@@ -1,0 +1,33 @@
+{
+  "name": "forge-engine",
+  "version": "0.0.0",
+  "description": "A small entity-component-system game engine for real-time-strategy games.",
+  "main": "index.js",
+  "dependencies": {
+    "grunt-webpack": "^3.0.2",
+    "webpack": "^2.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianpaschal/forge-engine.git"
+  },
+  "keywords": [
+    "entity-component-system",
+    "game-engine",
+    "javascript",
+    "node",
+    "nodejs",
+    "real-time-strategy",
+    "rts"
+  ],
+  "author": "Ian Paschal",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ianpaschal/forge-engine/issues"
+  },
+  "homepage": "https://github.com/ianpaschal/forge-engine#readme"
+}
