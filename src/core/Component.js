@@ -25,7 +25,7 @@ class Component {
 		else {
 			this._uuid = UUID();
 			this._type = "noname";
-			this._data = {};
+			this._data = {}; // NOTE: Some components use an array.
 		}
 	}
 
@@ -76,6 +76,10 @@ class Component {
 		*/
 	getUUID() {
 		return this._uuid;
+	}
+
+	setData( json ) {
+		this._data = json;
 	}
 
 	/** Set the component's type.
