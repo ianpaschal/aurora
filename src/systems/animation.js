@@ -13,6 +13,11 @@ const init = function() {
 
 const update = function( time ) {
 	// Do nothing for now.
+
+	// For all entities:
+
+	// if entity has props geometry and model, next task is "spawn":
+	
 };
 
 export default new System( props, init, update );

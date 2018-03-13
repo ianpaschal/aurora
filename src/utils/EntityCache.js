@@ -11,7 +11,7 @@ class EntityCache {
 		// will just recompute for all entities.
 		this._screenPoints = [];
 		const scope = this;
-		this._worldPoints.forEach(( point ) =>{
+		this._worldPoints.forEach( ( point ) =>{
 			const proj = point.clone().project( camera );
 			if ( proj.x <= 1 && proj.x >= -1 && proj.y <= 1 && proj.y >= -1 ) {
 				scope._screenPoints.push( proj );
@@ -20,7 +20,7 @@ class EntityCache {
 	}
 	getScreenPoints( max, min ) {
 		const results = [];
-		this._screenPoints.forEach(( p ) =>{
+		this._screenPoints.forEach( ( p ) =>{
 			if ( p.x <= max.x && p.x >= min.x && p.y <= max.y && p.y >= min.y ) {
 				results.push( p );
 			}

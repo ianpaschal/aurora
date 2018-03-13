@@ -31,7 +31,7 @@ const validators = {
 };
 
 export default function( check, input ) {
-	if ( !validators[ check ]) {
+	if ( !validators[ check ] ) {
 		console.warn( "Could not check " + input + "; No \"" + check + "\" validator found." );
 		return optimistic;
 	}

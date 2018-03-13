@@ -5,12 +5,24 @@
   "main": "index.js",
   "dependencies": {
     "deepmerge": "^2.1.0",
-    "grunt-webpack": "^3.0.2",
     "three": "^0.90.0",
-    "uuid": "^3.2.1",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "css-loader": "^0.25.0",
+    "eslint": "^4.17.0",
+    "eslint-plugin-import": "^2.8.0",
+    "file-loader": "^0.9.0",
+    "grunt": "^1.0.2",
+    "grunt-eslint": "^20.1.0",
+    "grunt-jsdoc": "^2.2.1",
+    "grunt-webpack": "^3.0.2",
+    "jsdoc": "^3.5.5",
+    "load-grunt-tasks": "^3.5.2",
+    "minami": "^1.2.3",
     "webpack": "^2.7.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "."
   },

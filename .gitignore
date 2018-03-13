@@ -7,8 +7,7 @@ logs
 npm-debug.log*
 
 # Binaries
-build/*
-!src/build
+dist
 
 # Dependency directories
 node_modules/

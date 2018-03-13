@@ -119,6 +119,11 @@ class Entity {
 		return false;
 	}
 
+	print () {
+		console.info( JSON.stringify( this, null, 4 ) );
+		return this;
+	};
+
 	/** Remove a component by type from the entity.
 		* @param {String} type - Type of the component to remove.
 		*/

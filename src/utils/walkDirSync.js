@@ -9,10 +9,10 @@ const walkDirSync = function( dir, filelist ) {
 	// If this is the 2nd level of the file tree, reuse the old file list:
 	filelist = filelist || [];
 
-	files.forEach(( file ) => {
+	files.forEach( ( file ) => {
 
 		// If directory is found, perform walk recursively:
-		if ( FS.statSync( Path.join( dir, file )).isDirectory()) {
+		if ( FS.statSync( Path.join( dir, file ) ).isDirectory() ) {
 			filelist = walkDirSync( Path.join( dir, file ), filelist );
 		}
 		else {
@@ -22,7 +22,7 @@ const walkDirSync = function( dir, filelist ) {
 				file.indexOf( ".ogg" ) == file.length - 4 ||
 				file.indexOf( ".json" ) == file.length - 5
 			) {
-				filelist.push( Path.join( dir, file ));
+				filelist.push( Path.join( dir, file ) );
 			}
 		}
 	});
