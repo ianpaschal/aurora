@@ -255,8 +255,8 @@ class Engine {
 				console.error( "Failed to load", err );
 			}
 		);
-		var decalGeo = new DecalGeometry( ground, mesh.position, mesh.rotation, new Three.Vector3( 4, 4, 4 ) );
-		var decalMat = new Three.MeshLambertMaterial({
+		const decalGeo = new DecalGeometry( ground, mesh.position, mesh.rotation, new Three.Vector3( 4, 4, 4 ) );
+		const decalMat = new Three.MeshLambertMaterial({
 			/*
 			normalMap: decalNormal,
 			normalScale: new Three.Vector2( 1, 1 ),
@@ -269,7 +269,7 @@ class Engine {
 			polygonOffset: true,
 			polygonOffsetFactor: - 4
 		});
-		var decalMesh = new Three.Mesh( decalGeo, decalMat );
+		const decalMesh = new Three.Mesh( decalGeo, decalMat );
 		this._scene.add( decalMesh );
 	}
 

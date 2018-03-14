@@ -23,7 +23,7 @@ export default class {
 			"../assets/texture/TexturesCom_SoilSand0187_1_seamless_S.jpg",
 
 			// onLoad callback
-			function ( texture ) {
+			( texture ) => {
 				// in this example we create the material when the texture is loaded
 				texture.wrapS = Three.RepeatWrapping;
 				texture.wrapT = Three.RepeatWrapping;
@@ -43,7 +43,7 @@ export default class {
 			undefined,
 
 			// onError callback
-			function ( err ) {
+			( err ) => {
 				console.error( "An error happened." );
 			}
 		);

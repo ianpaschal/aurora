@@ -17,7 +17,7 @@ module.exports = function( grunt ) {
 		},
 		eslint: {
 			options: {
-				configFile: ".eslintrc.json",
+				configFile: ".eslintrc.js",
 				fix: true
 			},
 			target: [ "src/**/*.js", "!src/windows/**" ]
