@@ -1,4 +1,4 @@
-// Forge is distributed under the MIT license.
+// Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
 

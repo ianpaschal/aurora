@@ -1,4 +1,4 @@
-// Forge is distributed under the MIT license.
+// Aurora is distributed under the MIT license.
 
 /** @classdesc Class representing a System. */
 class System {

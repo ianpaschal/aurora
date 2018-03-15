@@ -1,4 +1,4 @@
-// Forge is distributed under the MIT license.
+// Aurora is distributed under the MIT license.
 
 // External libraries:
 import FS from "fs";
@@ -22,10 +22,10 @@ import resourceSystem from "../systems/resources";
 import validate from "../utils/validate";
 import DecalGeometry from "../utils/DecalGeometry";
 
-/** @classdesc Core singleton representing an instance of the Forge Engine. */
+/** @classdesc Core singleton representing an instance of the Aurora Engine. */
 class Engine {
 
-	/** Create an instance of the Forge Engine. */
+	/** Create an instance of the Aurora Engine. */
 	constructor() {
 		console.log( "Initializing a new Engine." );
 
