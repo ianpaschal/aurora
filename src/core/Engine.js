@@ -101,7 +101,8 @@ class Engine {
 	getGeometry( type ) {
 		if ( this._geometries[ type ] ) {
 			return this._geometries[ type ];
-		} else {
+		}
+		else {
 			console.error( "Please supply a valid geometry type." );
 		}
 	}
@@ -396,7 +397,8 @@ class Engine {
 			if ( !world ) {
 				console.warn( "World is missing, a new one will be generated!" );
 				this.generateWorld( false, update, onFinished );
-			} else {
+			}
+			else {
 				this.loadWorld( world, update, onFinished );
 			}
 		});

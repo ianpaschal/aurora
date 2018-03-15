@@ -6,7 +6,7 @@ class System {
 	/** @description Create a System.
 		* @param {Object} props - Properties of this system.
 		* @param {String} props.name - Name of this system (primiarly used for logging purposes).
-		* @param {Bool} props.fixed - Whether the system should update as often as possible or respect a fixed step size.
+		* @param {Bool} props.fixed - Whether the system should update as often as possible or use a fixed step size.
 		* @param {Number} props.step - Step size (in ms). Only used if `props.fixed` is `false`.
 		* @param {Function} initFn - Function to run when first connecting the system to the engine.
 		* @param {Function} updateFn - Function to run each time the engine updates the main loop.
@@ -31,10 +31,16 @@ class System {
 		*/
 	init( engine ) {
 		if( !engine ) {
-			console.warn( "System " + this._name + ": Attempted to initalize system without an engine!" );
+			console.warn(
+				"System " + this._name + ":",
+				"Attempted to initalize system without an engine!"
+			);
 			return;
 		}
-		console.log( "System " + this._name + ": Linked system to engine." );
+		console.log(
+			"System " + this._name + ":",
+			"Linked system to engine."
+		);
 		this._engine = engine;
 
 		// Run the actual init behavior:
@@ -52,9 +58,41 @@ class System {
 				this.updateFn( this._step );
 				this._savedTime -= this._step;
 			}
-		} else {
+		}
+		else {
 			this.updateFn( delta );
 		}
+	}
+
+	addWatchedComponents( componentTypes ) {
+		componentTypes.forEach( ( type ) => {
+			const found = this._watchedComponents.find( ( existingType ) => {
+				return type === existingType;
+			});
+			if ( !found ) {
+				this._watchedComponents.push( type );
+			}
+		});
+	}
+
+	removeWatchedComponents( componentTypes ) {
+		componentTypes.forEach( ( type ) => {
+			const found = this._watchedComponents.find( ( existingType ) => {
+				return type === existingType;
+			});
+			if ( found ) {
+				// Remove:
+				this._watchedComponents.push( type );
+			}
+		});
+	}
+
+	isWatching( componentType ) {
+
+	}
+
+	setWatchAll( watch = true ) {
+		this._watchAll = watch;
 	}
 }
 

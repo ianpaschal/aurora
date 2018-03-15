@@ -1,6 +1,7 @@
 // Forge is distributed under the MIT license.
 
 import UUID from "uuid/v4";
+import Component from "./Component";
 
 /** @classdesc Class representing an Entity. */
 class Entity {
