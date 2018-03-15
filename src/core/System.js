@@ -64,35 +64,32 @@ class System {
 		}
 	}
 
-	addWatchedComponents( componentTypes ) {
-		componentTypes.forEach( ( type ) => {
-			const found = this._watchedComponents.find( ( existingType ) => {
-				return type === existingType;
-			});
-			if ( !found ) {
-				this._watchedComponents.push( type );
-			}
-		});
-	}
-
-	removeWatchedComponents( componentTypes ) {
-		componentTypes.forEach( ( type ) => {
-			const found = this._watchedComponents.find( ( existingType ) => {
-				return type === existingType;
-			});
-			if ( found ) {
-				// Remove:
-				this._watchedComponents.push( type );
-			}
-		});
-	}
-
 	isWatching( componentType ) {
-
+		const found = this._watchedComponents.find( ( existingType ) => {
+			return componentType === existingType;
+		});
+		return found;
 	}
 
 	setWatchAll( watch = true ) {
 		this._watchAll = watch;
+	}
+
+	_addWatchedComponents( componentTypes ) {
+		componentTypes.forEach( ( type ) => {
+			if ( !this.isWatching( type ) ) {
+				this._watchedComponents.push( type );
+			}
+		});
+	}
+
+	_removeWatchedComponents( componentTypes ) {
+		componentTypes.forEach( ( type ) => {
+			if ( this.isWatching( type ) ) {
+				// Remove:
+				this._watchedComponents.push( type );
+			}
+		});
 	}
 }
 
