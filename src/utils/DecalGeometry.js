@@ -65,7 +65,8 @@ export default function DecalGeometry( mesh, position, orientation, size ) {
 
 			geometry.fromGeometry( mesh.geometry );
 
-		} else {
+		}
+		else {
 
 			geometry.copy( mesh.geometry );
 
@@ -94,7 +95,8 @@ export default function DecalGeometry( mesh, position, orientation, size ) {
 
 			}
 
-		} else {
+		}
+		else {
 
 			// non-indexed BufferGeometry
 
