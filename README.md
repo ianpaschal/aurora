@@ -1,4 +1,4 @@
-# Aurora (Engine)
+# Aurora
 A small entity-component-system game engine for real-time-strategy games. It's also _sort of_ a mod API, but more on that later...
 
 Aurora Engine is based on four basic classes:
