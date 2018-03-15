@@ -70,9 +70,10 @@ class Entity {
 			return component.getType() === type;
 		});
 		if ( match ) {
+
 			return match;
 		}
-		return "Component with type " + type + "doesn't exist";
+		return "Component with type " + type + " doesn't exist";
 	}
 
 	/** Get all of the entity's components.
@@ -90,10 +91,11 @@ class Entity {
 		*/
 	getData( type ) {
 		const component = this.getComponent( type );
-		if ( component ) {
-			return component.getData();
+		if ( !component ) {
+			return "Component with type " + type + " doesn't exist";
+
 		}
-		return "Component with type " + type + "doesn't exist";
+		return component.getData();
 	}
 
 	/** Get the entity's type.
