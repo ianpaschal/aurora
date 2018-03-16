@@ -12,10 +12,15 @@ class System {
 		* @param {Function} updateFn - Function to run each time the engine updates the main loop.
 		* @returns {System} - The newly created system.
 		*/
-	constructor( props, initFn, updateFn ) {
+	constructor( props, componentTypes, initFn, updateFn ) {
 		this._name = props.name || "unnamed";
 		this._step = props.step || 100;
 		this._fixed = props.fixed || true;
+
+		this._watchedComponents = [];
+		this._addWatchedComponents( componentTypes );
+
+		this._entityUUIDs = [];
 
 		this.initFn = initFn;
 		this.updateFn = updateFn;
@@ -64,32 +69,57 @@ class System {
 		}
 	}
 
-	isWatching( componentType ) {
-		const found = this._watchedComponents.find( ( existingType ) => {
-			return componentType === existingType;
+	/** @description A component type from the system's watch list. Cannot be modified after creation.
+		* @readonly
+		*/
+	isWatching( searchTypes ) {
+		this._watchedComponents.forEach( ( type ) => {
+			const index = searchTypes.indexOf( type );
+			/* Instead of checking that the entity has every component, instead check
+			if any of the system's required components are not present. If at least
+			one missing component is detected, the entity should be excluded. */
+			if ( index < 0 ) {
+				return false;
+			}
 		});
-		return found;
+		return true;
 	}
 
-	setWatchAll( watch = true ) {
+	/** @description Add component types to the system's watch list. Cannot be modified after creation.
+		* @private
+		* @param {Array} componentTypes - The component types to add.
+		*/
+	_addWatchedComponents( componentTypes ) {
+		componentTypes.forEach( ( type ) => {
+			const index = this._watchedComponents.indexOf( type );
+			if ( index < 0 ) {
+				this._watchedComponents.push( type );
+			}
+		});
+	}
+
+	/** @description Remove component types from the system's watch list. Cannot be modified after creation.
+		* @private
+		* @param {Array} componentTypes - The component types to remove.
+		*/
+	_removeWatchedComponents( componentTypes ) {
+		componentTypes.forEach( ( type ) => {
+			const index = this._watchedComponents.indexOf( type );
+			if ( index >= 0 ) {
+				this._watchedComponents.splice( index, 1 );
+			}
+		});
+	}
+
+	/** @description Set the system to watch all entities
+		* @private
+		*/
+	_setWatchAll( watch = true ) {
 		this._watchAll = watch;
 	}
 
-	_addWatchedComponents( componentTypes ) {
-		componentTypes.forEach( ( type ) => {
-			if ( !this.isWatching( type ) ) {
-				this._watchedComponents.push( type );
-			}
-		});
-	}
-
-	_removeWatchedComponents( componentTypes ) {
-		componentTypes.forEach( ( type ) => {
-			if ( this.isWatching( type ) ) {
-				// Remove:
-				this._watchedComponents.push( type );
-			}
-		});
+	watchEntity( entity ) {
+		this._entityUUIDs.push( entity.getUUID() );
 	}
 }
 

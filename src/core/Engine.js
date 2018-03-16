@@ -10,14 +10,6 @@ import Component from "./Component";
 import Entity from "./Entity";
 import Player from "./Player";
 
-// Systems:
-/* In the future, it may be desireable to replace this with directory scanning
-	to automatically load all availible systems. Maybe... */
-import animationSystem from "../systems/animation";
-import lightingSystem from "../systems/lighting";
-import soundSystem from "../systems/sound";
-import resourceSystem from "../systems/resources";
-
 // Additional utilities:
 import validate from "../utils/validate";
 import DecalGeometry from "../utils/DecalGeometry";
@@ -55,12 +47,11 @@ class Engine {
 		this._lastFrameTime = null;
 	}
 
+	// NOTE: In the future, this should be pushing locations to an array.
 	addPluginsLocation( path ) {
 		this._pluginsDir = path;
 		console.log( this._pluginsDir );
 	}
-
-	// Getters:
 
 	getAssembly( type ) {
 		const match = this._assemblies.find( ( assembly ) => {
@@ -155,8 +146,15 @@ class Engine {
 		* @param {Entity} entity - The instance to add.
 		*/
 	registerEntity( entity ) {
+		// Make entity immutable (component data is still mutable though):
+		Object.seal( entity );
 		this._entities.push( entity );
-		return;
+		this._systems.forEach( ( system ) => {
+			if ( system.isWatching( entity.getComponentList() ) ) {
+				system.watchEntity( entity );
+			}
+		});
+		return this._entities;
 	}
 
 	/** Add a `Player` instance to to the engine.
@@ -335,7 +333,9 @@ class Engine {
 				const entity = new Entity();
 				player.own( entity );
 				entity.copy( this.getAssembly( "nature-rock-granite" ) );
-				entity.setComponentData( "player", this._players.indexOf( player ) );
+				entity.setComponentData( "player", {
+					index: this._players.indexOf( player )
+				});
 				entity.setComponentData( "position", {
 					x: player.start.x + ( Math.random() * 32 - 16 ),
 					y: player.start.y + ( Math.random() * 32 - 16 )
@@ -353,23 +353,12 @@ class Engine {
 
 	init( stack, world, onProgress, onFinished ) {
 
-		// Start systems:
-		const systems = [
-			animationSystem,
-			lightingSystem,
-			resourceSystem,
-			soundSystem
-		];
-		systems.forEach( ( system ) => {
-			this.registerSystem( system );
-		});
-
 		/* TODO: This should be more elegant. But for now I'm not sure if components
 		need their own class or not. The whole idea is kind of that they're just
 		data. */
-		const componentFiles = FS.readdirSync( Path.join( __dirname, "../components" ) );
+		const componentFiles = FS.readdirSync( Path.join( __dirname, "../plugins/components" ) );
 		componentFiles.forEach( ( file ) => {
-			const path = Path.join( __dirname, "../components", file );
+			const path = Path.join( __dirname, "../plugins/components", file );
 			const data = FS.readFileSync( path, "utf8" );
 			const json = JSON.parse( data );
 			const name = file.replace( /\.[^/.]+$/, "" );
@@ -418,7 +407,6 @@ class Engine {
 		// Load these backwards (textures, materials, geometries, aseemblies)
 		const loaders = {
 			loadTextures() {
-				console.log( stack.texture );
 				for ( const name in stack.texture ) {
 					textureLoader.load(
 						Path.join( pluginDir, stack.texture[ name ] ),
@@ -456,23 +444,8 @@ class Engine {
 			loadAssemblies() {
 				for ( const name in stack.assembly ) {
 					const path = Path.join( pluginDir, stack.assembly[ name ] );
-					const file = FS.readFileSync( path, "utf8" );
-					const json = JSON.parse( file );
-					const assembly = new Entity();
-					assembly.setType( json.type ); // "my-type"
-					json.components.forEach( ( data ) => {
-						//let comp = scope.getComponent( data.name );
-						/*if ( !comp ) {
-							console.log( "Adding a new component..." );
-							comp = new Component();
-							comp.setName( data.name );
-						}*/
-						const comp = new Component();
-						comp.setType( data.type );
-						comp.apply( data.data );
-						assembly.addComponent( comp );
-					});
-					scope.registerAssembly( assembly );
+					const json = JSON.parse( FS.readFileSync( path, "utf8" ) );
+					scope.registerAssembly( new Entity( json ) );
 					addLoaded( name );
 				}
 			},

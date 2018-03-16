@@ -15,11 +15,11 @@ class Entity {
 
 		// If building from JSON:
 		if ( json ) {
-			this._uuid = json._uuid || UUID();
-			this._type = json._type || "untyped";
+			this._uuid = json.uuid || UUID();
+			this._type = json.type || "untyped";
 			this._components = [];
-			json._components.forEach( ( data ) => {
-				this.addComponent( new Component( data ) );
+			json.components.forEach( ( data ) => {
+				this._addComponent( new Component( data ) );
 			});
 			this._tasks = json._tasks || [];
 		}
@@ -33,14 +33,38 @@ class Entity {
 		}
 	}
 
-	/** Add a `Component` to the entity.
+	/** @description Add a Component to the entity. This method should only be
+		* called internally, and never after the entity has been registered.
+		* @private
 		* @param {Component} component - The component to add.
 		*/
-	addComponent( component ) {
+	_addComponent( component ) {
+		// Don't add if it already exists:
 		if ( this.hasComponent( component.getType() ) ) {
-			return "Component already exists!";
+			console.warn( "Couldn't add "
+				+ component.getType() + " to " + this.getUUID()
+				+ ": Component already exists!"
+			);
 		}
-		this._components.push( component );
+		else {
+			this._components.push( component );
+		}
+		return this.getComponentList();
+	}
+
+	/** @description Remove a Component from the entity. This method should only
+		* be called internally, and never after the entity has been registered.
+		* @private
+		* @param {String} type - Type of the component to remove.
+		*/
+	_removeComponent( type ) {
+		const index = this._components.indexOf( this.getComponent( type ) );
+		if ( index > 0 ) {
+			delete this.components[ index ];
+		}
+		else {
+			return "Component with id " + type + "doesn't exist";
+		}
 	}
 
 	/** Clone the entity.
@@ -74,6 +98,18 @@ class Entity {
 			return match;
 		}
 		return "Component with type " + type + " doesn't exist";
+	}
+
+	/** Get all of the entity's component types.
+		* @readonly
+		* @returns {Array} - The entity's component types.
+		*/
+	getComponentList() {
+		const componentTypes = [];
+		this._components.forEach( ( component ) => {
+			componentTypes.push( component.getType() );
+		});
+		return componentTypes;
 	}
 
 	/** Get all of the entity's components.
@@ -128,19 +164,6 @@ class Entity {
 		console.info( JSON.stringify( this, null, 4 ) );
 		return this;
 	};
-
-	/** Remove a component by type from the entity.
-		* @param {String} type - Type of the component to remove.
-		*/
-	removeComponent( type ) {
-		const index = this._components.indexOf( this.getComponent( type ) );
-		if ( index > 0 ) {
-			delete this.components[ index ];
-		}
-		else {
-			return "Component with id " + type + "doesn't exist";
-		}
-	}
 
 	setComponentData( type, data ) {
 		for ( let i = 0; i < this._components.length; i++ ) {

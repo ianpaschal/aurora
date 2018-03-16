@@ -20,7 +20,7 @@ module.exports = {
 		"computed-property-spacing": [ 2, "always" ],
 		"dot-notation":              [ 2 ],
 		"indent":                    [ 2, "tab", { "SwitchCase": 1 } ],
-		"max-len":                   [ 2, { "code": 80, "comments": 120, "ignoreTrailingComments": true, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true } ],
+		"max-len":                   [ 2, { "code": 80, "comments": 120, "tabWidth": 2, "ignoreTrailingComments": true, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true } ],
 		"no-confusing-arrow":        [ 2, { "allowParens": false } ],
 		"no-const-assign":           [ 2 ],
 		"no-dupe-class-members":     [ 2 ],
