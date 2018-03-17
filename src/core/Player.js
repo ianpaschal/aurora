@@ -1,6 +1,10 @@
+// Aurora is distributed under the MIT license.
+
 import * as Three from "three";
 import UUID from "uuid/v4";
-export default class {
+
+/** @classdesc Class representing a Player. */
+class Player {
 	constructor( uuid, config ) {
 		this.uuid = uuid || UUID();
 		this.name = config.name;
@@ -19,3 +23,5 @@ export default class {
 		return this._entities;
 	}
 }
+
+export default Player;

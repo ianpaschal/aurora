@@ -1,6 +1,5 @@
 // Aurora is distributed under the MIT license.
 
-// Core modules:
 import Component from "./core/Component";
 import Engine from "./core/Engine";
 import Entity from "./core/Entity";

@@ -1,16 +1,11 @@
 // Aurora is distributed under the MIT license.
 
-// External libraries:
 import FS from "fs";
 import Path from "path";
 import * as Three from "three";
-
-// Internal modules:
 import Component from "./Component";
 import Entity from "./Entity";
 import Player from "./Player";
-
-// Additional utilities:
 import validate from "../utils/validate";
 import DecalGeometry from "../utils/DecalGeometry";
 
@@ -22,6 +17,7 @@ class Engine {
 		console.log( "Initializing a new Engine." );
 
 		this._scene = new Three.Scene();
+		this._pluginLocations = [];
 
 		// These are the things which are actually saved per game:
 		this._entities = [];
@@ -32,11 +28,11 @@ class Engine {
 		this._players = [];
 
 		// Static Resources:
-		// TODO: Make these into arrays. ,map, .filter and .find all give us what we need.
 		this._assemblies = [];
 		this._components = [];
 		this._systems = [];
 
+		// TODO: Make these into arrays. ,map, .filter and .find all give us what we need.
 		this._geometries = {}; // Three.Geometry class does not have .getType() method.
 		this._materials = {}; // Three.Material class does not have .getType() method.
 		this._sounds = {}; // Sound does not have .getType() method.
