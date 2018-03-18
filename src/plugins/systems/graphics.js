@@ -15,7 +15,6 @@ export default new System({
 	init() {
 		// Create an easier reference to the global scene:
 		this._scene = this._engine.getScene();
-		// Do nothing for now.
 	},
 	add( entity ) {
 		const geometryData = entity.getData( "geometry" );

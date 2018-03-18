@@ -35,14 +35,6 @@ class Engine {
 
 		// Static Resources:
 		this._assemblies = [];
-		this._components = [];
-		/* NOTE: Registering components with the engine doesn't make much sense.
-			Virtually all components won't use a default value and the useful part--
-			the data--is already included in assemblies. Also, since entities are
-			immutable after registration, there's no need to store components which
-			can't be added to/removed from them. The array is preserved for now though
-			as a reminder, and may be used in the future for validation (such as not)
-			allowing a system to try and watch "unapproved" components. */
 		this._systems = [];
 
 		// TODO: Make these into arrays. ,map, .filter and .find all give us what we need.
@@ -64,23 +56,7 @@ class Engine {
 		* @returns {(Assembly|null)} - Requested assembly, or null if not found.
 		*/
 	getAssembly( type ) {
-		const match = this._assemblies.find( ( assembly ) => {
-			return assembly.getType() === type;
-		});
-		if ( !match ) {
-			console.warn( "Assembly " + type + " could not be found!" );
-			return null;
-		}
-		return match;
-	}
-
-	/** @description Get a Component instance by type.
-		* @readonly
-		* @param {String} type - Type of component to fetch.
-		* @returns {(Component|null)} - Requested component, or null if not found.
-		*/
-	getComponent( type ) {
-		return getItem( type, this._components, "type" );
+		return getItem( type, this._assemblies, "_type" );
 	}
 
 	/** @description Get an Entity instance by UUID.
@@ -89,15 +65,7 @@ class Engine {
 		* @returns {(Entity|null)} - Requested entity, or null if not found.
 		*/
 	getEntity( uuid ) {
-		const match = this._entities.find( ( entity ) => {
-			return entity.getUUID() === uuid;
-		});
-		if ( !match ) {
-			console.warn( "Entity " + uuid + " could not be found!" );
-			return null;
-		}
-		return match;
-
+		return getItem( uuid, this._entities, "_UUID" );
 	}
 
 	/** @description Get a Three.Geometry instance by type.
@@ -143,16 +111,6 @@ class Engine {
 		// TODO: Validation.
 		this._assemblies.push( assembly );
 		return this._assemblies;
-	}
-
-	/** @description Add a Component instance to to the engine.
-		* @param {Component} component - Component instance to add.
-		* @returns {Array} - Updated array of components.
-		*/
-	registerComponent( component ) {
-		// TODO: Validation.
-		this._components.push( component );
-		return this._components;
 	}
 
 	/** @description Add an Entity instance to to the engine.
