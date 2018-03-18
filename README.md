@@ -1,6 +1,8 @@
 # Aurora
 A small entity-component-system game engine for real-time-strategy games. It's also _sort of_ a mod API, but more on that later...
 
+> Aurora is being developed alongside it's intended use case, [Forge](https://github.com/ianpaschal/forge), and still churns quite a bit. There's also lots of test code present which requires refactoring and possible removal, but the basic architecture is stable and usable.
+
 Aurora Engine is based on four basic classes:
 
 - `Engine`
