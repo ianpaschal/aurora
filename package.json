@@ -2,7 +2,7 @@
   "name": "aurora",
   "version": "0.0.1",
   "description": "A small entity-component-system game engine for real-time-strategy games.",
-  "main": "index.js",
+  "main": "./src/index.js",
   "dependencies": {
     "deepmerge": "^2.1.0",
     "three": "^0.90.0",

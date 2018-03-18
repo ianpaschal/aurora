@@ -1,26 +1,35 @@
 // Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
+import Component from "./Component";
 
 /** @classdesc Class representing an Entity. */
 class Entity {
 
 	/** Create an Entity.
-		* @param {Object} json - JSON object containing entity data. This is used
-		* when loading a previously created entity from disk, or creating an Entity
-		* which will be used as an Assembly to clone into new Entity instances.
+		* @param {Object} [config] - JSON object containing Entity data. This is
+		* used when loading a previously created Entity from disk, or creating an
+		* Entity to be used as an assembly to clone into new Entity instances.
+		* @param {String} [config.uuid] - UUID of the Entity.
+		* @param {String} [config.type] - Type of the Entity. Typically also called
+		* "unit type" or "class" in-game.
+		* @param {Array} [config.components] - Array of Component data to generate
+		* component instances from.
+		* @param {Array} [config.tasks] - Array of task objects (upcoming) for
+		* the entity to execute.
+		* @returns {Entity} - The newly created Entity.
 		*/
-	constructor( json ) {
+	constructor( config ) {
 
 		// If building from JSON:
-		if ( json ) {
-			this._uuid = json._uuid || UUID();
-			this._type = json._type || "untyped";
+		if ( config ) {
+			this._uuid = config.uuid || UUID();
+			this._type = config.type || "no-type";
 			this._components = [];
-			json._components.forEach( ( data ) => {
-				this.addComponent( new Component( data ) );
+			config.components.forEach( ( data ) => {
+				this._addComponent( new Component( data ) );
 			});
-			this._tasks = json._tasks || [];
+			this._tasks = config.tasks || [];
 		}
 
 		// If creating a fresh instance:
@@ -30,26 +39,60 @@ class Entity {
 			this._components = [];
 			this._tasks = [];
 		}
+
+		return this;
 	}
 
-	/** Add a `Component` to the entity.
-		* @param {Component} component - The component to add.
+	/** @description Add a Component instance to the Entity. This method should
+		* only be called internally, and never after the Entity has been registered.
+		* @private
+		* @param {Component} component - The Component to add.
+		* @returns {(Array|null)} - Updated array of Components, or null the
+		* Component already existed.
 		*/
-	addComponent( component ) {
+	_addComponent( component ) {
+		// Don't add if it already exists:
 		if ( this.hasComponent( component.getType() ) ) {
-			return "Component already exists!";
+			console.warn( "Couldn't add "
+				+ component.getType() + " to " + this.getUUID()
+				+ ": Component already exists!"
+			);
+			return null;
 		}
-		this._components.push( component );
+		else {
+			this._components.push( component );
+			return this._components;
+		}
+
 	}
 
-	/** Clone the entity.
+	/** @description Remove a Component instance from the Entity. This method
+		* should only be called internally, and never after the Entity has been
+		* registered.
+		* @private
+		* @param {String} type - Type of the Component to remove.
+		* @returns {(Array|null)} - Updated array of Components, or null the
+		* Component already existed.
+		*/
+	_removeComponent( type ) {
+		const index = this._components.indexOf( this.getComponent( type ) );
+		if ( index < 0 ) {
+			console.warn( "Component with id " + type + "doesn't exist!" );
+			return null;
+		}
+		this._components.splice( index, 1 );
+		return this._components;
+	}
+
+	/** @description Clone the entity.
 		* @returns {Entity} - New instance with the same components.
 		*/
 	clone() {
 		return new this.constructor().copy( this );
 	}
 
-	/** Copy an assembly into the entity, replacing all components.
+	/** @description Copy another entity (such as an assembly) into the entity,
+		* replacing all components.
 		* @param {Entity} source - Assembly to clone into the new entity.
 		*/
 	copy( source ) {
@@ -60,57 +103,78 @@ class Entity {
 		});
 	}
 
-	/** Get a component instance by  within the entity.
+	/** @description Get a component instance by within the entity.
+		* @readonly
 		* @param {String} type - Type of the component to get.
-		* @returns {Component}
+		* @returns {(Component|null)} - Requested component, or null if not found.
 		*/
 	getComponent( type ) {
 		const match = this._components.find( ( component ) => {
 			return component.getType() === type;
 		});
-		if ( match ) {
-			return match;
+		if ( !match ) {
+			console.warn( "Component " + type + " could not be found!" );
+			return null;
 		}
-		return "Component with type " + type + "doesn't exist";
+		return match;
 	}
 
-	/** Get all of the entity's components.
+	/** @description Get all of the entity's component types.
 		* @readonly
-		* @returns {Array} - The entity's components.
+		* @returns {Array} - Array of component types present within the entity.
+		*/
+	getComponentList() {
+		const componentTypes = [];
+		this._components.forEach( ( component ) => {
+			componentTypes.push( component.getType() );
+		});
+		return componentTypes;
+	}
+
+	/** @description Get all of the Entity's components.
+		* @readonly
+		* @returns {Array} - Array of the Entity's components.
 		*/
 	getComponents() {
 		return this._components;
 	}
 
-	/** Get data by component type from the entity.
+	/** @description Get data by component type from the Entity. This is basically
+		* a shorthand for .getComponent.getData();
 		* @readonly
 		* @param {String} type - Type of the component to get data from.
-		* @returns {Object}
+		* @returns {(Object|null)} - Requested component data, or null if not found.
 		*/
 	getData( type ) {
 		const component = this.getComponent( type );
-		if ( component ) {
-			return component.getData();
+		if ( !component ) {
+			console.warn( "Component with type " + type + " doesn't exist!" );
+			return null;
 		}
-		return "Component with type " + type + "doesn't exist";
+		return component.getData();
 	}
 
-	/** Get the entity's type.
+	/** @description Get the Entity's type.
 		* @readonly
-		* @returns {String} - The entity's type.
+		* @returns {String} - The Entity's type.
 		*/
 	getType() {
 		return this._type;
 	}
 
-	/** Get the entity's UUID.
+	/** @description Get the Entity's UUID.
 		* @readonly
-		* @returns {String} - The entity's UUID.
+		* @returns {String} - The Entity's UUID.
 		*/
 	getUUID() {
 		return this._uuid;
 	}
 
+	/** @description Check if a component is present within the Entity.
+		* @readonly
+		* @param {String} type - Type of the component to check.
+		* @returns {Bool} - True if the component is present within the Entity.
+		*/
 	hasComponent( type ) {
 		const match = this._components.find( ( component ) => {
 			return component.getType() === type;
@@ -121,57 +185,69 @@ class Entity {
 		return false;
 	}
 
+	/** @description Print the Entity as JSON. Useful for saving to disk.
+		* @readonly
+		* @returns {String} - Ent
+		*/
 	print () {
 		console.info( JSON.stringify( this, null, 4 ) );
 		return this;
 	};
 
-	/** Remove a component by type from the entity.
-		* @param {String} type - Type of the component to remove.
+	/** @description Overwrite the data for a Component with the given type within
+		* the Entity.
+		* @param {String} type - Type of the Component to check.
+		* @param {Object} data - JSON data to apply to the Component.
+		* @returns {(Array|null)} - Updated Component, or null if invalid.
 		*/
-	removeComponent( type ) {
-		const index = this._components.indexOf( this.getComponent( type ) );
-		if ( index > 0 ) {
-			delete this.components[ index ];
-		}
-		else {
-			return "Component with id " + type + "doesn't exist";
-		}
-	}
-
 	setComponentData( type, data ) {
 		for ( let i = 0; i < this._components.length; i++ ) {
 			if ( this._components[ i ].getType() === type ) {
-				return this._components[ i ].apply( data );
+				this._components[ i ].apply( data );
+				return this._components[ i ];
 			}
 		}
-		return "Component with type " + type + "doesn't exist";
+		console.warn( "Component with type " + type + "doesn't exist" );
+		return null;
 	}
 
-	setType( type ) {
-		this._type = type;
-	}
-
-	// Overwite current tasks:
+	/** @description Overwite the current task list with an array tasks.
+		* @param {Array} tasks - Array of task objects to replace existing tasks.
+		* @returns {Array} - Updated array of tasks.
+		*/
 	setTasks( tasks ) {
 		// TODO: Add some validation!
 		this._tasks = tasks;
+		return this.tasks;
 	};
 
-	// Append to current task queue:
+	/** @description Append an array of tasks to the current task queue.
+		* @param {Array} tasks - Array of task objects to replace existing tasks.
+		* @returns {Array} - Updated array of tasks.
+		*/
 	appendTasks( tasks ) {
 		// TODO: Add some validation!
 		this._tasks.concat( tasks );
+		return this.tasks;
 	};
 
-	// Insert in front of current task queue:
+	/** @description Insert an array of tasks into the front of the current task
+		* queue.
+		* @param {Array} tasks - Array of task objects to replace existing tasks.
+		* @returns {Array} - Updated array of tasks.
+		*/
 	insertTasks( tasks ) {
 		this._tasks = tasks.concat( this._tasks );
+		return this.tasks;
 	};
 
+	/** @description Advance the current task by one.
+		* @returns {Array} - Updated array of tasks.
+		*/
 	// Advance forward in the task queue:
 	advanceTasks() {
 		this._tasks.shift();
+		return this.tasks;
 	};
 
 }

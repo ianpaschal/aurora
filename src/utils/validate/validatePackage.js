@@ -7,7 +7,8 @@ export default function( dir, callback ) {
 		return "No valid callback provided!";
 	}
 
-	let err, obj = {};
+	let err;
+	let obj = {};
 	const file = Path.join( dir, "package.json" );
 	console.log( file );
 
