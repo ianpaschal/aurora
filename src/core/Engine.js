@@ -366,20 +366,35 @@ class Engine {
 		config = config || {
 			name: "Test World",
 			players: [
-				{ name: "Gaia", color: 0xA0B35D, start: { x: 0, y: 0, z: 0 } },
-				{ name: "Ian", color: 0x0000ff, start: { x: 50, y: 50, z: 0 } },
-				{ name: "Thomas", color: 0xff0000, start: { x: 200, y: -100, z: 0 } },
-				{ name: "Winston", color: 0x00ff00, start: { x: -100, x: 200, x: 0 } }
+				{
+					name: "Gaia",
+					color: new Three.Color( 0xA0B35D ),
+					start: { x: 0, y: 0, z: 0 },
+					resources: resources
+				},
+				{
+					name: "Ian",
+					color: new Three.Color( 0x0000ff ),
+					start: { x: 50, y: 50, z: 0 },
+					resources: resources
+				},
+				{
+					name: "Thomas",
+					color: new Three.Color( 0xff0000 ),
+					start: { x: 200, y: -100, z: 0 },
+					resources: resources
+				},
+				{
+					name: "Winston",
+					color: new Three.Color( 0x00ff00 ),
+					start: { x: -100, y: 200, x: 0 },
+					resources: resources
+				}
 			]
 		};
 
 		config.players.forEach( ( data ) => {
-			const player = new Player( null, {
-				color: new Three.Color( data.color ),
-				name: data.name,
-				start: new Three.Vector3().copy( data.start ),
-				resources: resources
-			});
+			const player = new Player( data );
 			this.registerPlayer( player );
 
 			// Generate test entities:
