@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>core/Component.js - Documentation</title>
+    <title>core/Player.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">core/Component.js</h1>
+    <h1 class="page-title">core/Player.js</h1>
     
 
     
@@ -41,121 +41,57 @@
         <article>
             <pre class="prettyprint source linenums"><code>// Aurora is distributed under the MIT license.
 
+import * as Three from "three";
 import UUID from "uuid/v4";
-import deepCopy from "../utils/deepCopy";
-import deepMerge from "deepmerge";
 
-/** @classdesc Class representing a Component. */
-class Component {
+/** @classdesc Class representing a Player. At the time of writing the Player
+	* class is very lightweight but the likely areas of expansion are world
+	* visibility ("fog-of-war"), assigning AIs, and resource/economy tracking. */
+class Player {
 
-	/** Create a Component.
-		* @param {Object} [config] - JSON object containing component data. This is used
-		* when loading a previously created ecomponent from disk, or creating the
-		* components which comprise an Assembly.
-		* @param {String} [config.uuid] - UUID of the component.
-		* @param {String} [config.type] - Type of the component.
-		* @param {Object} [config.data] - JSON object containing the actual data for
-		* the component.
-		* @returns {Component} - The newly created Component.
+	/** @description Create a Player instance.
+		* @param {Object} config - Properties of the player. When loading a saved player, this will likely be a JSON object.
+		* @param {String} config.uiud - UUID of the player, used primarily for loading from JSON.
+		* @param {String} config.name - Name of the player.
+		* @param {Color} config.color - Color of the player, expressed as a HEX string.
+		* @param {Object} config.start={x:0,y:0,z:0} - Starting location expressed as an XYZ object.
+		* @returns {System} - The newly created Player.
 		*/
 	constructor( config ) {
+		// TODO: Make these private and supply getter functions:
+		this.uuid = config.uuid || UUID();
+		this.name = config.name || "Unnamed Player";
+		this.color = config.color || 0xCCCCCC;
 
-		// If building from JSON:
-		if ( config ) {
-			this._uuid = config.uuid;
-			this._type = config.type;
-			this._data = config.data;
+		this.start = new Three.Vector3();
+		if ( config.start ) {
+			this.start.copy( config.start );
 		}
-
-		// If creating a fresh instance:
-		else {
-			this._uuid = UUID();
-			this._type = "noname";
-			this._data = {}; // NOTE: Some components use an array.
-		}
-
+		this._entityUUIDs = [];
+		console.log( "Created player " + this.uuid + ": " + this.name + "." );
 		return this;
 	}
 
-	/** @description Apply JSON data to this Component. Note: When two different
-		* types share the same key (i.e. a string and a boolean), the new value (in
-		* the JSON) will overwrite the existing value. This also applies to objects
-		* and arrays.
-		* @param {Object} json - JSON data to apply to the Component.
-		* @returns {Object} - Updated data object.
+	/** @description Own an entity by adding its UUID to to the player.
+		* @param {Entity} entity - Entity instance to add.
+		* @returns {Array} - Updated array of entity UUIDs.
 		*/
-	apply( json ) {
-		this._data = deepMerge( this._data, json );
-		return this._data;
-	}
-
-	/** @description Clone the component.
-		* @returns {Component} - New Component instance with the same data.
-		*/
-	clone() {
-		const clone = new this.constructor();
-		clone.copy( this );
-		return clone;
-	}
-
-	/** @description Copy another Component's data, replacing all existing data.
-		* @param {Component} source - Component to copy from.
-		* @returns {Component} - Component with updated data.
-		*/
-	copy( source ) {
+	own( entity ) {
 		// TODO: Validation.
-		this._type = source.getType();
-		this._data = deepCopy( source.getData() );
-		return this;
+		this._entityUUIDs.push( entity.getUUID() );
+		return this._entityUUIDs;
 	}
 
-	/** @description Get the component's data.
+	/** @description Get all entity UUIDs owned by player.
 		* @readonly
-		* @returns {Object} - The component's data.
+		* @returns {Array} - Array of entity UUIDs.
 		*/
-	getData() {
-		return this._data;
-	}
-
-	/** @description Get the component's type.
-		* @readonly
-		* @returns {String} - The component's type.
-		*/
-	getType() {
-		return this._type;
-	}
-
-	/** @description Get the component's UUID.
-		* @readonly
-		* @returns {String} - The component's UUID.
-		*/
-	getUUID() {
-		return this._uuid;
-	}
-
-	/** @description Set JSON data in this Component. Note: This method differs
-		* from `.apply()` in that it completely overwrites any existing data.
-		* @param {Object} json - JSON data to apply to the Component.
-		* @returns {Object} - Updated data object.
-		*/
-	setData( json ) {
-		// TODO: Validation.
-		this._data = json;
-		return this._data;
-	}
-
-	/** @description Set the component's type.
-		* @param {String} type - New type for the Component.
-		* @returns {String} - Updated type for the Component.
-		*/
-	setType( type ) {
-		// TODO: Validation.
-		this._type = type;
-		return this._type;
+	getEntityUUIDs() {
+		return this._entityUUIDs;
 	}
 }
 
-export default Component;
+export default Player;
 </code></pre>
         </article>
     </section>

@@ -1,6 +1,7 @@
 /**
  * @author Mugen87 / https://github.com/Mugen87
  * @author spite / https://github.com/spite
+ * @author ianpaschal / https://github.com/ianpaschal
  *
  * You can use this geometry to create a decal mesh, that serves different kinds of purposes.
  * e.g. adding unique details to models, performing dynamic visual environmental changes or covering seams.
@@ -38,7 +39,9 @@ export default function DecalGeometry( mesh, position, orientation, size ) {
 	projectorMatrix.makeRotationFromEuler( orientation );
 	projectorMatrix.setPosition( position );
 
-	const projectorMatrixInverse = new Three.Matrix4().getInverse( projectorMatrix );
+	const projectorMatrixInverse = new Three.Matrix4().getInverse(
+		projectorMatrix
+	);
 
 	// generate buffers
 
@@ -46,7 +49,9 @@ export default function DecalGeometry( mesh, position, orientation, size ) {
 
 	// build geometry
 
-	this.addAttribute( "position", new Three.Float32BufferAttribute( vertices, 3 ) );
+	this.addAttribute(
+		"position", new Three.Float32BufferAttribute( vertices, 3 )
+	);
 	this.addAttribute( "normal", new Three.Float32BufferAttribute( normals, 3 ) );
 	this.addAttribute( "uv", new Three.Float32BufferAttribute( uvs, 2 ) );
 
@@ -139,8 +144,16 @@ export default function DecalGeometry( mesh, position, orientation, size ) {
 
 			// now create vertex and normal buffer data
 
-			vertices.push( decalVertex.position.x, decalVertex.position.y, decalVertex.position.z );
-			normals.push( decalVertex.normal.x, decalVertex.normal.y, decalVertex.normal.z );
+			vertices.push(
+				decalVertex.position.x,
+				decalVertex.position.y,
+				decalVertex.position.z
+			);
+			normals.push(
+				decalVertex.normal.x,
+				decalVertex.normal.y,
+				decalVertex.normal.z
+			);
 
 		}
 
@@ -168,8 +181,14 @@ export default function DecalGeometry( mesh, position, orientation, size ) {
 
 		for ( let i = 0; i < inVertices.length; i += 3 ) {
 
-			var v1Out, v2Out, v3Out, total = 0;
-			var nV1, nV2, nV3, nV4;
+			let v1Out;
+			let v2Out;
+			let v3Out;
+			let total = 0;
+			let nV1;
+			let nV2;
+			let nV3;
+			let nV4;
 
 			const d1 = inVertices[ i + 0 ].position.dot( plane ) - s;
 			const d2 = inVertices[ i + 1 ].position.dot( plane ) - s;

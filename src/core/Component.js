@@ -8,17 +8,22 @@ import deepMerge from "deepmerge";
 class Component {
 
 	/** Create a Component.
-		* @param {Object} json - JSON object containing component data. This is used
+		* @param {Object} [config] - JSON object containing component data. This is used
 		* when loading a previously created ecomponent from disk, or creating the
 		* components which comprise an Assembly.
+		* @param {String} [config.uuid] - UUID of the component.
+		* @param {String} [config.type] - Type of the component.
+		* @param {Object} [config.data] - JSON object containing the actual data for
+		* the component.
+		* @returns {Component} - The newly created Component.
 		*/
-	constructor( json ) {
+	constructor( config ) {
 
 		// If building from JSON:
-		if ( json ) {
-			this._uuid = json.uuid;
-			this._type = json.type;
-			this._data = json.data;
+		if ( config ) {
+			this._uuid = config.uuid;
+			this._type = config.type;
+			this._data = config.data;
 		}
 
 		// If creating a fresh instance:
@@ -27,18 +32,24 @@ class Component {
 			this._type = "noname";
 			this._data = {}; // NOTE: Some components use an array.
 		}
+
+		return this;
 	}
 
-	/** Apply JSON data to this component. Note: When merging an object and an
-		* array, the item in `JSON` will overwrite the existing object for that key.``
-		* @param {Object} json - New instance of `Component` with the same data.
+	/** @description Apply JSON data to this Component. Note: When two different
+		* types share the same key (i.e. a string and a boolean), the new value (in
+		* the JSON) will overwrite the existing value. This also applies to objects
+		* and arrays.
+		* @param {Object} json - JSON data to apply to the Component.
+		* @returns {Object} - Updated data object.
 		*/
 	apply( json ) {
 		this._data = deepMerge( this._data, json );
+		return this._data;
 	}
 
-	/** Clone this component.
-		* @returns {Component} - New instance of `Component` with the same data.
+	/** @description Clone the component.
+		* @returns {Component} - New Component instance with the same data.
 		*/
 	clone() {
 		const clone = new this.constructor();
@@ -46,12 +57,15 @@ class Component {
 		return clone;
 	}
 
-	/** @description Copy another component's data, replacing all existing data.
+	/** @description Copy another Component's data, replacing all existing data.
 		* @param {Component} source - Component to copy from.
+		* @returns {Component} - Component with updated data.
 		*/
 	copy( source ) {
+		// TODO: Validation.
 		this._type = source.getType();
 		this._data = deepCopy( source.getData() );
+		return this;
 	}
 
 	/** @description Get the component's data.
@@ -78,15 +92,25 @@ class Component {
 		return this._uuid;
 	}
 
+	/** @description Set JSON data in this Component. Note: This method differs
+		* from `.apply()` in that it completely overwrites any existing data.
+		* @param {Object} json - JSON data to apply to the Component.
+		* @returns {Object} - Updated data object.
+		*/
 	setData( json ) {
+		// TODO: Validation.
 		this._data = json;
+		return this._data;
 	}
 
-	/** Set the component's type.
-		* @param {String} type - New type for the component.
+	/** @description Set the component's type.
+		* @param {String} type - New type for the Component.
+		* @returns {String} - Updated type for the Component.
 		*/
 	setType( type ) {
+		// TODO: Validation.
 		this._type = type;
+		return this._type;
 	}
 }
 
