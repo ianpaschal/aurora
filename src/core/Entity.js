@@ -171,7 +171,7 @@ class Entity {
 		* @returns {Bool} - True if the component is present within the Entity.
 		*/
 	hasComponent( type ) {
-		hasItem( type, this._components, "_type" );
+		return hasItem( type, this._components, "_type" );
 	}
 
 	/** @description Print the Entity as JSON. Useful for saving to disk.
@@ -196,7 +196,7 @@ class Entity {
 				return this._components[ i ];
 			}
 		}
-		console.warn( "Component with type " + type + "doesn't exist" );
+		console.warn( "Component with type " + type + " doesn't exist!" );
 		return null;
 	}
 

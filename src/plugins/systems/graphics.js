@@ -21,19 +21,23 @@ export default new System({
 		const materialData = entity.getData( "material" );
 		const geoIndex = Math.floor( Math.random() * geometryData.length );
 		const geometry = this._engine.getGeometry( geometryData[ geoIndex ] );
-		const material = new Three.MeshLambertMaterial({
-			color: new Three.Color( 1, 1, 1 ),
-			map: this._engine._textures[ materialData + "-diffuse" ],
-			alphaMap: this._engine._textures[ materialData + "-diffuse" ],
-			alphaTest: 0.5, // if transparent is false
-			transparent: false
+
+		const materials = [];
+		materialData.forEach( ( material ) => {
+			materials.push( new Three.MeshLambertMaterial({
+				color: new Three.Color( 1, 1, 1 ),
+				map: this._engine._textures[ material + "-diffuse" ],
+				alphaMap: this._engine._textures[ material + "-alpha" ],
+				alphaTest: 0.5, // if transparent is false
+				transparent: false
+			}) );
 		});
-		const mesh = new Three.Mesh( geometry, material );
+		const mesh = new Three.Mesh( geometry, materials );
 		mesh.position.copy( entity.getData( "position" ) );
 		mesh.rotation.copy( entity.getData( "rotation" ) );
 		mesh.entityID = entity.getUUID();
 		this._scene.add( mesh );
-
+		/*
 		// Decal
 		const ground = this._scene.getObjectByName( "ground" );
 		const textureLoader = new Three.TextureLoader();
@@ -81,6 +85,7 @@ export default new System({
 		});
 		const decalMesh = new Three.Mesh( decalGeo, decalMat );
 		this._scene.add( decalMesh );
+		*/
 	},
 	update( time ) {
 		// Do nothing for now.

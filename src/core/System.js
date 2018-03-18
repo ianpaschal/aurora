@@ -92,15 +92,16 @@ class System {
 		* entity, including unneeded ones, cycle through the system's components and
 		* check that each one is present within the entity's component list.
 		* @readonly
-		* @param {Array} componentTypes - Array of
+		* @param {Array} entityComponents - Array of components to check.
+		* @returns {Boolean} - Whether the system should be watching the entity.
 		*/
-	isWatching( componentTypes ) {
-		this._watchedComponents.forEach( ( type ) => {
-			if ( componentTypes.indexOf( type ) < 0 ) {
+	isWatchable( entity ) {
+		for ( const type of this._watchedComponents ) {
+			if ( !entity.hasComponent( type ) ) {
 				// Return early if any required component is missing on entity:
 				return false;
 			}
-		});
+		}
 		return true;
 	}
 

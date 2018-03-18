@@ -5,11 +5,13 @@ import Path from "path";
 import * as Three from "three";
 import Entity from "./Entity";
 import Player from "./Player";
+import World from "./World";
 import validate from "../utils/validate";
 import getItem from "../utils/getItem";
 import hasItem from "../utils/hasItem";
 import graphicsSystem from "../plugins/systems/graphics.js";
 import terrainSystem from "../plugins/systems/terrain.js";
+import productionSystem from "../plugins/systems/production.js";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -27,10 +29,6 @@ class Engine {
 
 		// These are the things which are actually saved per game:
 		this._entities = [];
-		this._world = {
-			time: 0,
-			name: ""
-		};
 		this._players = [];
 
 		// Static Resources:
@@ -65,7 +63,7 @@ class Engine {
 		* @returns {(Entity|null)} - Requested entity, or null if not found.
 		*/
 	getEntity( uuid ) {
-		return getItem( uuid, this._entities, "_UUID" );
+		return getItem( uuid, this._entities, "_uuid" );
 	}
 
 	/** @description Get a Three.Geometry instance by type.
@@ -125,7 +123,7 @@ class Engine {
 		this._entities.push( entity );
 		// Check all systems to see if they should be watching this entity:
 		this._systems.forEach( ( system ) => {
-			if ( system.isWatching( entity.getComponentList() ) ) {
+			if ( system.isWatchable( entity ) ) {
 				system.addEntity( entity );
 			}
 		});
@@ -222,6 +220,10 @@ class Engine {
 			// Systems must be intialized after loading so they can use assets:
 			this.registerSystem( graphicsSystem );
 			this.registerSystem( terrainSystem );
+			this.registerSystem( productionSystem );
+
+			this._world = new World();
+			this._world.setTime( 0 );
 
 			// If no source is provided, generate a new world:
 			if ( !world ) {
@@ -351,22 +353,36 @@ class Engine {
 			this.registerPlayer( player );
 
 			// Generate test entities:
-			for ( let i = 0; i < 4; i++ ) {
-				const entity = new Entity();
-				player.own( entity );
-				entity.copy( this.getAssembly( "nature-rock-granite" ) );
-				entity.setComponentData( "player", {
-					index: this._players.indexOf( player )
-				});
-				entity.setComponentData( "position", {
-					x: player.start.x + ( Math.random() * 32 - 16 ),
-					y: player.start.y + ( Math.random() * 32 - 16 )
-				});
-				entity.setComponentData( "rotation", {
-					z: Math.random() * Math.PI
-				});
-				this.registerEntity( entity );
-			}
+			const entity = new Entity();
+			player.own( entity );
+			entity.copy( this.getAssembly( "greek-settlement-age-0" ) );
+			entity.getComponent( "player" ).apply({
+				index: this._players.indexOf( player )
+			});
+			entity.getComponent( "position" ).apply({
+				x: player.start.x,
+				y: player.start.y
+			});
+			entity.getComponent( "rotation" ).apply({
+				z: Math.random() * Math.PI
+			});
+			entity.getComponent( "production" ).apply({
+				queue: [
+					{
+						"type": "nature-rock-granite",
+						"progress": 100
+					},
+					{
+						"type": "nature-rock-granite",
+						"progress": 100
+					},
+					{
+						"type": "nature-rock-granite",
+						"progress": 100
+					}
+				]
+			});
+			this.registerEntity( entity );
 		});
 
 		onFinished();
