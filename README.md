@@ -1,9 +1,9 @@
 # Aurora
 A small entity-component-system game engine for real-time-strategy games. It's also _sort of_ a mod API, but more on that later...
 
-> Aurora is being developed alongside it's intended use case, [Forge](https://github.com/ianpaschal/forge), and still churns quite a bit. There's also lots of test code present which requires refactoring and possible removal, but the basic architecture is stable and usable.
+> Aurora is being developed alongside its intended use case, [Forge](https://github.com/ianpaschal/forge), and still churns quite a bit. There's also lots of test code present which requires refactoring and possible removal, but the basic architecture is stable and usable.
 
-Aurora Engine is based on four basic classes:
+Aurora is based on four basic classes:
 
 - `Engine`
 - `Entity`
@@ -18,16 +18,16 @@ In a nutshell:
 - The engine:
 	- Tells all systems to update each game loop
 	- Handles the creation and destruction of entities and components
-	- Handles the loading of assets using `Three.js` (Geometries, materials, etc.)
+	- Handles the loading of assets using `Three.js` (geometries, materials, etc.)
 
 ## Mod API
-> "I read something above that said Aurora Engine is '_sort of_ a mod API'."
+> "I read something above that said Aurora is '_sort of_ a mod API'."
 
-That's correct. With Aurora Engine, there's not really a distinction between core content and mods. Because all entities are both represented and saved as JSON (plus whatever other image assets or sounds), it's easy to add new units to the game without actually having to `eval()` any Javascript. This is especially useful for modded multiplayer where the required mods can be safely sent to all players in the game.
+That's correct. With Aurora, there's not really a distinction between core content and mods. Because all entities are both represented and saved as JSON (plus whatever other image assets or sounds), it's easy to add new units to the game without actually having to `eval()` any Javascript. This is especially useful for modded multiplayer where the required mods can be safely sent to all players in the game.
 
 Obviously this exempts "systems" from being added as _they_ are the actual executable functions which process a world's entities, but exchanging those should eventually be possible as well as the users' discretion.
 
 Read more on the wiki.
 
 ## License
-Aurora Engine is licensed under the MIT license.
+Aurora is licensed under the MIT license.
