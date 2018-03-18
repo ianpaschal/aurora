@@ -25,7 +25,7 @@ export default new System({
 		const material = new Three.MeshLambertMaterial({
 			color: new Three.Color( 1, 1, 1 ),
 			map: this._engine._textures[ materialData + "-diffuse" ],
-			alphaMap: this._engine._textures[ materialData + "-alpha" ],
+			alphaMap: this._engine._textures[ materialData + "-diffuse" ],
 			alphaTest: 0.5, // if transparent is false
 			transparent: false
 		});

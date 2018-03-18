@@ -6,6 +6,8 @@ import * as Three from "three";
 import Entity from "./Entity";
 import Player from "./Player";
 import validate from "../utils/validate";
+import getItem from "../utils/getItem";
+import hasItem from "../utils/hasItem";
 import graphicsSystem from "../plugins/systems/graphics.js";
 import terrainSystem from "../plugins/systems/terrain.js";
 
@@ -78,14 +80,7 @@ class Engine {
 		* @returns {(Component|null)} - Requested component, or null if not found.
 		*/
 	getComponent( type ) {
-		const match = this._components.find( ( component ) => {
-			return component.getType() === type;
-		});
-		if ( !match ) {
-			console.warn( "Component " + type + " could not be found!" );
-			return null;
-		}
-		return match;
+		return getItem( type, this._components, "type" );
 	}
 
 	/** @description Get an Entity instance by UUID.

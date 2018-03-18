@@ -1,6 +1,8 @@
 // Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
+import getItem from "../utils/getItem";
+import hasItem from "../utils/hasItem";
 import Component from "./Component";
 
 /** @classdesc Class representing an Entity. */
@@ -109,14 +111,7 @@ class Entity {
 		* @returns {(Component|null)} - Requested component, or null if not found.
 		*/
 	getComponent( type ) {
-		const match = this._components.find( ( component ) => {
-			return component.getType() === type;
-		});
-		if ( !match ) {
-			console.warn( "Component " + type + " could not be found!" );
-			return null;
-		}
-		return match;
+		return getItem( type, this._components, "_type" );
 	}
 
 	/** @description Get all of the entity's component types.
@@ -176,13 +171,7 @@ class Entity {
 		* @returns {Bool} - True if the component is present within the Entity.
 		*/
 	hasComponent( type ) {
-		const match = this._components.find( ( component ) => {
-			return component.getType() === type;
-		});
-		if ( match ) {
-			return true;
-		}
-		return false;
+		hasItem( type, this._components, "_type" );
 	}
 
 	/** @description Print the Entity as JSON. Useful for saving to disk.
