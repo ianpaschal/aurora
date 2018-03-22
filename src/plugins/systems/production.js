@@ -1,3 +1,5 @@
+// Aurora is distributed under the MIT license.
+
 import System from "../../core/System";
 import Entity from "../../core/Entity";
 
@@ -40,8 +42,8 @@ export default new System({
 					});
 					fresh.setTasks( [
 						{ action: "walk", target: {
-							x: spawn.x + Math.random() * 50,
-							y: spawn.y + Math.random() * 50,
+							x: spawn.x + Math.random() * 12,
+							y: spawn.y + Math.random() * 12,
 							z: 0
 						} },
 						{ action: "idle", target: null }

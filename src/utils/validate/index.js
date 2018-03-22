@@ -1,3 +1,5 @@
+// Aurora is distributed under the MIT license.
+
 import Player from "../../core/Player";
 import System from "../../core/System";
 /**

@@ -1,3 +1,5 @@
+// Aurora is distributed under the MIT license.
+
 import * as Three from "three";
 import System from "../../core/System";
 

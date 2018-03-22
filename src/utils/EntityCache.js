@@ -1,3 +1,5 @@
+// Aurora is distributed under the MIT license.
+
 class EntityCache {
 	constructor() {
 		this._worldPoints = [];

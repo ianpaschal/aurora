@@ -1,3 +1,5 @@
+// Aurora is distributed under the MIT license.
+
 import FS from "fs";
 import Path from "path";
 

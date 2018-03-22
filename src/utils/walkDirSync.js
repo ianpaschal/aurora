@@ -1,8 +1,10 @@
+// Aurora is distributed under the MIT license.
+
 import FS from "fs";
 import Path from "path";
 
 // List all files in a directory in Node.js recursively in a synchronous fashion
-const walkDirSync = function( dir, filelist ) {
+export default function( dir, filelist ) {
 
 	const files = FS.readdirSync( dir );
 
@@ -28,5 +30,3 @@ const walkDirSync = function( dir, filelist ) {
 	});
 	return filelist;
 };
-
-export default walkDirSync;
