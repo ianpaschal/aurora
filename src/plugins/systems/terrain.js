@@ -24,10 +24,10 @@ export default new System({
 		ground.name = "ground";
 		this._scene.add( ground );
 	},
-	add( entity ) {
+	add() {
 		// Do nothing for now.
 	},
-	update( time ) {
+	update() {
 		// Do nothing for now.
 	}
 });

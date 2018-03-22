@@ -1,7 +1,6 @@
 // Aurora is distributed under the MIT license.
 
 import System from "../../core/System";
-import * as Three from "three";
 import calc from "../../utils/calc.js";
 
 export default new System({
@@ -13,7 +12,7 @@ export default new System({
 	init() {
 		// Do nothing for now.
 	},
-	add( entity ) {
+	add() {
 		// Do nothing for now.
 	},
 	update( time ) {
@@ -27,7 +26,6 @@ export default new System({
 			if ( currentTask.action === "walk" ) {
 
 				const position = entity.getData( "position" );
-				const rotation = entity.getData( "rotation" );
 				const target = currentTask.target;
 				const heading = calc.heading( position, target );
 				const distance = entity.getData( "movement" ).speed * ( time / 1000 );

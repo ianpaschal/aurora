@@ -17,7 +17,6 @@ export default new System({
 	init() {
 		// Create an easier reference to the global scene:
 		this._scene = this._engine.getScene();
-
 		this._entityMeshes = {};
 	},
 	add( entity ) {
@@ -89,17 +88,15 @@ export default new System({
 			polygonOffsetFactor: - 4
 		});
 		const decalMesh = new Three.Mesh( decalGeo, decalMat );
-		this._scene.add( decalMesh );
+		this._entityMeshes[ entity.getUUID() ].add( decalMesh );
 		*/
 	},
-	update( time ) {
+	update() {
 		this._entityUUIDs.forEach( ( uuid ) => {
 			const entity = this._engine.getEntity( uuid );
 			const mesh = this._entityMeshes[ uuid ];
 			mesh.position.copy( entity.getData( "position" ) );
-			// mesh.position.x += time / 1000;
 		});
-
 	}
 });
 
