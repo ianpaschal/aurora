@@ -21,6 +21,8 @@ module.exports = {
 		"dot-notation":              [ 2 ],
 		"indent":                    [ 2, "tab", { "SwitchCase": 1 } ],
 		"max-len":                   [ 2, { "code": 80, "comments": 120, "tabWidth": 2, "ignoreTrailingComments": true, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true } ],
+		"max-lines":                 [ 2, { "max": 250, "skipBlankLines": true }, { "skipComments": true } ],
+		"max-statements":            [ 2, 30 ],
 		"no-confusing-arrow":        [ 2, { "allowParens": false } ],
 		"no-const-assign":           [ 2 ],
 		"no-dupe-class-members":     [ 2 ],
