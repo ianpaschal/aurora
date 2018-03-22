@@ -20,7 +20,7 @@ module.exports = function( grunt ) {
 				configFile: ".eslintrc.js",
 				fix: true
 			},
-			target: [ "src/**/*.js", "!src/windows/**" ]
+			target: [ "src/**/*.js", "!src/windows/**", "!docs" ]
 		}
 	});
 
