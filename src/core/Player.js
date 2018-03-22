@@ -20,7 +20,10 @@ class Player {
 		// TODO: Make these private and supply getter functions:
 		this.uuid = config.uuid || UUID();
 		this.name = config.name || "Unnamed Player";
-		this.color = config.color || new Three.Color( 0xCCCCCC );
+		if ( !config.color ) {
+			config.color = "#CCCCCC";
+		}
+		this.color = new Three.Color( config.color );
 
 		this.start = new Three.Vector3();
 		if ( config.start ) {

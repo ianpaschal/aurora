@@ -149,6 +149,14 @@ class Entity {
 		return component.getData();
 	}
 
+	/** @description Get the Entity's task list.
+		* @readonly
+		* @returns {Array} - The Entity's task list.
+		*/
+	getTasks() {
+		return this._tasks;
+	}
+
 	/** @description Get the Entity's type.
 		* @readonly
 		* @returns {String} - The Entity's type.

@@ -15,6 +15,8 @@ export default new System({
 	init() {
 		// Create an easier reference to the global scene:
 		this._scene = this._engine.getScene();
+
+		this._entityMeshes = {};
 	},
 	add( entity ) {
 		const geometryData = entity.getData( "geometry" );
@@ -37,6 +39,7 @@ export default new System({
 		mesh.rotation.copy( entity.getData( "rotation" ) );
 		mesh.entityID = entity.getUUID();
 		this._scene.add( mesh );
+		this._entityMeshes[ entity.getUUID() ] = mesh;
 		/*
 		// Decal
 		const ground = this._scene.getObjectByName( "ground" );
@@ -88,7 +91,13 @@ export default new System({
 		*/
 	},
 	update( time ) {
-		// Do nothing for now.
+		this._entityUUIDs.forEach( ( uuid ) => {
+			const entity = this._engine.getEntity( uuid );
+			const mesh = this._entityMeshes[ uuid ];
+			mesh.position.copy( entity.getData( "position" ) );
+			// mesh.position.x += time / 1000;
+		});
+
 	}
 });
 

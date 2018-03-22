@@ -17,6 +17,10 @@ export default new System({
 
 			const entity = this._engine.getEntity( uuid );
 			const queue = entity.getData( "production" ).queue;
+			let spawn = entity.getData( "production" ).spawn;
+			if ( spawn === null ) {
+				spawn = entity.getData( "position" );
+			}
 			const playerIndex = entity.getData( "player" ).index;
 			const player = this._engine.getPlayer( playerIndex );
 			// Update progress:
@@ -31,11 +35,15 @@ export default new System({
 						index: playerIndex
 					});
 					fresh.getComponent( "position" ).apply({
-						x: entity.getData( "position" ).x + ( ( Math.random() * 40 ) - 20 ),
-						y: entity.getData( "position" ).y + ( ( Math.random() * 40 ) - 20 )
+						x: spawn.x,
+						y: spawn.y
 					});
 					fresh.setTasks( [
-						{ action: "walk", target: { x: 50, y: 50, z: 0 } },
+						{ action: "walk", target: {
+							x: spawn.x + Math.random() * 50,
+							y: spawn.y + Math.random() * 50,
+							z: 0
+						} },
 						{ action: "idle", target: null }
 					] );
 					this._engine.registerEntity( fresh );

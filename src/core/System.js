@@ -15,9 +15,10 @@ class System {
 		* @returns {System} - The newly created System.
 		*/
 	constructor( config ) {
+		console.log( config.fixed );
 		this._name = config.name || "unnamed";
+		this._fixed = config.fixed || false;
 		this._step = config.step || 100;
-		this._fixed = config.fixed || true;
 
 		this._watchedComponents = [];
 		this._addWatchedComponents( config.componentTypes );

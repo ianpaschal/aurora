@@ -12,6 +12,7 @@ import hasItem from "../utils/hasItem";
 import graphicsSystem from "../plugins/systems/graphics.js";
 import terrainSystem from "../plugins/systems/terrain.js";
 import productionSystem from "../plugins/systems/production.js";
+import movementSystem from "../plugins/systems/movement.js";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -221,6 +222,7 @@ class Engine {
 			this.registerSystem( graphicsSystem );
 			this.registerSystem( terrainSystem );
 			this.registerSystem( productionSystem );
+			this.registerSystem( movementSystem );
 
 			this._world = new World();
 			this._world.setTime( 0 );
@@ -312,41 +314,10 @@ class Engine {
 
 	generateWorld( config, onProgress, onFinished ) {
 
-		/* Later, config should be loaded from disk, for now it's hard coded. */
-		const resources = {
-			food: 100,
-			wood: 100,
-			metal: 100
-		};
-		config = config || {
-			name: "Test World",
-			players: [
-				{
-					name: "Gaia",
-					color: new Three.Color( 0xA0B35D ),
-					start: { x: 0, y: 0, z: 0 },
-					resources: resources
-				},
-				{
-					name: "Ian",
-					color: new Three.Color( 0x0000ff ),
-					start: { x: 50, y: 50, z: 0 },
-					resources: resources
-				},
-				{
-					name: "Thomas",
-					color: new Three.Color( 0xff0000 ),
-					start: { x: 200, y: -100, z: 0 },
-					resources: resources
-				},
-				{
-					name: "Winston",
-					color: new Three.Color( 0x00ff00 ),
-					start: { x: -100, y: 200, x: 0 },
-					resources: resources
-				}
-			]
-		};
+		if ( !config ) {
+			const path = Path.join( __dirname, "../plugins/maps/default.json" );
+			config = JSON.parse( FS.readFileSync( path, "utf8" ) );
+		}
 
 		config.players.forEach( ( data ) => {
 			const player = new Player( data );
@@ -363,23 +334,11 @@ class Engine {
 				x: player.start.x,
 				y: player.start.y
 			});
-			entity.getComponent( "rotation" ).apply({
-				z: Math.random() * Math.PI
-			});
 			entity.getComponent( "production" ).apply({
 				queue: [
-					{
-						"type": "nature-rock-granite",
-						"progress": 100
-					},
-					{
-						"type": "nature-rock-granite",
-						"progress": 100
-					},
-					{
-						"type": "nature-rock-granite",
-						"progress": 100
-					}
+					{ "type": "nature-rock-granite", "progress": 100 },
+					{ "type": "nature-rock-granite", "progress": 100 },
+					{ "type": "nature-rock-granite", "progress": 100 }
 				]
 			});
 			this.registerEntity( entity );
