@@ -13,7 +13,8 @@ class Entity {
 		* used when loading a previously created Entity from disk, or creating an
 		* Entity to be used as an assembly to clone into new Entity instances.
 		* @param {String} [config.uuid] - UUID of the Entity.
-		* @param {String} [config.type] - Type of the Entity. Typically also called
+		* @param {String} [config.type] - Type of the Entity.
+		* @param {String} [config.name] - Name of the Entity. Typically also called
 		* "unit type" or "class" in-game.
 		* @param {Array} [config.components] - Array of Component data to generate
 		* component instances from.
@@ -27,6 +28,7 @@ class Entity {
 		if ( config ) {
 			this._uuid = config.uuid || UUID();
 			this._type = config.type || "no-type";
+			this._name = config.name || "No Name";
 			this._components = [];
 			config.components.forEach( ( data ) => {
 				this._addComponent( new Component( data ) );
@@ -38,6 +40,7 @@ class Entity {
 		else {
 			this._uuid = UUID();
 			this._type = "untyped";
+			this._name = "No Name";
 			this._components = [];
 			this._tasks = [];
 		}
@@ -99,6 +102,7 @@ class Entity {
 		*/
 	copy( source ) {
 		this._type = source.getType();
+		this._name = source.getName();
 		this._components = [];
 		source.getComponents().forEach( ( component ) => {
 			this._components.push( component.clone() );
@@ -147,6 +151,14 @@ class Entity {
 			return null;
 		}
 		return component.getData();
+	}
+
+	/** @description Get the Entity's name.
+		* @readonly
+		* @returns {String} - The Entity's name.
+		*/
+	getName() {
+		return this._name;
 	}
 
 	/** @description Get the Entity's task list.
