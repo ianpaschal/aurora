@@ -46,7 +46,7 @@ export default new System({
 							y: spawn.y + Math.random() * 12,
 							z: 0
 						} },
-						{ action: "idle", target: null }
+						{ action: "harvest", target: null }
 					] );
 					this._engine.registerEntity( fresh );
 					queue.shift();

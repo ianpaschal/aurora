@@ -34,6 +34,7 @@ class Entity {
 				this._addComponent( new Component( data ) );
 			});
 			this._tasks = config.tasks || [];
+			this.tasksDirty = false;
 		}
 
 		// If creating a fresh instance:
@@ -138,6 +139,14 @@ class Entity {
 		return this._components;
 	}
 
+	/** @description Get the Entity's current task.
+		* @readonly
+		* @returns {Object} - The Entity's current task.
+		*/
+	getCurrentTask() {
+		return this._tasks[ 0 ];
+	}
+
 	/** @description Get data by component type from the Entity. This is basically
 		* a shorthand for .getComponent.getData();
 		* @readonly
@@ -227,6 +236,7 @@ class Entity {
 	setTasks( tasks ) {
 		// TODO: Add some validation!
 		this._tasks = tasks;
+		this.tasksDirty = true;
 		return this.tasks;
 	};
 
@@ -247,6 +257,7 @@ class Entity {
 		*/
 	insertTasks( tasks ) {
 		this._tasks = tasks.concat( this._tasks );
+		this.tasksDirty = true;
 		return this.tasks;
 	};
 
@@ -256,6 +267,7 @@ class Entity {
 	// Advance forward in the task queue:
 	advanceTasks() {
 		this._tasks.shift();
+		this.tasksDirty = true;
 		return this.tasks;
 	};
 

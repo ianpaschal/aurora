@@ -336,9 +336,9 @@ class Engine {
 			});
 			entity.getComponent( "production" ).apply({
 				queue: [
-					{ "type": "nature-rock-granite", "progress": 100 },
-					{ "type": "nature-rock-granite", "progress": 100 },
-					{ "type": "nature-rock-granite", "progress": 100 }
+					{ "type": "greek-villager-male", "progress": 100 },
+					{ "type": "greek-villager-male", "progress": 100 },
+					{ "type": "greek-villager-male", "progress": 100 }
 				]
 			});
 			this.registerEntity( entity );

@@ -18,29 +18,52 @@ export default new System({
 		// Create an easier reference to the global scene:
 		this._scene = this._engine.getScene();
 		this._entityMeshes = {};
+		this._mixers = {};
 	},
 	add( entity ) {
 		const geometryData = entity.getData( "geometry" );
+		const animationData = entity.getData( "animation" );
 		const materialData = entity.getData( "material" );
 		const geoIndex = Math.floor( Math.random() * geometryData.length );
 		const geometry = this._engine.getGeometry( geometryData[ geoIndex ] );
-
 		const materials = [];
-		materialData.forEach( ( material ) => {
-			materials.push( new Three.MeshLambertMaterial({
+		materialData.forEach( ( name ) => {
+			const material = new Three.MeshLambertMaterial({
 				color: new Three.Color( 1, 1, 1 ),
-				map: this._engine._textures[ material + "-diffuse" ],
-				alphaMap: this._engine._textures[ material + "-alpha" ],
+				map: this._engine._textures[ name + "-diffuse" ],
 				alphaTest: 0.5, // if transparent is false
 				transparent: false
-			}) );
+			});
+			if ( animationData ) {
+				material.morphTargets = true;
+			}
+			if ( this._engine._textures[ name + "-alpha" ] ) {
+				material.alphaMap = this._engine._textures[ name + "-alpha" ];
+			}
+			materials.push( material );
 		});
 		const mesh = new Three.Mesh( geometry, materials );
 		mesh.position.copy( entity.getData( "position" ) );
-		mesh.rotation.copy( entity.getData( "rotation" ) );
+		mesh.rotation.z = entity.getData( "rotation" ).z;
 		mesh.entityID = entity.getUUID();
 		this._scene.add( mesh );
 		this._entityMeshes[ entity.getUUID() ] = mesh;
+		if ( geometry.morphTargets.length > 0 ) {
+
+			// Seriously, Mr. Doob? ------------------------------------------->|
+			const clips = Three.AnimationClip.CreateClipsFromMorphTargetSequences(
+				geometry.morphTargets,
+				30
+			);
+			const mixer = new Three.AnimationMixer( mesh );
+			mixer.clipAction( "idle" ).setDuration( 2 );
+			mixer.clipAction( "walk" ).setDuration( 1 );
+			mixer.existingAction( "walk" ).clampWhenFinished = false;
+			mixer.clipAction( "harvest" ).setDuration( 2 );
+			this._mixers[ entity.getUUID() ] = mixer;
+			mixer.clipAction( "walk" ).play();
+		}
+
 		/*
 		// Decal
 		const ground = this._scene.getObjectByName( "ground" );
@@ -91,86 +114,23 @@ export default new System({
 		this._entityMeshes[ entity.getUUID() ].add( decalMesh );
 		*/
 	},
-	update() {
+	update( time ) {
 		this._entityUUIDs.forEach( ( uuid ) => {
 			const entity = this._engine.getEntity( uuid );
 			const mesh = this._entityMeshes[ uuid ];
 			mesh.position.copy( entity.getData( "position" ) );
+			mesh.rotation.z = entity.getData( "rotation" ).z;
+			const mixer = this._mixers[ uuid ];
+			if ( mixer ) {
+				/*
+				if ( entity.tasksDirty ) {
+					entity.tasksDirty = false;
+					mixer.stopAllAction();
+					// mixer.existingAction( entity.getCurrentTask().action ).play();
+				}
+				*/
+				mixer.update( time / 1000 );
+			}
 		});
 	}
 });
-
-// OLD:
-/*
-class AnimationSystem {
-
-	constructor() {
-		this.name = "rendering";
-		this._mixers = [];
-		this.walking = undefined;
-		this._savedTime = 0;
-		this._maxFPS = 60;
-		console.log( "Created a new " + this.name + " system." );
-		return this;
-	}
-
-	init( engine ) {
-		if( !engine ) {
-			console.warn( capitalize( this.name ) + ": Attempted to initalize system without an engine!" );
-			return;
-		}
-		console.log( capitalize( this.name ) + ": Linked system to engine." );
-
-		const loader = new Three.JSONLoader();
-		// console.log( "IN ANIMATION:", engine );
-		const scope = this;
-
-		const paths = [];
-		paths.push( "../../plugins/age-of-mythology/model/greek-villager-female.js" );
-
-		paths.forEach( ( path ) => {
-			loader.load( path, ( geometry, materials ) => {
-				for ( var i = 0; i < materials.length; i++ ) {
-					materials[ i ].color.setRGB( 1.0, 1.0, 1.0 );
-					materials[ i ].morphTargets = true;
-				}
-				const mesh = new Three.Mesh( geometry, new Three.MeshLambertMaterial({
-					color: 0x999999
-				}) );
-				mesh.material.morphTargets = true;
-
-				const clips = Three.AnimationClip.CreateClipsFromMorphTargetSequences( geometry.morphTargets, 30 );
-				// const forageClip = Three.AnimationClip.CreateFromMorphTargetSequence( "forage", geometry.morphTargets, 30 );
-
-				console.log( clips );
-				const mixer = new Three.AnimationMixer( mesh );
-				const walkAction = mixer.clipAction( clips[ 0 ] );
-				const forageAction = mixer.clipAction( clips[ 1 ] );
-
-				walkAction.setDuration( 2 );
-				walkAction.play();
-				// forageAction.play();
-
-				// engine.getScene().add( mesh );
-				mesh.position.x = paths.indexOf( path ) * 2;
-				scope._mixers.push( mixer );
-				if ( paths.indexOf( path ) === 1 ) {
-					scope.walking = mesh;
-				}
-			});
-		});
-	}
-	update( delta ) {
-		this._savedTime += delta;
-		if ( this._savedTime > this._stepSize ) {
-			this._savedTime -= delta;
-		}
-		this._mixers.forEach( ( mixer ) => {
-			mixer.update( delta / 1000 );
-		});
-	}
-
-}
-
-export default AnimationSystem;
-*/
