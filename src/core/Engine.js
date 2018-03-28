@@ -13,6 +13,7 @@ import graphicsSystem from "../plugins/systems/graphics.js";
 import terrainSystem from "../plugins/systems/terrain.js";
 import productionSystem from "../plugins/systems/production.js";
 import movementSystem from "../plugins/systems/movement.js";
+import visibilitySystem from "../plugins/systems/visibility";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -223,6 +224,7 @@ class Engine {
 			this.registerSystem( terrainSystem );
 			this.registerSystem( productionSystem );
 			this.registerSystem( movementSystem );
+			this.registerSystem( visibilitySystem );
 
 			this._world = new World();
 			this._world.setTime( 0 );

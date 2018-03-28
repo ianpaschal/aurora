@@ -31,6 +31,7 @@ class Player {
 		}
 		this._entityUUIDs = [];
 		console.log( "Created player " + this.uuid + ": " + this.name + "." );
+		this.addVisibilityMap();
 		return this;
 	}
 
@@ -50,6 +51,19 @@ class Player {
 		*/
 	getEntityUUIDs() {
 		return this._entityUUIDs;
+	}
+
+	addVisibilityMap() {
+		// Create the canvas:
+		const canvas = document.createElement( "canvas" );
+		canvas.setAttribute( "width", 1024 );
+		canvas.setAttribute( "height", 1024 );
+		// Paint it black:
+		const context = canvas.getContext( "2d" );
+		context.fillStyle = "white";
+		context.fillRect( 0, 0, canvas.width, canvas.height );
+		// And save it:
+		this._visibilityMap = canvas;
 	}
 }
 
