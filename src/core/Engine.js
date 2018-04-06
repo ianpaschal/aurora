@@ -8,7 +8,6 @@ import Player from "./Player";
 import World from "./World";
 import validate from "../utils/validate";
 import getItem from "../utils/getItem";
-import hasItem from "../utils/hasItem";
 import graphicsSystem from "../plugins/systems/graphics.js";
 import terrainSystem from "../plugins/systems/terrain.js";
 import productionSystem from "../plugins/systems/production.js";

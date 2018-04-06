@@ -1,7 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import System from "../../core/System";
-import calc from "../../utils/calc.js";
+import Math2D from "../../utils/Math2D";
 
 export default new System({
 	name: "movement",
@@ -27,9 +27,9 @@ export default new System({
 
 				const position = entity.getData( "position" );
 				const target = currentTask.target;
-				const heading = calc.heading( position, target );
+				const heading = Math2D.heading( position, target );
 				const distance = entity.getData( "movement" ).speed * ( time / 1000 );
-				const distanceToGo = calc.distance( position, target );
+				const distanceToGo = Math2D.distance( position, target );
 
 				// Apply old position plus computed offset to position:
 				entity.getComponent( "position" ).apply({
