@@ -81,6 +81,25 @@ class Engine {
 		}
 	}
 
+	/** @description Get a number of states from the end of the state stack.
+		* @readonly
+		* @param {Number} num - Number of recent states to fetch.
+		* @returns {Array} - Array of states, starting with the most recent.
+		*/
+	getLastStates( num ) {
+		return this._states.slice( Math.max( this._states.length - num, 0 ) );
+		// TODO: Handle better if there's more states than 0, but fewer than num.
+		// TODO: Make most recent state be #0.
+	}
+
+	/** @description Get a number of states in the state stack.
+		* @readonly
+		* @returns {Number} - The number of states in the state stack.
+		*/
+	getNumStates() {
+		return this._states.length;
+	}
+
 	/** @description Get a Player instance by index.
 		* @readonly
 		* @param {Number} index - Index (player number) to fetch.
@@ -193,9 +212,16 @@ class Engine {
 			const now = performance.now();
 			const delta = now - this._lastFrameTime;
 			this._lastFrameTime = now;
+			if ( this.onUpdateStart && typeof this.onUpdateStart == "function" ) {
+				this.onUpdateEnd();
+			}
 			this._systems.forEach( ( system ) => {
 				system.update( delta );
 			});
+			this._states.push( this._state );
+			if ( this.onUpdateEnd && typeof this.onUpdateEnd == "function" ) {
+				this.onUpdateEnd();
+			}
 		}
 	}
 
