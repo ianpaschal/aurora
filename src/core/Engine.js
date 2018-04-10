@@ -2,6 +2,7 @@
 
 import FS from "fs";
 import Path from "path";
+import Present from "present";
 import * as Three from "three";
 import Entity from "./Entity";
 import Player from "./Player";
@@ -194,7 +195,7 @@ class Engine {
 	start() {
 		/* Always reset. If engine was stopped and restarted, not resetting could
 			cause a massive time jump to be added to all systems. */
-		this._lastFrameTime = performance.now();
+		this._lastFrameTime = Present();
 		this._running = true;
 		setInterval( this._update.bind( this ), 1000 / 60 );
 	}

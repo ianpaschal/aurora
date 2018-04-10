@@ -5,6 +5,7 @@
   "main": "./src/index.js",
   "dependencies": {
     "deepmerge": "^2.1.0",
+    "present": "^1.0.0",
     "three": "^0.90.0",
     "uuid": "^3.2.1"
   },
