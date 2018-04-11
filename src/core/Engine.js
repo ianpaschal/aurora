@@ -28,6 +28,7 @@ class Engine {
 
 		this._scene = new Three.Scene();
 		this._pluginLocations = [];
+		this._states = [];
 
 		// These are the things which are actually saved per game:
 		this._entities = [];
@@ -46,6 +47,7 @@ class Engine {
 		// Timing:
 		this._running = false;
 		this._lastFrameTime = null;
+		this._step = 100;
 
 		return this;
 	}
@@ -197,7 +199,7 @@ class Engine {
 			cause a massive time jump to be added to all systems. */
 		this._lastFrameTime = Present();
 		this._running = true;
-		setInterval( this._update.bind( this ), 1000 / 60 );
+		setInterval( this._update.bind( this ), this._step - 4 );
 	}
 
 	/** @description Stop the execution of the update loop. */
@@ -210,9 +212,10 @@ class Engine {
 		*/
 	_update() {
 		if ( this._running ) {
-			const now = performance.now();
+			const now = Present();
 			const delta = now - this._lastFrameTime;
 			this._lastFrameTime = now;
+			console.log( "Update" );
 			if ( this.onUpdateStart && typeof this.onUpdateStart == "function" ) {
 				this.onUpdateEnd();
 			}
