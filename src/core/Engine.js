@@ -48,6 +48,8 @@ class Engine {
 		this._running = false;
 		this._lastFrameTime = null;
 		this._step = 100;
+		this._accumulator = 0;
+		this._ticks = 0;
 
 		return this;
 	}
@@ -193,13 +195,43 @@ class Engine {
 		return null;
 	}
 
+	setOnUpdateEnd( fn ) {
+		if ( typeof fn != "function" ) {
+			console.error( "Please supply a valid function." );
+			return;
+		}
+		this._onUpdateEnd = fn;
+		return this._onUpdateEnd;
+	}
+
+	setOnUpdateStart( fn ) {
+		if ( typeof fn != "function" ) {
+			console.error( "Please supply a valid function." );
+			return;
+		}
+		this._onUpdateStart = fn;
+		return this._onUpdateStart;
+	}
+
 	/** @description Start the execution of the update loop. */
 	start() {
 		/* Always reset. If engine was stopped and restarted, not resetting could
 			cause a massive time jump to be added to all systems. */
 		this._lastFrameTime = Present();
 		this._running = true;
-		setInterval( this._update.bind( this ), this._step - 4 );
+		setInterval( tick.bind( this ), this._step );
+		function tick() {
+			if ( this._running ) {
+				const now = Present();
+				const delta = now - this._lastFrameTime;
+				this._lastFrameTime = now;
+				this._accumulator += delta;
+				while ( this._accumulator > this._step ) {
+					this._update();
+					this._accumulator -= this._step;
+				}
+			}
+		}
 	}
 
 	/** @description Stop the execution of the update loop. */
@@ -211,22 +243,47 @@ class Engine {
 		* @private
 		*/
 	_update() {
-		if ( this._running ) {
-			const now = Present();
-			const delta = now - this._lastFrameTime;
-			this._lastFrameTime = now;
-			console.log( "Update" );
-			if ( this.onUpdateStart && typeof this.onUpdateStart == "function" ) {
-				this.onUpdateEnd();
-			}
-			this._systems.forEach( ( system ) => {
-				system.update( delta );
-			});
-			this._states.push( this._state );
-			if ( this.onUpdateEnd && typeof this.onUpdateEnd == "function" ) {
-				this.onUpdateEnd();
-			}
+		if ( this.onUpdateStart ) {
+			this._onUpdateStart();
 		}
+		this._systems.forEach( ( system ) => {
+			system.update( this._step );
+		});
+
+		// TODO: Create and save state.
+		const timestamp = this._states.length * this._step;
+		this._states.push( this._snap( timestamp ) );
+		console.log( timestamp );
+
+		if ( this.onUpdateEnd ) {
+			this._onUpdateEnd();
+		}
+	}
+
+	/** @description Create a state object containing all player and entity data.
+		* @private
+		* @param {Number} timestamp - Timestamp to record this state under.
+		* @param {Boolean} complete - Whether to include all players and entities in
+		* the state or only dirty ones.
+		* @returns {Object} - Object including saved data for players and entities.
+		*/
+	_snap( timestamp, complete ) {
+		const data = {
+			timestamp: timestamp,
+			players: [],
+			entities: []
+		};
+		this._entities.forEach( ( entity ) => {
+			if ( entity.isDirty() || complete ) {
+
+			}
+		});
+		this._players.forEach( ( player ) => {
+			if ( player.isDirty() || complete ) {
+				// TODO: Serialize to JSON and push to entities.
+			}
+		});
+		return data;
 	}
 
 	init( stack, world, onProgress, onFinished ) {
