@@ -76,6 +76,14 @@ class Component {
 		return this._data;
 	}
 
+	/** @description Get the component's data as a JSON string.
+		* @readonly
+		* @returns {String} - The component's data as a JSON string.
+		*/
+	getJSON() {
+		return JSON.stringify( this._data, null, 4 );
+	}
+
 	/** @description Get the component's type.
 		* @readonly
 		* @returns {String} - The component's type.

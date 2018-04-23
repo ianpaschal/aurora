@@ -18,20 +18,23 @@ class Player {
 		*/
 	constructor( config ) {
 		// TODO: Make these private and supply getter functions:
-		this.uuid = config.uuid || UUID();
-		this.name = config.name || "Unnamed Player";
-		if ( !config.color ) {
-			config.color = "#CCCCCC";
+		if ( config ) {
+			this.uuid = config.uuid;
+			this.name = config.name;
+			this.color = new Three.Color( config.color );
+			this.start = new Three.Vector3().copy( config.start );
 		}
-		this.color = new Three.Color( config.color );
-
-		this.start = new Three.Vector3();
-		if ( config.start ) {
-			this.start.copy( config.start );
+		else {
+			this.uuid = UUID();
+			this.name = "Unnamed Player";
+			this.color = new Three.Color( 0xCCCCCC );
+			this.start = new Three.Vector3();
 		}
 		this._entityUUIDs = [];
 		console.log( "Created player " + this.uuid + ": " + this.name + "." );
-		this.addVisibilityMap();
+
+		// TODO: This should be done per client, not per player within engine.
+		// this.addVisibilityMap();
 		return this;
 	}
 

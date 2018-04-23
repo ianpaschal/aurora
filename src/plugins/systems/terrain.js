@@ -10,6 +10,7 @@ export default new System({
 	init() {
 		// Create an easier reference to the global scene:
 		this._scene = this._engine.getScene();
+		/*
 		const groundTexture = this._engine._textures[ "nature-grass-75-dirt-25" ];
 		groundTexture.wrapS = Three.RepeatWrapping;
 		groundTexture.wrapT = Three.RepeatWrapping;
@@ -20,6 +21,11 @@ export default new System({
 				color: 0xffffff,
 				map: groundTexture
 			})
+		);
+		*/
+		const ground = new Three.Mesh(
+			new Three.PlaneGeometry( 512, 512 ),
+			new Three.MeshLambertMaterial({ color: 0xffffff })
 		);
 		ground.name = "ground";
 		this._scene.add( ground );

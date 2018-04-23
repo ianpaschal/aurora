@@ -1,7 +1,5 @@
 // Aurora is distributed under the MIT license.
 
-import * as Three from "three";
-
 export default class {
 	constructor( name ) {
 		this._name = name || "Unamed World";

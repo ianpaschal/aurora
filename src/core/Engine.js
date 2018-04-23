@@ -92,9 +92,7 @@ class Engine {
 		* @returns {Array} - Array of states, starting with the most recent.
 		*/
 	getLastStates( num ) {
-		return this._states.slice( Math.max( this._states.length - num, 0 ) );
-		// TODO: Handle better if there's more states than 0, but fewer than num.
-		// TODO: Make most recent state be #0.
+		return this._states.slice( 0, num ).reverse();
 	}
 
 	/** @description Get a number of states in the state stack.
@@ -186,13 +184,13 @@ class Engine {
 		* @returns {(Array|null)} - Updated array of systems, or null if invalid.
 		*/
 	registerSystem( system ) {
-		if ( validate( "isSystem", system ) ) {
-			system.init( this );
-			this._systems.push( system );
-			return this._systems;
+		if ( !validate( "isSystem", system ) ) {
+			console.error( "Please supply a valid system instance." );
+			return null;
 		}
-		console.error( "Please supply a valid system instance." );
-		return null;
+		system.init( this );
+		this._systems.push( system );
+		return this._systems;
 	}
 
 	setOnUpdateEnd( fn ) {
@@ -243,7 +241,7 @@ class Engine {
 		* @private
 		*/
 	_update() {
-		if ( this.onUpdateStart ) {
+		if ( this._onUpdateStart ) {
 			this._onUpdateStart();
 		}
 		this._systems.forEach( ( system ) => {
@@ -252,10 +250,11 @@ class Engine {
 
 		// TODO: Create and save state.
 		const timestamp = this._states.length * this._step;
-		this._states.push( this._snap( timestamp ) );
-		console.log( timestamp );
 
-		if ( this.onUpdateEnd ) {
+		// Unshift so that _states[0] is always the most recent state.
+		this._states.unshift( this._snap( timestamp ) );
+
+		if ( this._onUpdateEnd ) {
 			this._onUpdateEnd();
 		}
 	}
@@ -275,12 +274,12 @@ class Engine {
 		};
 		this._entities.forEach( ( entity ) => {
 			if ( entity.isDirty() || complete ) {
-
+				// TODO: Serialize to JSON and push to entities.
 			}
 		});
 		this._players.forEach( ( player ) => {
 			if ( player.isDirty() || complete ) {
-				// TODO: Serialize to JSON and push to entities.
+				// TODO: Serialize to JSON and push to players.
 			}
 		});
 		return data;
@@ -300,17 +299,14 @@ class Engine {
 			loaded++;
 			onProgress( ( loaded / length ) * 100, "Loaded " + itemName );
 		}
-
-		// Load assets. On finished, start the world loading/generation routine:
-		// onProgress is called when an asset is loaded and passed the
-		this.loadAssets( stack, updateProgress, () => {
+		function onLoadComplete() {
 
 			// Systems must be intialized after loading so they can use assets:
-			this.registerSystem( graphicsSystem );
+			// this.registerSystem( graphicsSystem );
 			this.registerSystem( terrainSystem );
 			this.registerSystem( productionSystem );
 			this.registerSystem( movementSystem );
-			this.registerSystem( visibilitySystem );
+			// this.registerSystem( visibilitySystem );
 
 			this._world = new World();
 			this._world.setTime( 0 );
@@ -318,12 +314,22 @@ class Engine {
 			// If no source is provided, generate a new world:
 			if ( !world ) {
 				console.warn( "World is missing, a new one will be generated!" );
-				this.generateWorld( false, updateProgress, onFinished );
+				this.testPopulateWorld( 4, updateProgress, onFinished );
 			}
 			else {
 				this.loadWorld( world, updateProgress, onFinished );
 			}
-		});
+		}
+
+		// Load assets. On finished, start the world loading/generation routine:
+		// onProgress is called when an asset is loaded and passed the
+		if ( stack.length > 0 ) {
+			console.log( "Going to load stuff" );
+			this.loadAssets( stack, updateProgress, onLoadComplete.bind( this ) );
+		}
+		else {
+			onLoadComplete.bind( this )();
+		}
 	}
 
 	loadAssets( stack, onProgress, onFinished ) {
@@ -400,7 +406,7 @@ class Engine {
 		}
 	}
 
-	generateWorld( config, onProgress, onFinished ) {
+	populateWorld( config, onProgress, onFinished ) {
 
 		if ( !config ) {
 			const path = Path.join( __dirname, "../plugins/maps/default.json" );
@@ -411,6 +417,7 @@ class Engine {
 			const player = new Player( data );
 			this.registerPlayer( player );
 
+			/*
 			// Generate test entities:
 			const entity = new Entity();
 			player.own( entity );
@@ -430,10 +437,40 @@ class Engine {
 				]
 			});
 			this.registerEntity( entity );
+			*/
 		});
 
 		onFinished();
 	}
+
+	testPopulateWorld( numPlayers, onProgress, onFinished ) {
+
+		for ( let i = 0; i < numPlayers; i++ ) {
+			const player = new Player();
+			this.registerPlayer( player );
+			// Generate test entities:
+			const entity = new Entity();
+			player.own( entity );
+			entity.copy( this.getAssembly( "settlement-age-0" ) );
+			entity.getComponent( "player" ).apply({
+				index: this._players.indexOf( player )
+			});
+			entity.getComponent( "position" ).apply({
+				x: player.start.x,
+				y: player.start.y
+			});
+			entity.getComponent( "production" ).apply({
+				queue: [
+					{ "type": "villager-male", "progress": 100 },
+					{ "type": "villager-male", "progress": 100 },
+					{ "type": "villager-male", "progress": 100 }
+				]
+			});
+			this.registerEntity( entity );
+		};
+		onFinished();
+	}
+
 }
 
 export default Engine;
