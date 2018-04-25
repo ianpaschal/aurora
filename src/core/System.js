@@ -18,6 +18,7 @@ class System {
 		this._name = config.name || "unnamed";
 		this._fixed = config.fixed || false;
 		this._step = config.step || 100;
+		this._displayName = this._name[ 0 ].toUpperCase() + this._name.substr( 1 );
 
 		this._watchedComponents = [];
 		this._addWatchedComponents( config.componentTypes );
@@ -30,7 +31,6 @@ class System {
 
 		this._savedTime = 0;
 
-		console.log( "Created system: " + this._name + "." );
 		return this;
 	}
 
@@ -53,15 +53,12 @@ class System {
 	init( engine ) {
 		if( !engine ) {
 			console.warn(
-				"System " + this._name + ":",
-				"Attempted to initalize system without an engine!"
+				"System " + this._displayName + ":",
+				"Attempted to initialize system without an engine!"
 			);
 			return;
 		}
-		console.log(
-			"System " + this._name + ":",
-			"Linked system to engine."
-		);
+		console.log( "Initializing a new system: " + this._displayName + "." );
 		this._engine = engine;
 
 		// Run the actual init behavior:

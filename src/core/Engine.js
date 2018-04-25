@@ -9,6 +9,7 @@ import Player from "./Player";
 import World from "./World";
 import validate from "../utils/validate";
 import getItem from "../utils/getItem";
+import buildLoadStack from "../utils/buildLoadStack";
 import graphicsSystem from "../plugins/systems/graphics.js";
 import terrainSystem from "../plugins/systems/terrain.js";
 import productionSystem from "../plugins/systems/production.js";
@@ -52,6 +53,11 @@ class Engine {
 		this._ticks = 0;
 
 		return this;
+	}
+
+	findPlugins() {
+		console.log( this._pluginLocations, this._pluginStack );
+		return buildLoadStack( this._pluginLocations, this._pluginStack );
 	}
 
 	/** @description Get an assembly (Entity instance) by type.
@@ -124,6 +130,13 @@ class Engine {
 		return this._scene;
 	}
 
+	launch() {
+		this.registerSystem( terrainSystem );
+		this.registerSystem( productionSystem );
+		this.registerSystem( movementSystem );
+		this.start();
+	}
+
 	/** @description Add an Entity instance to to the engine as an assembly.
 		* @param {Entity} assembly - Entity instance to add.
 		* @returns {Array} - Updated array of assemblies.
@@ -172,7 +185,6 @@ class Engine {
 		*/
 	registerPluginLocation( path ) {
 		// TODO: Validation.
-		this._pluginsDir = path;
 		this._pluginLocations.push( path );
 		return this._pluginLocations;
 	}
@@ -191,6 +203,11 @@ class Engine {
 		system.init( this );
 		this._systems.push( system );
 		return this._systems;
+	}
+
+	setPluginStack( stack ) {
+		this._pluginStack = stack;
+		return this._pluginStack;
 	}
 
 	setOnUpdateEnd( fn ) {
@@ -339,7 +356,11 @@ class Engine {
 		for ( const section in stack ) {
 			length += Object.keys( stack[ section ] ).length;
 		}
-		const pluginDir = this._pluginsDir;
+		// If nothing to load, skip straight to on finished:
+		if ( length === 0 ) {
+			onFinished();
+		}
+		const pluginDir = this._pluginLocations[ 0 ];
 		const textureLoader = new Three.TextureLoader();
 		const JSONLoader = new Three.JSONLoader();
 
@@ -406,70 +427,70 @@ class Engine {
 		}
 	}
 
-	populateWorld( config, onProgress, onFinished ) {
-
-		if ( !config ) {
-			const path = Path.join( __dirname, "../plugins/maps/default.json" );
-			config = JSON.parse( FS.readFileSync( path, "utf8" ) );
-		}
-
-		config.players.forEach( ( data ) => {
-			const player = new Player( data );
-			this.registerPlayer( player );
-
-			/*
-			// Generate test entities:
-			const entity = new Entity();
-			player.own( entity );
-			entity.copy( this.getAssembly( "greek-settlement-age-0" ) );
-			entity.getComponent( "player" ).apply({
-				index: this._players.indexOf( player )
-			});
-			entity.getComponent( "position" ).apply({
-				x: player.start.x,
-				y: player.start.y
-			});
-			entity.getComponent( "production" ).apply({
-				queue: [
-					{ "type": "greek-villager-male", "progress": 100 },
-					{ "type": "greek-villager-male", "progress": 100 },
-					{ "type": "greek-villager-male", "progress": 100 }
-				]
-			});
-			this.registerEntity( entity );
-			*/
-		});
-
-		onFinished();
-	}
-
-	testPopulateWorld( numPlayers, onProgress, onFinished ) {
-
-		for ( let i = 0; i < numPlayers; i++ ) {
-			const player = new Player();
-			this.registerPlayer( player );
-			// Generate test entities:
-			const entity = new Entity();
-			player.own( entity );
-			entity.copy( this.getAssembly( "settlement-age-0" ) );
-			entity.getComponent( "player" ).apply({
-				index: this._players.indexOf( player )
-			});
-			entity.getComponent( "position" ).apply({
-				x: player.start.x,
-				y: player.start.y
-			});
-			entity.getComponent( "production" ).apply({
-				queue: [
-					{ "type": "villager-male", "progress": 100 },
-					{ "type": "villager-male", "progress": 100 },
-					{ "type": "villager-male", "progress": 100 }
-				]
-			});
-			this.registerEntity( entity );
-		};
-		onFinished();
-	}
+	// populateWorld( config, onProgress, onFinished ) {
+	//
+	// 	if ( !config ) {
+	// 		const path = Path.join( __dirname, "../plugins/maps/default.json" );
+	// 		config = JSON.parse( FS.readFileSync( path, "utf8" ) );
+	// 	}
+	//
+	// 	config.players.forEach( ( data ) => {
+	// 		const player = new Player( data );
+	// 		this.registerPlayer( player );
+	//
+	// 		/*
+	// 		// Generate test entities:
+	// 		const entity = new Entity();
+	// 		player.own( entity );
+	// 		entity.copy( this.getAssembly( "greek-settlement-age-0" ) );
+	// 		entity.getComponent( "player" ).apply({
+	// 			index: this._players.indexOf( player )
+	// 		});
+	// 		entity.getComponent( "position" ).apply({
+	// 			x: player.start.x,
+	// 			y: player.start.y
+	// 		});
+	// 		entity.getComponent( "production" ).apply({
+	// 			queue: [
+	// 				{ "type": "greek-villager-male", "progress": 100 },
+	// 				{ "type": "greek-villager-male", "progress": 100 },
+	// 				{ "type": "greek-villager-male", "progress": 100 }
+	// 			]
+	// 		});
+	// 		this.registerEntity( entity );
+	// 		*/
+	// 	});
+	//
+	// 	onFinished();
+	// }
+	//
+	// testPopulateWorld( numPlayers, onProgress, onFinished ) {
+	//
+	// 	for ( let i = 0; i < numPlayers; i++ ) {
+	// 		const player = new Player();
+	// 		this.registerPlayer( player );
+	// 		// Generate test entities:
+	// 		const entity = new Entity();
+	// 		player.own( entity );
+	// 		entity.copy( this.getAssembly( "settlement-age-0" ) );
+	// 		entity.getComponent( "player" ).apply({
+	// 			index: this._players.indexOf( player )
+	// 		});
+	// 		entity.getComponent( "position" ).apply({
+	// 			x: player.start.x,
+	// 			y: player.start.y
+	// 		});
+	// 		entity.getComponent( "production" ).apply({
+	// 			queue: [
+	// 				{ "type": "villager-male", "progress": 100 },
+	// 				{ "type": "villager-male", "progress": 100 },
+	// 				{ "type": "villager-male", "progress": 100 }
+	// 			]
+	// 		});
+	// 		this.registerEntity( entity );
+	// 	};
+	// 	onFinished();
+	// }
 
 }
 

@@ -3,6 +3,14 @@
 import FS from "fs";
 import Path from "path";
 
+/** @description Construct a loadStack object from plugin locations.
+	* @param {Array} pluginLocations - Type of assembly to fetch.
+	* @param {Array} pluginStack - Array of plugins to search each location for.
+	* Lower indices within the array indicate earlier loading; assets within those
+	* plugins can be overwritten by assets within plugins with higher indices.
+	* @returns {Array} - A loadStack; an array of sorted filepaths to laod assets
+	* from.
+	*/
 export default function( pluginLocations, pluginStack ) {
 	const loadStack = {};
 
