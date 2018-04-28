@@ -1,5 +1,6 @@
-# Aurora
-
+<p>
+	<img src="https://github.com/ianpaschal/aurora/raw/master/header.png" />
+</p>
 <p>
 	<a href="https://www.npmjs.com/package/aurora">
 		<img src="https://img.shields.io/npm/v/aurora.svg" />
