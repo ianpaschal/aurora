@@ -1,7 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
-import deepCopy from "../utils/deepCopy";
+import { deepCopy } from "../utils";
 import deepMerge from "deepmerge";
 
 /** @classdesc Class representing a Component. */
@@ -74,6 +74,14 @@ class Component {
 		*/
 	getData() {
 		return this._data;
+	}
+
+	/** @description Get the component's data as a JSON string.
+		* @readonly
+		* @returns {String} - The component's data as a JSON string.
+		*/
+	getJSON() {
+		return JSON.stringify( this._data, null, 4 );
 	}
 
 	/** @description Get the component's type.

@@ -1,5 +1,7 @@
 // Aurora is distributed under the MIT license.
 
+// TODO: Remove, depreciated.
+
 class EntityCache {
 	constructor() {
 		this._worldPoints = [];

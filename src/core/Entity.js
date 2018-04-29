@@ -1,8 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
-import getItem from "../utils/getItem";
-import hasItem from "../utils/hasItem";
+import { getItem, hasItem } from "../utils";
 import Component from "./Component";
 
 /** @classdesc Class representing an Entity. */
@@ -46,6 +45,8 @@ class Entity {
 			this._tasks = [];
 		}
 
+		this._dirty = false;
+
 		return this;
 	}
 
@@ -65,11 +66,9 @@ class Entity {
 			);
 			return null;
 		}
-		else {
-			this._components.push( component );
-			return this._components;
-		}
-
+		this._components.push( component );
+		this._dirty = true;
+		return this._components;
 	}
 
 	/** @description Remove a Component instance from the Entity. This method
@@ -87,6 +86,7 @@ class Entity {
 			return null;
 		}
 		this._components.splice( index, 1 );
+		this._dirty = true;
 		return this._components;
 	}
 
@@ -100,6 +100,7 @@ class Entity {
 	/** @description Copy another entity (such as an assembly) into the entity,
 		* replacing all components.
 		* @param {Entity} source - Assembly to clone into the new entity.
+		* @returns {Array} - Updated array of Components copied from source.
 		*/
 	copy( source ) {
 		this._type = source.getType();
@@ -108,6 +109,8 @@ class Entity {
 		source.getComponents().forEach( ( component ) => {
 			this._components.push( component.clone() );
 		});
+		this._dirty = true;
+		return this._components;
 	}
 
 	/** @description Get a component instance by within the entity.
@@ -203,6 +206,14 @@ class Entity {
 		return hasItem( type, this._components, "_type" );
 	}
 
+	/** @description Check if a Component has been changed since the last update.
+		* @readonly
+		* @returns {Bool} - True if the Entity has been changed.
+		*/
+	isDirty() {
+		return this._dirty;
+	}
+
 	/** @description Print the Entity as JSON. Useful for saving to disk.
 		* @readonly
 		* @returns {String} - Ent
@@ -222,11 +233,21 @@ class Entity {
 		for ( let i = 0; i < this._components.length; i++ ) {
 			if ( this._components[ i ].getType() === type ) {
 				this._components[ i ].apply( data );
+				this.setDirty();
 				return this._components[ i ];
 			}
 		}
 		console.warn( "Component with type " + type + " doesn't exist!" );
 		return null;
+	}
+
+	/** @description Set a Component as dirty or clean.
+		* @param {Bool} dirty - Value to set the dirty flag. Default is true.
+		* @returns {Bool} - The Component's dirty flag.
+		*/
+	setDirty( dirty = true ) {
+		this._dirty = dirty;
+		return this._dirty;
 	}
 
 	/** @description Overwite the current task list with an array tasks.
@@ -237,6 +258,7 @@ class Entity {
 		// TODO: Add some validation!
 		this._tasks = tasks;
 		this.tasksDirty = true;
+		this.setDirty();
 		return this.tasks;
 	};
 
@@ -247,6 +269,7 @@ class Entity {
 	appendTasks( tasks ) {
 		// TODO: Add some validation!
 		this._tasks.concat( tasks );
+		this.setDirty();
 		return this.tasks;
 	};
 
@@ -258,6 +281,7 @@ class Entity {
 	insertTasks( tasks ) {
 		this._tasks = tasks.concat( this._tasks );
 		this.tasksDirty = true;
+		this.setDirty();
 		return this.tasks;
 	};
 
@@ -268,6 +292,7 @@ class Entity {
 	advanceTasks() {
 		this._tasks.shift();
 		this.tasksDirty = true;
+		this.setDirty();
 		return this.tasks;
 	};
 

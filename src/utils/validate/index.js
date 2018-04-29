@@ -9,6 +9,27 @@ import System from "../../core/System";
 const optimistic = true;
 
 const validators = {
+	vector2( input ) {
+		if ( !input.x || typeof input.x != "number" ) {
+			return false;
+		}
+		if ( !input.y || typeof input.y != "number" ) {
+			return false;
+		}
+		return true;
+	},
+	vector3( input ) {
+		if ( !input.x || typeof input.x != "number" ) {
+			return false;
+		}
+		if ( !input.y || typeof input.y != "number" ) {
+			return false;
+		}
+		if ( !input.z || typeof input.z != "number" ) {
+			return false;
+		}
+		return true;
+	},
 	playerIndex( input ) {
 		if ( typeof input !== "number" ) {
 			return false;

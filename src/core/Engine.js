@@ -1,19 +1,15 @@
 // Aurora is distributed under the MIT license.
 
 import FS from "fs";
-import Path from "path";
+import Present from "present";
 import * as Three from "three";
 import Entity from "./Entity";
-import Player from "./Player";
-import World from "./World";
 import validate from "../utils/validate";
-import getItem from "../utils/getItem";
-import hasItem from "../utils/hasItem";
-import graphicsSystem from "../plugins/systems/graphics.js";
-import terrainSystem from "../plugins/systems/terrain.js";
-import productionSystem from "../plugins/systems/production.js";
-import movementSystem from "../plugins/systems/movement.js";
-import visibilitySystem from "../plugins/systems/visibility";
+import { deepCopy, getItem } from "../utils";
+import buildLoadStack from "../utils/buildLoadStack";
+import terrainSystem from "../systems/terrain.js";
+import productionSystem from "../systems/production.js";
+import movementSystem from "../systems/movement.js";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -28,16 +24,18 @@ class Engine {
 
 		this._scene = new Three.Scene();
 		this._pluginLocations = [];
+		this._pluginStack = [];
 
-		// These are the things which are actually saved per game:
+		// These are the things which are actually saved per game
 		this._entities = [];
 		this._players = [];
 
-		// Static Resources:
+		// These are loaded each run
 		this._assemblies = [];
 		this._systems = [];
 
-		// TODO: Make these into arrays. ,map, .filter and .find all give us what we need.
+		// TODO: Make these into arrays. .map, .filter, and .find all give us what we need.
+		// TODO: Replace these with a Resource class.
 		this._geometries = {}; // Three.Geometry class does not have .getType() method.
 		this._materials = {}; // Three.Material class does not have .getType() method.
 		this._sounds = {}; // Sound does not have .getType() method.
@@ -46,8 +44,23 @@ class Engine {
 		// Timing:
 		this._running = false;
 		this._lastFrameTime = null;
+		this._step = 100;
+		this._accumulator = 0;
+		this._ticks = 0;
+		this._states = [];
+		this._maxStates = 10;
 
 		return this;
+	}
+
+	/** @description Build the load stack. NOTE: Right now, this is essentially a
+		* just a wrapper for buildLoadStack(), which should be moved from utils into
+		* this file eventually.
+		* @readonly
+		* @returns {Array} - Array of asset items.
+		*/
+	findPlugins() {
+		return buildLoadStack( this._pluginLocations, this._pluginStack );
 	}
 
 	/** @description Get an assembly (Entity instance) by type.
@@ -56,7 +69,11 @@ class Engine {
 		* @returns {(Assembly|null)} - Requested assembly, or null if not found.
 		*/
 	getAssembly( type ) {
-		return getItem( type, this._assemblies, "_type" );
+		const assembly = getItem( type, this._assemblies, "_type" );
+		if ( !assembly ) {
+			return console.error( "Assembly not found!" );
+		}
+		return assembly;
 	}
 
 	/** @description Get an Entity instance by UUID.
@@ -82,6 +99,23 @@ class Engine {
 		}
 	}
 
+	/** @description Get a number of states from the end of the state stack.
+		* @readonly
+		* @param {Number} num - Number of recent states to fetch.
+		* @returns {Array} - Array of states, starting with the most recent.
+		*/
+	getLastStates( num ) {
+		return this._states.slice( 0, num ).reverse();
+	}
+
+	/** @description Get a number of states in the state stack.
+		* @readonly
+		* @returns {Number} - The number of states in the state stack.
+		*/
+	getNumStates() {
+		return this._states.length;
+	}
+
 	/** @description Get a Player instance by index.
 		* @readonly
 		* @param {Number} index - Index (player number) to fetch.
@@ -95,12 +129,22 @@ class Engine {
 		return null;
 	}
 
-	/** @description Get the glogal scene instance.
+	/** @description Get the glogal scene instance. NOTE: This will likely become
+		* depreciated once rendering is handled exclusively by the client.
 		* @readonly
 		* @returns {Three.Scene}
 		*/
 	getScene() {
 		return this._scene;
+	}
+
+	/** @description Registers Systems and starts the Engine.
+		*/
+	launch() {
+		this.registerSystem( terrainSystem );
+		this.registerSystem( productionSystem );
+		this.registerSystem( movementSystem );
+		this.start();
 	}
 
 	/** @description Add an Entity instance to to the engine as an assembly.
@@ -151,7 +195,6 @@ class Engine {
 		*/
 	registerPluginLocation( path ) {
 		// TODO: Validation.
-		this._pluginsDir = path;
 		this._pluginLocations.push( path );
 		return this._pluginLocations;
 	}
@@ -160,25 +203,72 @@ class Engine {
 		* After being registered and initialized, systems are immutable and updated
 		* every game loop.
 		* @param {System} system - System instance to initialize and add.
-		* @returns {(Array|null)} - Updated array of systems, or null if invalid.
+		* @returns {(Array|null)} - Updated array of Systems, or null if invalid.
 		*/
 	registerSystem( system ) {
-		if ( validate( "isSystem", system ) ) {
-			system.init( this );
-			this._systems.push( system );
-			return this._systems;
+		if ( !validate( "isSystem", system ) ) {
+			console.error( "Please supply a valid system instance." );
+			return null;
 		}
-		console.error( "Please supply a valid system instance." );
-		return null;
+		system.init( this );
+		this._systems.push( system );
+		return this._systems;
+	}
+
+	/** @description Set the Engine's plugin stack.
+		* @param {Array} stack - Array of plugins to load.
+		* @returns {Array} - Updated array of plugins.
+		*/
+	setPluginStack( stack ) {
+		this._pluginStack = stack;
+		return this._pluginStack;
+	}
+
+	/** @description Set a function to execute after every update tick.
+		* @param {Function} fn - Function to execute.
+		* @returns {(Function|Null)} - Updated handler function, or null if invalid.
+		*/
+	setOnUpdateEnd( fn ) {
+		if ( typeof fn != "function" ) {
+			console.error( "Please supply a valid function." );
+			return null;
+		}
+		this._onUpdateEnd = fn;
+		return this._onUpdateEnd;
+	}
+
+	/** @description Set a function to execute before every update tick.
+		* @param {Function} fn - Function to execute.
+		* @returns {(Function|Null)} - Updated handler function, or null if invalid.
+		*/
+	setOnUpdateStart( fn ) {
+		if ( typeof fn != "function" ) {
+			console.error( "Please supply a valid function." );
+			return null;
+		}
+		this._onUpdateStart = fn;
+		return this._onUpdateStart;
 	}
 
 	/** @description Start the execution of the update loop. */
 	start() {
 		/* Always reset. If engine was stopped and restarted, not resetting could
 			cause a massive time jump to be added to all systems. */
-		this._lastFrameTime = performance.now();
+		this._lastFrameTime = Present();
 		this._running = true;
-		setInterval( this._update.bind( this ), 1000 / 60 );
+		setInterval( tick.bind( this ), this._step );
+		function tick() {
+			if ( this._running ) {
+				const now = Present();
+				const delta = now - this._lastFrameTime;
+				this._lastFrameTime = now;
+				this._accumulator += delta;
+				while ( this._accumulator > this._step ) {
+					this._update();
+					this._accumulator -= this._step;
+				}
+			}
+		}
 	}
 
 	/** @description Stop the execution of the update loop. */
@@ -190,111 +280,113 @@ class Engine {
 		* @private
 		*/
 	_update() {
-		if ( this._running ) {
-			const now = performance.now();
-			const delta = now - this._lastFrameTime;
-			this._lastFrameTime = now;
-			this._systems.forEach( ( system ) => {
-				system.update( delta );
-			});
-		}
-	}
 
-	init( stack, world, onProgress, onFinished ) {
-		// Compute total length:
-		let length = 0;
-		let loaded = 0;
-		for ( const section in stack ) {
-			length += Object.keys( stack[ section ] ).length;
-		}
-		if ( world ) {
-			length += Object.keys( world.entities ).length;
-		}
-		function updateProgress( itemName ) {
-			loaded++;
-			onProgress( ( loaded / length ) * 100, "Loaded " + itemName );
+		// Run any pre-update behavior.
+		if ( this._onUpdateStart ) {
+			this._onUpdateStart();
 		}
 
-		// Load assets. On finished, start the world loading/generation routine:
-		// onProgress is called when an asset is loaded and passed the
-		this.loadAssets( stack, updateProgress, () => {
-
-			// Systems must be intialized after loading so they can use assets:
-			this.registerSystem( graphicsSystem );
-			this.registerSystem( terrainSystem );
-			this.registerSystem( productionSystem );
-			this.registerSystem( movementSystem );
-			this.registerSystem( visibilitySystem );
-
-			this._world = new World();
-			this._world.setTime( 0 );
-
-			// If no source is provided, generate a new world:
-			if ( !world ) {
-				console.warn( "World is missing, a new one will be generated!" );
-				this.generateWorld( false, updateProgress, onFinished );
-			}
-			else {
-				this.loadWorld( world, updateProgress, onFinished );
-			}
+		// Perform the update on every system.
+		this._systems.forEach( ( system ) => {
+			system.update( this._step );
 		});
+
+		// Keep track of which tick this was.
+		this._ticks++;
+
+		// TODO: Create and save state.
+		const timestamp = this._ticks * this._step;
+
+		// Unshift so that _states[0] is always the most recent state.
+		this._states.unshift( this._snapshot( timestamp ) );
+
+		/* To avoid using too much memory, if _states is now longer than _maxStates,
+			trim _states to _maxStates length. */
+		if ( this._states.length > this._maxStates ) {
+			this._states = this._states.slice( 0, this._maxStates );
+		}
+
+		// Run any post-update behavior.
+		if ( this._onUpdateEnd ) {
+			this._onUpdateEnd();
+		}
 	}
+
+	/** @description Create a state object containing all player and entity data.
+		* @private
+		* @param {Number} timestamp - Timestamp to record this state under.
+		* @param {Boolean} complete - Whether to include all players and entities in
+		* the state or only dirty ones.
+		* @returns {Object} - Object including saved data for players and entities.
+		*/
+	_snapshot( timestamp, complete ) {
+		const data = {
+			timestamp: timestamp,
+			players: [],
+			entities: []
+		};
+
+		// TODO: Add filtering instead of sending every entity every update.
+		this._entities.forEach( ( entity ) => {
+			data.entities.push( deepCopy( entity ) );
+		});
+		this._players.forEach( ( player ) => {
+			data.players.push( deepCopy( player ) );
+		});
+		return data;
+	}
+
+	// TODO: These functions are gnarly. Clean them up!
 
 	loadAssets( stack, onProgress, onFinished ) {
 		const scope = this;
 		let loaded = 0;
-		let length = 0;
-		for ( const section in stack ) {
-			length += Object.keys( stack[ section ] ).length;
+
+		// If nothing to load, skip straight to on finished:
+		if ( stack.length === 0 ) {
+			onFinished();
 		}
-		const pluginDir = this._pluginsDir;
+
 		const textureLoader = new Three.TextureLoader();
 		const JSONLoader = new Three.JSONLoader();
 
 		// Load these backwards (textures, materials, geometries, aseemblies)
 		const loaders = {
-			loadTextures() {
-				for ( const name in stack.texture ) {
-					textureLoader.load(
-						Path.join( pluginDir, stack.texture[ name ] ),
-						( texture ) => {
-							scope._textures[ name ] = texture;
-							addLoaded( name );
-						},
-						undefined,
-						( err ) => {
-							console.error( "Failed to load", stack.textures[ name ], err );
-						}
-					);
-				}
+			texture( item ) {
+				textureLoader.load(
+					item.path,
+					( texture ) => {
+						scope._textures[ item.name ] = texture;
+						addLoaded( item.name );
+					},
+					undefined,
+					( err ) => {
+						console.error( "Failed to load", stack.textures[ name ], err );
+					}
+				);
 			},
 			loadMaterials() {
 				for ( const name in stack.material ) {
 					addLoaded( name );
 				}
 			},
-			loadGeometries() {
-				for ( const type in stack.geometry ) {
-					JSONLoader.load(
-						Path.join( pluginDir, stack.geometry[ type ] ),
-						( geometry ) => {
-							scope._geometries[ type ] = geometry;
-							addLoaded( type );
-						},
-						undefined,
-						( err ) => {
-							console.error( err );
-						}
-					);
-				}
+			geometry( item ) {
+				JSONLoader.load(
+					item.path,
+					( geometry ) => {
+						scope._geometries[ item.type ] = geometry;
+						addLoaded( item.name );
+					},
+					undefined,
+					( err ) => {
+						console.error( err );
+					}
+				);
 			},
-			loadAssemblies() {
-				for ( const name in stack.assembly ) {
-					const path = Path.join( pluginDir, stack.assembly[ name ] );
-					const json = JSON.parse( FS.readFileSync( path, "utf8" ) );
-					scope.registerAssembly( new Entity( json ) );
-					addLoaded( name );
-				}
+			assembly( item ) {
+				const json = JSON.parse( FS.readFileSync( item.path, "utf8" ) );
+				scope.registerAssembly( new Entity( json ) );
+				addLoaded( item.name );
 			},
 			loadIcons() {
 				for ( const name in stack.icon ) {
@@ -302,52 +394,67 @@ class Engine {
 				}
 			}
 		};
-		for ( const loader in loaders ) {
-			loaders[ loader ]();
-		}
+
+		stack.forEach( ( item ) => {
+			loaders[ item.type ]( item );
+		});
+
 		function addLoaded( name ) {
 			loaded++;
 			onProgress( name );
-			if ( loaded === length ) {
+			if ( loaded === stack.length ) {
 				onFinished();
 			}
 		}
 	}
 
-	generateWorld( config, onProgress, onFinished ) {
+	// init( stack, world, onProgress, onFinished ) {
+	// 	// Compute total length:
+	// 	let length = 0;
+	// 	let loaded = 0;
+	// 	for ( const section in stack ) {
+	// 		length += Object.keys( stack[ section ] ).length;
+	// 	}
+	// 	if ( world ) {
+	// 		length += Object.keys( world.entities ).length;
+	// 	}
+	// 	function updateProgress( itemName ) {
+	// 		loaded++;
+	// 		onProgress( ( loaded / length ) * 100, "Loaded " + itemName );
+	// 	}
+	// 	function onLoadComplete() {
+	//
+	// 		// Systems must be intialized after loading so they can use assets:
+	// 		// this.registerSystem( graphicsSystem );
+	// 		this.registerSystem( terrainSystem );
+	// 		this.registerSystem( productionSystem );
+	// 		this.registerSystem( movementSystem );
+	// 		// this.registerSystem( visibilitySystem );
+	//
+	// 		// this._world = new World();
+	// 		// this._world.setTime( 0 );
+	//
+	// 		// If no source is provided, generate a new world:
+	// 		if ( !world ) {
+	// 			console.warn( "World is missing, a new one will be generated!" );
+	// 			this.testPopulateWorld( 4, updateProgress, onFinished );
+	// 		}
+	// 		else {
+	// 			this.loadWorld( world, updateProgress, onFinished );
+	// 		}
+	// 	}
+	//
+	// 	// Load assets. On finished, start the world loading/generation routine:
+	// 	// onProgress is called when an asset is loaded and passed the
+	// 	if ( stack.length > 0 ) {
+	// 		console.log( "Going to load stuff" );
+	// 		this.loadAssets( stack, updateProgress, onLoadComplete.bind( this ) );
+	// 	}
+	// 	else {
+	// 		onLoadComplete.bind( this )();
+	// 	}
+	// }
 
-		if ( !config ) {
-			const path = Path.join( __dirname, "../plugins/maps/default.json" );
-			config = JSON.parse( FS.readFileSync( path, "utf8" ) );
-		}
-
-		config.players.forEach( ( data ) => {
-			const player = new Player( data );
-			this.registerPlayer( player );
-
-			// Generate test entities:
-			const entity = new Entity();
-			player.own( entity );
-			entity.copy( this.getAssembly( "greek-settlement-age-0" ) );
-			entity.getComponent( "player" ).apply({
-				index: this._players.indexOf( player )
-			});
-			entity.getComponent( "position" ).apply({
-				x: player.start.x,
-				y: player.start.y
-			});
-			entity.getComponent( "production" ).apply({
-				queue: [
-					{ "type": "greek-villager-male", "progress": 100 },
-					{ "type": "greek-villager-male", "progress": 100 },
-					{ "type": "greek-villager-male", "progress": 100 }
-				]
-			});
-			this.registerEntity( entity );
-		});
-
-		onFinished();
-	}
 }
 
 export default Engine;
