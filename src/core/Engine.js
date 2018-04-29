@@ -1,7 +1,6 @@
 // Aurora is distributed under the MIT license.
 
 import FS from "fs";
-import Path from "path";
 import Present from "present";
 import * as Three from "three";
 import Entity from "./Entity";

@@ -19,18 +19,18 @@ export default function( pluginLocations, pluginStack ) {
 		pluginStack.forEach( ( plugin ) => {
 
 			// Search for package.json per plugin. Skip if not found.
-			const path = Path.join( location, plugin, "package.json" );
-			if ( !FS.existsSync( Path.join( location, plugin ) ) ) {
+			const base = Path.join( location, plugin );
+			if ( !FS.existsSync( base ) ) {
 				console.warn( "Skipping " + plugin + ". Not found." );
 				return;
 			}
-			if ( !FS.existsSync( path ) ) {
+			if ( !FS.existsSync( Path.join( base, "package.json" ) ) ) {
 				console.warn( "Skipping " + plugin + ". 'package.json' was missing." );
 				return;
 			}
 
 			// If found, parse list of assets (contents)
-			const data = FS.readFileSync( path, "utf8" );
+			const data = FS.readFileSync( Path.join( base, "package.json" ), "utf8" );
 			const contents = JSON.parse( data ).contents;
 			contents.forEach( ( item ) => {
 
@@ -42,7 +42,7 @@ export default function( pluginLocations, pluginStack ) {
 					stack.splice( index, 1 );
 				}
 				// Save the actual asset path to the stack
-				item.path = Path.join( location, plugin, item.path );
+				item.path = Path.join( base, item.path );
 				stack.push( item );
 			});
 		});
