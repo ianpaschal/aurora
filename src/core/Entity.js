@@ -1,8 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
-import getItem from "../utils/getItem";
-import hasItem from "../utils/hasItem";
+import { getItem, hasItem } from "../utils";
 import Component from "./Component";
 
 /** @classdesc Class representing an Entity. */

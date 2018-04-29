@@ -33,9 +33,19 @@ class Player {
 		this._entityUUIDs = [];
 		console.log( "Created player " + this.uuid + ": " + this.name + "." );
 
+		this._dirty = false;
+
 		// TODO: This should be done per client, not per player within engine.
 		// this.addVisibilityMap();
 		return this;
+	}
+
+	/** @description Check if the Player has been changed since the last update.
+		* @readonly
+		* @returns {Bool} - True if the Player has been changed.
+		*/
+	isDirty() {
+		return this._dirty;
 	}
 
 	/** @description Own an entity by adding its UUID to to the player.

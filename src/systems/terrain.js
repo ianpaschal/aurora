@@ -1,7 +1,8 @@
 // Aurora is distributed under the MIT license.
 
 import * as Three from "three";
-import System from "../../core/System";
+import SimplexNoise from "simplex-noise";
+import System from "../core/System";
 
 export default new System({
 	name: "terrain",
@@ -23,8 +24,19 @@ export default new System({
 			})
 		);
 		*/
+		this._simplex = new SimplexNoise();
+
+		// TODO: This should be generating a number of tiles around the origin
+
+		const groundGeometry = new Three.PlaneGeometry( 64, 64, 16, 16 );
+
+		groundGeometry.vertices.forEach( ( vertex ) => {
+			vertex.z = this._simplex.noise2D( vertex.x, vertex.y );
+			// console.log( vertex.z );
+		});
+
 		const ground = new Three.Mesh(
-			new Three.PlaneGeometry( 512, 512 ),
+			groundGeometry,
 			new Three.MeshLambertMaterial({ color: 0xffffff })
 		);
 		ground.name = "ground";

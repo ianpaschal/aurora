@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-import validate from "./validate";
+import validate from "../utils/validate";
 
 export default {
 	distance( p1, p2 ) {
@@ -10,7 +10,7 @@ export default {
 			console.error( "Could not compute with an invalid coordinate." );
 			return;
 		}
-		
+
 		const dX = p2.x - p1.x;
 		const dY = p2.y - p1.y;
 		return Math.sqrt( Math.pow( dX, 2 ) + Math.pow( dY, 2 ) );

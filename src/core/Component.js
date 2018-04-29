@@ -1,7 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import UUID from "uuid/v4";
-import deepCopy from "../utils/deepCopy";
+import { deepCopy } from "../utils";
 import deepMerge from "deepmerge";
 
 /** @classdesc Class representing a Component. */

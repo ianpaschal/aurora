@@ -12,7 +12,7 @@ import Path from "path";
 	* from.
 	*/
 export default function( pluginLocations, pluginStack ) {
-	const loadStack = {};
+	const stack = [];
 
 	// Scan each plugin location for each plugin in the stack.
 	pluginLocations.forEach( ( location ) => {
@@ -29,21 +29,23 @@ export default function( pluginLocations, pluginStack ) {
 				return;
 			}
 
-			// If found, parse list of assets (contents).
+			// If found, parse list of assets (contents)
 			const data = FS.readFileSync( path, "utf8" );
 			const contents = JSON.parse( data ).contents;
 			contents.forEach( ( item ) => {
 
-				// Add a section for this type if it doesn't exist yet.
-				if ( !loadStack[ item.type ] ) {
-					loadStack[ item.type ] = {};
+				// If an asset has already been registered with that name, remove it
+				const index = stack.findIndex( ( asset ) => {
+					return asset.name === item.name;
+				});
+				if ( index >= 0 ) {
+					stack.splice( index, 1 );
 				}
-
-				// Save the actual asset path to the stack.
-				const assetPath = Path.join( location, plugin, item.path );
-				loadStack[ item.type ][ item.name ] = assetPath;
+				// Save the actual asset path to the stack
+				item.path = Path.join( location, plugin, item.path );
+				stack.push( item );
 			});
 		});
 	});
-	return loadStack;
+	return stack;
 }
