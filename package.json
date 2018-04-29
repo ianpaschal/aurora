@@ -26,7 +26,8 @@
     "webpack": "^2.7.0"
   },
   "scripts": {
-    "test": "."
+    "test": ".",
+    "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
   },
   "repository": {
     "type": "git",
