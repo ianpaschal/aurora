@@ -45,7 +45,7 @@
         System
         </h2>
         
-            <div class="class-description"><p>Class representing a System.</p></div>
+            <div class="class-description">Class representing a System.</div>
         
     
 </header>
@@ -67,7 +67,7 @@
 
 
 <div class="description">
-    <p>Create a System.</p>
+    Create a System.
 </div>
 
 
@@ -164,7 +164,7 @@
             
 
             <td class="description last">
-                <p>Properties of this system.</p>
+                Properties of this system.
                 
                     
 
@@ -207,7 +207,7 @@
             
 
             <td class="description last">
-                <p>Name of this system (primiarly used for logging purposes).</p>
+                Name of this system (primiarly used for logging purposes).
                 
             </td>
         </tr>
@@ -233,7 +233,7 @@
             
 
             <td class="description last">
-                <p>Whether the system should update as often as possible or use a fixed step size.</p>
+                Whether the system should update as often as possible or use a fixed step size.
                 
             </td>
         </tr>
@@ -259,7 +259,7 @@
             
 
             <td class="description last">
-                <p>Step size (in ms). Only used if <code>props.fixed</code> is <code>false</code>.</p>
+                Step size (in ms). Only used if `props.fixed` is `false`.
                 
             </td>
         </tr>
@@ -285,7 +285,7 @@
             
 
             <td class="description last">
-                <p>Types to watch</p>
+                Types to watch
                 
             </td>
         </tr>
@@ -311,7 +311,7 @@
             
 
             <td class="description last">
-                <p>Function to run when first connecting the system to the engine.</p>
+                Function to run when first connecting the system to the engine.
                 
             </td>
         </tr>
@@ -337,7 +337,7 @@
             
 
             <td class="description last">
-                <p>Function to run on an entity when adding it to the system.</p>
+                Function to run on an entity when adding it to the system.
                 
             </td>
         </tr>
@@ -363,7 +363,7 @@
             
 
             <td class="description last">
-                <p>Function to run each time the engine updates the main loop.</p>
+                Function to run each time the engine updates the main loop.
                 
             </td>
         </tr>
@@ -427,8 +427,8 @@
 
 
 <div class="description">
-    <p>Add component types to the system's watch list. Cannot be
-modified after creation.</p>
+    Add component types to the system's watch list. Cannot be
+modified after creation.
 </div>
 
 
@@ -525,7 +525,7 @@ modified after creation.</p>
             
 
             <td class="description last">
-                <p>The component types to add.</p>
+                The component types to add.
                 
             </td>
         </tr>
@@ -563,8 +563,8 @@ modified after creation.</p>
 
 
 <div class="description">
-    <p>Remove component types from the system's watch list. Cannot
-be modified after creation.</p>
+    Remove component types from the system's watch list. Cannot
+be modified after creation.
 </div>
 
 
@@ -661,7 +661,7 @@ be modified after creation.</p>
             
 
             <td class="description last">
-                <p>The component types to remove.</p>
+                The component types to remove.
                 
             </td>
         </tr>
@@ -699,7 +699,7 @@ be modified after creation.</p>
 
 
 <div class="description">
-    <p>Set the system to watch all entities. Not used for now.</p>
+    Set the system to watch all entities. Not used for now.
 </div>
 
 
@@ -782,9 +782,9 @@ be modified after creation.</p>
 
 
 <div class="description">
-    <p>Watch an entity by adding its UUID to to the system. After
+    Watch an entity by adding its UUID to to the system. After
 adding, the system will run the entity through the internal add function
-to do any additional processing.</p>
+to do any additional processing.
 </div>
 
 
@@ -881,7 +881,7 @@ to do any additional processing.</p>
             
 
             <td class="description last">
-                <p>Entity instance to add.</p>
+                Entity instance to add.
                 
             </td>
         </tr>
@@ -922,9 +922,7 @@ to do any additional processing.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of entity UUIDs.</li>
-</ul>
+    - Updated array of entity UUIDs.
 </div>
 
     
@@ -946,8 +944,8 @@ to do any additional processing.</p>
 
 
 <div class="description">
-    <p>Initialize the system (as a part of linking to the engine).
-After linking the engine, the system will run its stored init function.</p>
+    Initialize the system (as a part of linking to the engine).
+After linking the engine, the system will run its stored init function.
 </div>
 
 
@@ -1044,7 +1042,7 @@ After linking the engine, the system will run its stored init function.</p>
             
 
             <td class="description last">
-                <p>Engine instance to link to.</p>
+                Engine instance to link to.
                 
             </td>
         </tr>
@@ -1082,10 +1080,10 @@ After linking the engine, the system will run its stored init function.</p>
 
 
 <div class="description">
-    <p>Check if an entity's component list includes all of the
+    Check if an entity's component list includes all of the
 system's required components. Instead of checking every component on an
 entity, including unneeded ones, cycle through the system's components and
-check that each one is present within the entity's component list.</p>
+check that each one is present within the entity's component list.
 </div>
 
 
@@ -1182,7 +1180,7 @@ check that each one is present within the entity's component list.</p>
             
 
             <td class="description last">
-                <p>Array of components to check.</p>
+                Array of components to check.
                 
             </td>
         </tr>
@@ -1223,9 +1221,7 @@ check that each one is present within the entity's component list.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Whether the system should be watching the entity.</li>
-</ul>
+    - Whether the system should be watching the entity.
 </div>
 
     
@@ -1247,9 +1243,9 @@ check that each one is present within the entity's component list.</p>
 
 
 <div class="description">
-    <p>Update the system with a given amount of time to simulate.
+    Update the system with a given amount of time to simulate.
 The system will run its stored update function using either a fixed step
-or variable step (specified at creation) and the supplied delta time.</p>
+or variable step (specified at creation) and the supplied delta time.
 </div>
 
 
@@ -1346,7 +1342,7 @@ or variable step (specified at creation) and the supplied delta time.</p>
             
 
             <td class="description last">
-                <p>Time in milliseconds to simulate.</p>
+                Time in milliseconds to simulate.
                 
             </td>
         </tr>
@@ -1389,7 +1385,7 @@ or variable step (specified at creation) and the supplied delta time.</p>
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 29 2018 16:44:24 GMT+0200 (CEST) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 05 2018 23:13:10 GMT+0200 (CEST) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

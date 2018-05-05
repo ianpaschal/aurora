@@ -6,7 +6,7 @@ import FS from "fs";
 import Path from "path";
 
 // List all files in a directory in Node.js recursively in a synchronous fashion
-export default function( dir, filelist ) {
+const walkDirSync = function( dir, filelist ) {
 
 	const files = FS.readdirSync( dir );
 
@@ -32,3 +32,5 @@ export default function( dir, filelist ) {
 	});
 	return filelist;
 };
+
+export default walkDirSync;

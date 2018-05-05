@@ -1,2 +1,3 @@
-src/windows/**
 docs
+src/utils/DecalGeometry.js
+src/windows/**

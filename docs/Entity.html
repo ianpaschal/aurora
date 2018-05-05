@@ -45,7 +45,7 @@
         Entity
         </h2>
         
-            <div class="class-description"><p>Class representing an Entity.</p></div>
+            <div class="class-description">Class representing an Entity.</div>
         
     
 </header>
@@ -67,7 +67,7 @@
 
 
 <div class="description">
-    <p>Create an Entity.</p>
+    Create an Entity.
 </div>
 
 
@@ -176,9 +176,9 @@
             
 
             <td class="description last">
-                <p>JSON object containing Entity data. This is
+                JSON object containing Entity data. This is
 used when loading a previously created Entity from disk, or creating an
-Entity to be used as an assembly to clone into new Entity instances.</p>
+Entity to be used as an assembly to clone into new Entity instances.
                 
                     
 
@@ -233,7 +233,7 @@ Entity to be used as an assembly to clone into new Entity instances.</p>
             
 
             <td class="description last">
-                <p>UUID of the Entity.</p>
+                UUID of the Entity.
                 
             </td>
         </tr>
@@ -269,7 +269,7 @@ Entity to be used as an assembly to clone into new Entity instances.</p>
             
 
             <td class="description last">
-                <p>Type of the Entity.</p>
+                Type of the Entity.
                 
             </td>
         </tr>
@@ -305,8 +305,8 @@ Entity to be used as an assembly to clone into new Entity instances.</p>
             
 
             <td class="description last">
-                <p>Name of the Entity. Typically also called
-&quot;unit type&quot; or &quot;class&quot; in-game.</p>
+                Name of the Entity. Typically also called
+"unit type" or "class" in-game.
                 
             </td>
         </tr>
@@ -342,8 +342,8 @@ Entity to be used as an assembly to clone into new Entity instances.</p>
             
 
             <td class="description last">
-                <p>Array of Component data to generate
-component instances from.</p>
+                Array of Component data to generate
+component instances from.
                 
             </td>
         </tr>
@@ -379,8 +379,8 @@ component instances from.</p>
             
 
             <td class="description last">
-                <p>Array of task objects (upcoming) for
-the entity to execute.</p>
+                Array of task objects (upcoming) for
+the entity to execute.
                 
             </td>
         </tr>
@@ -444,8 +444,8 @@ the entity to execute.</p>
 
 
 <div class="description">
-    <p>Add a Component instance to the Entity. This method should
-only be called internally, and never after the Entity has been registered.</p>
+    Add a Component instance to the Entity. This method should
+only be called internally, and never after the Entity has been registered.
 </div>
 
 
@@ -542,7 +542,7 @@ only be called internally, and never after the Entity has been registered.</p>
             
 
             <td class="description last">
-                <p>The Component to add.</p>
+                The Component to add.
                 
             </td>
         </tr>
@@ -586,10 +586,8 @@ only be called internally, and never after the Entity has been registered.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of Components, or null the
-Component already existed.</li>
-</ul>
+    - Updated array of Components, or null the
+Component already existed.
 </div>
 
     
@@ -611,9 +609,9 @@ Component already existed.</li>
 
 
 <div class="description">
-    <p>Remove a Component instance from the Entity. This method
+    Remove a Component instance from the Entity. This method
 should only be called internally, and never after the Entity has been
-registered.</p>
+registered.
 </div>
 
 
@@ -710,7 +708,7 @@ registered.</p>
             
 
             <td class="description last">
-                <p>Type of the Component to remove.</p>
+                Type of the Component to remove.
                 
             </td>
         </tr>
@@ -754,10 +752,8 @@ registered.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of Components, or null the
-Component already existed.</li>
-</ul>
+    - Updated array of Components, or null the
+Component already existed.
 </div>
 
     
@@ -779,7 +775,7 @@ Component already existed.</li>
 
 
 <div class="description">
-    <p>Advance the current task by one.</p>
+    Advance the current task by one.
 </div>
 
 
@@ -865,9 +861,7 @@ Component already existed.</li>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of tasks.</li>
-</ul>
+    - Updated array of tasks.
 </div>
 
     
@@ -889,7 +883,7 @@ Component already existed.</li>
 
 
 <div class="description">
-    <p>Append an array of tasks to the current task queue.</p>
+    Append an array of tasks to the current task queue.
 </div>
 
 
@@ -986,7 +980,7 @@ Component already existed.</li>
             
 
             <td class="description last">
-                <p>Array of task objects to replace existing tasks.</p>
+                Array of task objects to replace existing tasks.
                 
             </td>
         </tr>
@@ -1027,9 +1021,7 @@ Component already existed.</li>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of tasks.</li>
-</ul>
+    - Updated array of tasks.
 </div>
 
     
@@ -1051,7 +1043,7 @@ Component already existed.</li>
 
 
 <div class="description">
-    <p>Clone the entity.</p>
+    Clone the entity.
 </div>
 
 
@@ -1137,9 +1129,7 @@ Component already existed.</li>
 
 
 <div class="param-desc">
-    <ul>
-<li>New instance with the same components.</li>
-</ul>
+    - New instance with the same components.
 </div>
 
     
@@ -1161,8 +1151,8 @@ Component already existed.</li>
 
 
 <div class="description">
-    <p>Copy another entity (such as an assembly) into the entity,
-replacing all components.</p>
+    Copy another entity (such as an assembly) into the entity,
+replacing all components.
 </div>
 
 
@@ -1259,7 +1249,7 @@ replacing all components.</p>
             
 
             <td class="description last">
-                <p>Assembly to clone into the new entity.</p>
+                Assembly to clone into the new entity.
                 
             </td>
         </tr>
@@ -1300,9 +1290,7 @@ replacing all components.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of Components copied from source.</li>
-</ul>
+    - Updated array of Components copied from source.
 </div>
 
     
@@ -1324,7 +1312,7 @@ replacing all components.</p>
 
 
 <div class="description">
-    <p>Get a component instance by within the entity.</p>
+    Get a component instance by within the entity.
 </div>
 
 
@@ -1421,7 +1409,7 @@ replacing all components.</p>
             
 
             <td class="description last">
-                <p>Type of the component to get.</p>
+                Type of the component to get.
                 
             </td>
         </tr>
@@ -1465,9 +1453,7 @@ replacing all components.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Requested component, or null if not found.</li>
-</ul>
+    - Requested component, or null if not found.
 </div>
 
     
@@ -1489,7 +1475,7 @@ replacing all components.</p>
 
 
 <div class="description">
-    <p>Get all of the entity's component types.</p>
+    Get all of the entity's component types.
 </div>
 
 
@@ -1575,9 +1561,7 @@ replacing all components.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Array of component types present within the entity.</li>
-</ul>
+    - Array of component types present within the entity.
 </div>
 
     
@@ -1599,7 +1583,7 @@ replacing all components.</p>
 
 
 <div class="description">
-    <p>Get all of the Entity's components.</p>
+    Get all of the Entity's components.
 </div>
 
 
@@ -1685,9 +1669,7 @@ replacing all components.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Array of the Entity's components.</li>
-</ul>
+    - Array of the Entity's components.
 </div>
 
     
@@ -1709,7 +1691,7 @@ replacing all components.</p>
 
 
 <div class="description">
-    <p>Get the Entity's current task.</p>
+    Get the Entity's current task.
 </div>
 
 
@@ -1795,9 +1777,7 @@ replacing all components.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>The Entity's current task.</li>
-</ul>
+    - The Entity's current task.
 </div>
 
     
@@ -1819,8 +1799,8 @@ replacing all components.</p>
 
 
 <div class="description">
-    <p>Get data by component type from the Entity. This is basically
-a shorthand for .getComponent.getData();</p>
+    Get data by component type from the Entity. This is basically
+a shorthand for .getComponent.getData();
 </div>
 
 
@@ -1917,7 +1897,7 @@ a shorthand for .getComponent.getData();</p>
             
 
             <td class="description last">
-                <p>Type of the component to get data from.</p>
+                Type of the component to get data from.
                 
             </td>
         </tr>
@@ -1961,9 +1941,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Requested component data, or null if not found.</li>
-</ul>
+    - Requested component data, or null if not found.
 </div>
 
     
@@ -1985,7 +1963,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="description">
-    <p>Get the Entity's name.</p>
+    Get the Entity's name.
 </div>
 
 
@@ -2071,9 +2049,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>The Entity's name.</li>
-</ul>
+    - The Entity's name.
 </div>
 
     
@@ -2095,7 +2071,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="description">
-    <p>Get the Entity's task list.</p>
+    Get the Entity's task list.
 </div>
 
 
@@ -2181,9 +2157,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>The Entity's task list.</li>
-</ul>
+    - The Entity's task list.
 </div>
 
     
@@ -2205,7 +2179,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="description">
-    <p>Get the Entity's type.</p>
+    Get the Entity's type.
 </div>
 
 
@@ -2291,9 +2265,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>The Entity's type.</li>
-</ul>
+    - The Entity's type.
 </div>
 
     
@@ -2315,7 +2287,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="description">
-    <p>Get the Entity's UUID.</p>
+    Get the Entity's UUID.
 </div>
 
 
@@ -2401,9 +2373,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>The Entity's UUID.</li>
-</ul>
+    - The Entity's UUID.
 </div>
 
     
@@ -2425,7 +2395,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="description">
-    <p>Check if a component is present within the Entity.</p>
+    Check if a component is present within the Entity.
 </div>
 
 
@@ -2522,7 +2492,7 @@ a shorthand for .getComponent.getData();</p>
             
 
             <td class="description last">
-                <p>Type of the component to check.</p>
+                Type of the component to check.
                 
             </td>
         </tr>
@@ -2563,9 +2533,7 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>True if the component is present within the Entity.</li>
-</ul>
+    - True if the component is present within the Entity.
 </div>
 
     
@@ -2587,8 +2555,8 @@ a shorthand for .getComponent.getData();</p>
 
 
 <div class="description">
-    <p>Insert an array of tasks into the front of the current task
-queue.</p>
+    Insert an array of tasks into the front of the current task
+queue.
 </div>
 
 
@@ -2685,7 +2653,7 @@ queue.</p>
             
 
             <td class="description last">
-                <p>Array of task objects to replace existing tasks.</p>
+                Array of task objects to replace existing tasks.
                 
             </td>
         </tr>
@@ -2726,9 +2694,7 @@ queue.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of tasks.</li>
-</ul>
+    - Updated array of tasks.
 </div>
 
     
@@ -2750,7 +2716,7 @@ queue.</p>
 
 
 <div class="description">
-    <p>Check if a Component has been changed since the last update.</p>
+    Check if a Component has been changed since the last update.
 </div>
 
 
@@ -2836,9 +2802,7 @@ queue.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>True if the Entity has been changed.</li>
-</ul>
+    - True if the Entity has been changed.
 </div>
 
     
@@ -2860,7 +2824,7 @@ queue.</p>
 
 
 <div class="description">
-    <p>Print the Entity as JSON. Useful for saving to disk.</p>
+    Print the Entity as JSON. Useful for saving to disk.
 </div>
 
 
@@ -2946,9 +2910,7 @@ queue.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Ent</li>
-</ul>
+    - Ent
 </div>
 
     
@@ -2970,8 +2932,8 @@ queue.</p>
 
 
 <div class="description">
-    <p>Overwrite the data for a Component with the given type within
-the Entity.</p>
+    Overwrite the data for a Component with the given type within
+the Entity.
 </div>
 
 
@@ -3068,7 +3030,7 @@ the Entity.</p>
             
 
             <td class="description last">
-                <p>Type of the Component to check.</p>
+                Type of the Component to check.
                 
             </td>
         </tr>
@@ -3094,7 +3056,7 @@ the Entity.</p>
             
 
             <td class="description last">
-                <p>JSON data to apply to the Component.</p>
+                JSON data to apply to the Component.
                 
             </td>
         </tr>
@@ -3138,9 +3100,7 @@ the Entity.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated Component, or null if invalid.</li>
-</ul>
+    - Updated Component, or null if invalid.
 </div>
 
     
@@ -3162,7 +3122,7 @@ the Entity.</p>
 
 
 <div class="description">
-    <p>Set a Component as dirty or clean.</p>
+    Set a Component as dirty or clean.
 </div>
 
 
@@ -3267,7 +3227,7 @@ the Entity.</p>
             
 
             <td class="description last">
-                <p>Value to set the dirty flag. Default is true.</p>
+                Value to set the dirty flag. Default is true.
                 
             </td>
         </tr>
@@ -3308,9 +3268,7 @@ the Entity.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>The Component's dirty flag.</li>
-</ul>
+    - The Component's dirty flag.
 </div>
 
     
@@ -3332,7 +3290,7 @@ the Entity.</p>
 
 
 <div class="description">
-    <p>Overwite the current task list with an array tasks.</p>
+    Overwite the current task list with an array tasks.
 </div>
 
 
@@ -3429,7 +3387,7 @@ the Entity.</p>
             
 
             <td class="description last">
-                <p>Array of task objects to replace existing tasks.</p>
+                Array of task objects to replace existing tasks.
                 
             </td>
         </tr>
@@ -3470,9 +3428,7 @@ the Entity.</p>
 
 
 <div class="param-desc">
-    <ul>
-<li>Updated array of tasks.</li>
-</ul>
+    - Updated array of tasks.
 </div>
 
     
@@ -3499,7 +3455,7 @@ the Entity.</p>
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 29 2018 16:44:24 GMT+0200 (CEST) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 05 2018 23:13:09 GMT+0200 (CEST) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

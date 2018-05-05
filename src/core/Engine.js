@@ -315,11 +315,9 @@ class Engine {
 	/** @description Create a state object containing all player and entity data.
 		* @private
 		* @param {Number} timestamp - Timestamp to record this state under.
-		* @param {Boolean} complete - Whether to include all players and entities in
-		* the state or only dirty ones.
 		* @returns {Object} - Object including saved data for players and entities.
 		*/
-	_snapshot( timestamp, complete ) {
+	_snapshot( timestamp ) {
 		const data = {
 			timestamp: timestamp,
 			players: [],
