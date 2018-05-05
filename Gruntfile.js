@@ -29,5 +29,6 @@ module.exports = function( grunt ) {
 
 	// Default task(s).
 	grunt.registerTask( "default", [ "eslint", "jsdoc" ] );
+	grunt.registerTask( "docs", [ "eslint" ] );
 
 };

@@ -23,11 +23,17 @@
     "jsdoc": "^3.5.5",
     "load-grunt-tasks": "^3.5.2",
     "minami": "^1.2.3",
-    "webpack": "^2.7.0"
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^2.7.0",
+    "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-merge": "^4.1.2"
   },
   "scripts": {
-    "test": ".",
-    "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
+    "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
+    "lint": "eslint",
+    "test": "grunt",
+    "pack-dev": "NODE_ENV=development webpack --config webpack/dev.config.js",
+    "pack-prod": "NODE_ENV=production webpack --config webpack/prod.config.js"
   },
   "repository": {
     "type": "git",
