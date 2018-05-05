@@ -30,10 +30,9 @@
   },
   "scripts": {
     "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "eslint": "eslint --fix",
-    "test": "grunt",
-    "pack-dev": "NODE_ENV=development webpack --config webpack/dev.config.js",
-    "pack-prod": "NODE_ENV=production webpack --config webpack/prod.config.js"
+    "lint": "eslint --fix",
+    "pack:dev": "NODE_ENV=development webpack --config webpack/dev.config.js",
+    "pack:prod": "NODE_ENV=production webpack --config webpack/prod.config.js"
   },
   "repository": {
     "type": "git",
