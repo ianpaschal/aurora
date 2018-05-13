@@ -165,6 +165,25 @@ class Entity {
 		return component.getData();
 	}
 
+	/** @description Get the Entity's data as a JSON string.
+		* @readonly
+		* @returns {String} - The Entity's data as a JSON string.
+		*/
+	getJSON() {
+		// Provide new keys instead of stringifying private properties (with '_')
+		const data = {
+			uuid: this.getUUID(),
+			type: this.getType(),
+			name: this.getName(),
+			tasks: this.getTasks(),
+			components: []
+		};
+		this._components.forEach( ( component ) => {
+			data.components.push( component.getJSON() );
+		});
+		return JSON.stringify( data, null, 4 );
+	}
+
 	/** @description Get the Entity's name.
 		* @readonly
 		* @returns {String} - The Entity's name.

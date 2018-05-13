@@ -1,15 +1,12 @@
 // Aurora is distributed under the MIT license.
 
-import FS from "fs";
 import Present from "present";
 import * as Three from "three";
 import Entity from "./Entity";
+import State from "./State";
 import validate from "../utils/validate";
-import { deepCopy, getItem } from "../utils";
+import { getItem, hasItem } from "../utils";
 import buildLoadStack from "../utils/buildLoadStack";
-import terrainSystem from "../systems/terrain.js";
-import productionSystem from "../systems/production.js";
-import movementSystem from "../systems/movement.js";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -43,7 +40,7 @@ class Engine {
 
 		// Timing:
 		this._running = false;
-		this._lastFrameTime = null;
+		this._lastTickTime = null;
 		this._step = 100;
 		this._accumulator = 0;
 		this._ticks = 0;
@@ -51,6 +48,59 @@ class Engine {
 		this._maxStates = 10;
 
 		return this;
+	}
+
+	addState( state ) {
+
+		if ( !state ) {
+			const timestamp = this._ticks * this._step;
+			state = new State( timestamp, this );
+		}
+
+		// Unshift so that _states[0] is always the most recent state.
+		this._states.unshift( state );
+
+		/* To avoid using too much memory, if _states is now longer than _maxStates,
+			trim _states to _maxStates length. */
+		if ( this._states.length > this._maxStates ) {
+			this._states = this._states.slice( 0, this._maxStates );
+		}
+	}
+
+	applyState( state ) {
+		this._lastTickTime = state.timestamp;
+		state.entities.forEach( ( entity ) => {
+			if ( hasItem( entity._uuid, this._entities, "_uuid" ) ) {
+				const instance = this.getEntity( entity._uuid );
+				/* Don't bother checking if entity has component because if it's already
+					been registered it will be frozen. */
+				instance.getComponents.forEach( ( component ) => {
+					const type = component.getType();
+					const data = entity.components[ type ];
+					component.apply( data );
+				});
+			}
+			else {
+				const instance = new Entity( entity );
+				this.registerEntity( instance );
+			}
+		});
+		state.players.forEach( ( entity ) => {
+			if ( hasItem( entity._uuid, this._entities, "_uuid" ) ) {
+				const instance = this.getEntity( entity._uuid );
+				/* Don't bother checking if entity has component because if it's already
+					been registered it will be frozen. */
+				instance.getComponents.forEach( ( component ) => {
+					const type = component.getType();
+					const data = entity._components[ type ];
+					component.apply( data );
+				});
+			}
+			else {
+				const instance = new Entity( entity );
+				this.registerEntity( instance );
+			}
+		});
 	}
 
 	/** @description Build the load stack. NOTE: Right now, this is essentially a
@@ -108,6 +158,14 @@ class Engine {
 		return this._states.slice( 0, num ).reverse();
 	}
 
+	/** @description Get the timestamp of the last update.
+		* @readonly
+		* @returns {Number} - Timestamp of the last update.
+		*/
+	getLastTickTime() {
+		return this._lastTickTime;
+	}
+
 	/** @description Get a number of states in the state stack.
 		* @readonly
 		* @returns {Number} - The number of states in the state stack.
@@ -136,15 +194,6 @@ class Engine {
 		*/
 	getScene() {
 		return this._scene;
-	}
-
-	/** @description Registers Systems and starts the Engine.
-		*/
-	launch() {
-		this.registerSystem( terrainSystem );
-		this.registerSystem( productionSystem );
-		this.registerSystem( movementSystem );
-		this.start();
 	}
 
 	/** @description Add an Entity instance to to the engine as an assembly.
@@ -254,14 +303,14 @@ class Engine {
 	start() {
 		/* Always reset. If engine was stopped and restarted, not resetting could
 			cause a massive time jump to be added to all systems. */
-		this._lastFrameTime = Present();
+		this._lastTickTime = Present();
 		this._running = true;
 		setInterval( tick.bind( this ), this._step );
 		function tick() {
 			if ( this._running ) {
 				const now = Present();
-				const delta = now - this._lastFrameTime;
-				this._lastFrameTime = now;
+				const delta = now - this._lastTickTime;
+				this._lastTickTime = now;
 				this._accumulator += delta;
 				while ( this._accumulator > this._step ) {
 					this._update();
@@ -294,44 +343,10 @@ class Engine {
 		// Keep track of which tick this was.
 		this._ticks++;
 
-		// TODO: Create and save state.
-		const timestamp = this._ticks * this._step;
-
-		// Unshift so that _states[0] is always the most recent state.
-		this._states.unshift( this._snapshot( timestamp ) );
-
-		/* To avoid using too much memory, if _states is now longer than _maxStates,
-			trim _states to _maxStates length. */
-		if ( this._states.length > this._maxStates ) {
-			this._states = this._states.slice( 0, this._maxStates );
-		}
-
 		// Run any post-update behavior.
 		if ( this._onUpdateEnd ) {
 			this._onUpdateEnd();
 		}
-	}
-
-	/** @description Create a state object containing all player and entity data.
-		* @private
-		* @param {Number} timestamp - Timestamp to record this state under.
-		* @returns {Object} - Object including saved data for players and entities.
-		*/
-	_snapshot( timestamp ) {
-		const data = {
-			timestamp: timestamp,
-			players: [],
-			entities: []
-		};
-
-		// TODO: Add filtering instead of sending every entity every update.
-		this._entities.forEach( ( entity ) => {
-			data.entities.push( deepCopy( entity ) );
-		});
-		this._players.forEach( ( player ) => {
-			data.players.push( deepCopy( player ) );
-		});
-		return data;
 	}
 
 	// TODO: These functions are gnarly. Clean them up!
@@ -345,56 +360,27 @@ class Engine {
 			onFinished();
 		}
 
-		const textureLoader = new Three.TextureLoader();
-		const JSONLoader = new Three.JSONLoader();
-
-		// Load these backwards (textures, materials, geometries, aseemblies)
 		const loaders = {
-			texture( item ) {
-				textureLoader.load(
-					item.path,
-					( texture ) => {
-						scope._textures[ item.name ] = texture;
-						addLoaded( item.name );
-					},
-					undefined,
-					( err ) => {
-						console.error( "Failed to load", stack.textures[ name ], err );
-					}
-				);
-			},
-			loadMaterials() {
-				for ( const name in stack.material ) {
-					addLoaded( name );
-				}
-			},
-			geometry( item ) {
-				JSONLoader.load(
-					item.path,
-					( geometry ) => {
-						scope._geometries[ item.type ] = geometry;
-						addLoaded( item.name );
-					},
-					undefined,
-					( err ) => {
-						console.error( err );
-					}
-				);
-			},
-			assembly( item ) {
-				const json = JSON.parse( FS.readFileSync( item.path, "utf8" ) );
-				scope.registerAssembly( new Entity( json ) );
-				addLoaded( item.name );
-			},
-			loadIcons() {
-				for ( const name in stack.icon ) {
-					addLoaded( name );
-				}
-			}
+			"texture": new Three.TextureLoader(),
+			"geometry": new Three.JSONLoader()
 		};
 
 		stack.forEach( ( item ) => {
-			loaders[ item.type ]( item );
+			if ( !loaders[ item.type ] ) {
+				console.error( "No loader for type " + item.type );
+				return;
+			}
+			loaders[ item.type ].load(
+				item.path,
+				( texture ) => {
+					scope._textures[ item.name ] = texture;
+					addLoaded( item.name );
+				},
+				undefined,
+				( err ) => {
+					console.error( "Failed to load", stack.textures[ name ], err );
+				}
+			);
 		});
 
 		function addLoaded( name ) {
@@ -405,54 +391,6 @@ class Engine {
 			}
 		}
 	}
-
-	// init( stack, world, onProgress, onFinished ) {
-	// 	// Compute total length:
-	// 	let length = 0;
-	// 	let loaded = 0;
-	// 	for ( const section in stack ) {
-	// 		length += Object.keys( stack[ section ] ).length;
-	// 	}
-	// 	if ( world ) {
-	// 		length += Object.keys( world.entities ).length;
-	// 	}
-	// 	function updateProgress( itemName ) {
-	// 		loaded++;
-	// 		onProgress( ( loaded / length ) * 100, "Loaded " + itemName );
-	// 	}
-	// 	function onLoadComplete() {
-	//
-	// 		// Systems must be intialized after loading so they can use assets:
-	// 		// this.registerSystem( graphicsSystem );
-	// 		this.registerSystem( terrainSystem );
-	// 		this.registerSystem( productionSystem );
-	// 		this.registerSystem( movementSystem );
-	// 		// this.registerSystem( visibilitySystem );
-	//
-	// 		// this._world = new World();
-	// 		// this._world.setTime( 0 );
-	//
-	// 		// If no source is provided, generate a new world:
-	// 		if ( !world ) {
-	// 			console.warn( "World is missing, a new one will be generated!" );
-	// 			this.testPopulateWorld( 4, updateProgress, onFinished );
-	// 		}
-	// 		else {
-	// 			this.loadWorld( world, updateProgress, onFinished );
-	// 		}
-	// 	}
-	//
-	// 	// Load assets. On finished, start the world loading/generation routine:
-	// 	// onProgress is called when an asset is loaded and passed the
-	// 	if ( stack.length > 0 ) {
-	// 		console.log( "Going to load stuff" );
-	// 		this.loadAssets( stack, updateProgress, onLoadComplete.bind( this ) );
-	// 	}
-	// 	else {
-	// 		onLoadComplete.bind( this )();
-	// 	}
-	// }
-
 }
 
 export default Engine;

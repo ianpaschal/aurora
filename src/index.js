@@ -5,10 +5,8 @@ import Engine from "./core/Engine";
 import Entity from "./core/Entity";
 import Player from "./core/Player";
 import System from "./core/System";
-
 import Math2D from "./math/Math2D";
 import Math3D from "./math/Math3D";
-
 import * as utils from "./utils";
 
 export default {

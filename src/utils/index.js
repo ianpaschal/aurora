@@ -27,3 +27,8 @@ export function hasItem( target, array, prop ) {
 	}
 	return true;
 }
+
+export function interpolate() {
+
+	return;
+}

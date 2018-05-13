@@ -81,7 +81,12 @@ class Component {
 		* @returns {String} - The component's data as a JSON string.
 		*/
 	getJSON() {
-		return JSON.stringify( this._data, null, 4 );
+		// Provide new keys instead of stringifying private properties (with '_')
+		return JSON.stringify({
+			uuid: this.getUUID(),
+			type: this.getType(),
+			data: this.getData()
+		}, null, 4 );
 	}
 
 	/** @description Get the component's type.
