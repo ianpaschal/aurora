@@ -31,12 +31,12 @@ class Engine {
 		this._assemblies = [];
 		this._systems = [];
 
-		// TODO: Make these into arrays. .map, .filter, and .find all give us what we need.
-		// TODO: Replace these with a Resource class.
-		this._geometries = {}; // Three.Geometry class does not have .getType() method.
-		this._materials = {}; // Three.Material class does not have .getType() method.
-		this._sounds = {}; // Sound does not have .getType() method.
-		this._textures = {}; // Three.Texture class does not have .getType() method.
+		this._assets = {
+			assembly: {},
+			geometry: {},
+			sound: {},
+			texture: {}
+		};
 
 		// Timing:
 		this._running = false;
@@ -349,8 +349,6 @@ class Engine {
 		}
 	}
 
-	// TODO: These functions are gnarly. Clean them up!
-
 	loadAssets( stack, onProgress, onFinished ) {
 		const scope = this;
 		let loaded = 0;
@@ -372,9 +370,13 @@ class Engine {
 			}
 			loaders[ item.type ].load(
 				item.path,
-				( texture ) => {
-					scope._textures[ item.name ] = texture;
-					addLoaded( item.name );
+				( asset ) => {
+					scope._assets[ item.type ][ item.name ] = asset;
+					loaded++;
+					onProgress( item.name );
+					if ( loaded === stack.length ) {
+						onFinished();
+					}
 				},
 				undefined,
 				( err ) => {
@@ -382,14 +384,6 @@ class Engine {
 				}
 			);
 		});
-
-		function addLoaded( name ) {
-			loaded++;
-			onProgress( name );
-			if ( loaded === stack.length ) {
-				onFinished();
-			}
-		}
 	}
 }
 
