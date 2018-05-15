@@ -1,12 +1,13 @@
 // Aurora is distributed under the MIT license.
 
 import Present from "present";
-import * as Three from "three";
+import { Scene, JSONLoader, TextureLoader } from "three";
 import Entity from "./Entity";
 import State from "./State";
 import validate from "../utils/validate";
 import { getItem, hasItem } from "../utils";
 import buildLoadStack from "../utils/buildLoadStack";
+import EntityLoader from "../loaders/EntityLoader";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -19,17 +20,16 @@ class Engine {
 	constructor() {
 		console.log( "Initializing a new Engine." );
 
-		this._scene = new Three.Scene();
+		this._scene = new Scene();
 		this._pluginLocations = [];
 		this._pluginStack = [];
 
 		// These are the things which are actually saved per game
 		this._entities = [];
-		this._players = [];
-
-		// These are loaded each run
-		this._assemblies = [];
 		this._systems = [];
+
+		// IDEA: Store players as components?
+		this._players = [];
 
 		this._assets = {
 			assembly: {},
@@ -113,18 +113,30 @@ class Engine {
 		return buildLoadStack( this._pluginLocations, this._pluginStack );
 	}
 
-	/** @description Get an assembly (Entity instance) by type.
-		* @readonly
-		* @param {String} type - Type of assembly to fetch.
-		* @returns {(Assembly|null)} - Requested assembly, or null if not found.
-		*/
-	getAssembly( type ) {
-		const assembly = getItem( type, this._assemblies, "_type" );
-		if ( !assembly ) {
-			return console.error( "Assembly not found!" );
+	getAsset( type, id ) {
+		if ( !this._assets[ type ] ) {
+			return console.log( "No assets of type " + type + " exist." );
 		}
-		return assembly;
+		const asset = this._assets[ type ][ id ];
+		if ( !asset ) {
+			return console.log( "Asset " + id + " does not exist." );
+		}
+		return asset;
 	}
+
+	// // TODO: Phase out in favor of getting asset.
+	// /** @description Get an assembly (Entity instance) by type.
+	// 	* @readonly
+	// 	* @param {String} type - Type of assembly to fetch.
+	// 	* @returns {(Assembly|null)} - Requested assembly, or null if not found.
+	// 	*/
+	// getAssembly( type ) {
+	// 	const assembly = getItem( type, this._assemblies, "_type" );
+	// 	if ( !assembly ) {
+	// 		return console.error( "Assembly not found!" );
+	// 	}
+	// 	return assembly;
+	// }
 
 	/** @description Get an Entity instance by UUID.
 		* @readonly
@@ -135,19 +147,20 @@ class Engine {
 		return getItem( uuid, this._entities, "_uuid" );
 	}
 
-	/** @description Get a Three.Geometry instance by type.
-		* @readonly
-		* @param {String} type - Type of geometry to fetch.
-		* @returns {(Geometry|null)} - Requested geometry, or null if not found.
-		*/
-	getGeometry( type ) {
-		if ( this._geometries[ type ] ) {
-			return this._geometries[ type ];
-		}
-		else {
-			console.error( "Please supply a valid geometry type." );
-		}
-	}
+	// // TODO: Phase out in favor of getting asset.
+	// /** @description Get a Three.Geometry instance by type.
+	// 	* @readonly
+	// 	* @param {String} type - Type of geometry to fetch.
+	// 	* @returns {(Geometry|null)} - Requested geometry, or null if not found.
+	// 	*/
+	// getGeometry( type ) {
+	// 	if ( this._geometries[ type ] ) {
+	// 		return this._geometries[ type ];
+	// 	}
+	// 	else {
+	// 		console.error( "Please supply a valid geometry type." );
+	// 	}
+	// }
 
 	/** @description Get a number of states from the end of the state stack.
 		* @readonly
@@ -187,6 +200,7 @@ class Engine {
 		return null;
 	}
 
+	// TODO: This should eventually be phased out. Scenes should be handled by clients.
 	/** @description Get the glogal scene instance. NOTE: This will likely become
 		* depreciated once rendering is handled exclusively by the client.
 		* @readonly
@@ -196,16 +210,6 @@ class Engine {
 		return this._scene;
 	}
 
-	/** @description Add an Entity instance to to the engine as an assembly.
-		* @param {Entity} assembly - Entity instance to add.
-		* @returns {Array} - Updated array of assemblies.
-		*/
-	registerAssembly( assembly ) {
-		// TODO: Validation.
-		this._assemblies.push( assembly );
-		return this._assemblies;
-	}
-
 	/** @description Add an Entity instance to to the engine.
 		* After being registered and initialized, systems are immutable and updated
 		* every game loop.
@@ -213,15 +217,19 @@ class Engine {
 		* @returns {Array} - Updated array of entities.
 		*/
 	registerEntity( entity ) {
-		// Make entity immutable (component data is still mutable though):
+
+		// Make entity immutable (component data is still mutable though)
 		Object.seal( entity );
+
 		this._entities.push( entity );
-		// Check all systems to see if they should be watching this entity:
+
+		// Check all systems to see if they should be watching this entity
 		this._systems.forEach( ( system ) => {
 			if ( system.isWatchable( entity ) ) {
 				system.addEntity( entity );
 			}
 		});
+
 		return this._entities;
 	}
 
@@ -301,8 +309,7 @@ class Engine {
 
 	/** @description Start the execution of the update loop. */
 	start() {
-		/* Always reset. If engine was stopped and restarted, not resetting could
-			cause a massive time jump to be added to all systems. */
+		// Always reset in case engine was stopped and restarted.
 		this._lastTickTime = Present();
 		this._running = true;
 		setInterval( tick.bind( this ), this._step );
@@ -359,8 +366,9 @@ class Engine {
 		}
 
 		const loaders = {
-			"texture": new Three.TextureLoader(),
-			"geometry": new Three.JSONLoader()
+			"assembly": new EntityLoader(),
+			"texture": new TextureLoader(),
+			"geometry": new JSONLoader()
 		};
 
 		stack.forEach( ( item ) => {

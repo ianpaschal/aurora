@@ -1,25 +1,13 @@
 // Aurora is distributed under the MIT license.
 
-import Component from "./core/Component";
-import Engine from "./core/Engine";
-import Entity from "./core/Entity";
-import Player from "./core/Player";
-import System from "./core/System";
-import Math2D from "./math/Math2D";
-import Math3D from "./math/Math3D";
+export { default as Component } from "./core/Component";
+export { default as Engine } from "./core/Engine";
+export { default as Entity } from "./core/Entity";
+export { default as Player } from "./core/Player";
+export { default as System } from "./core/System";
+
+export { default as Math2D } from "./math/Math2D";
+export { default as Math3D } from "./math/Math3D";
+export { default as Percentage } from "./math/Percentage";
 import * as utils from "./utils";
-
-export default {
-
-	// Core
-	Component: Component,
-	Engine: Engine,
-	Entity: Entity,
-	Player: Player,
-	System: System,
-
-	// Math & utils
-	Math2D: Math2D,
-	Math3D: Math3D,
-	utils: utils
-};
+export { utils };
