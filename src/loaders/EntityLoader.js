@@ -2,10 +2,7 @@
 
 import FS from "fs";
 import Entity from "../core/Entity";
-
-function calcPercent( a, b ) {
-	return Math.round( ( a / b ) * 1000 ) / 10;
-}
+import Percentage from "../math/Percentage";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
@@ -41,9 +38,8 @@ class EntityLoader {
 		// Listen for data
 		stream.on( "data", ( chunk ) => {
 			chunks.push( chunk );
-			const percent = calcPercent( stream.bytesRead / stats.size );
 			if ( typeof onProgress !== "function" ) {
-				onProgress( percent );
+				onProgress( new Percentage( stream.bytesRead / stats.size ) );
 			}
 		});
 
