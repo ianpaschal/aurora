@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>State - Documentation</title>
+    <title>loaders/EntityLoader.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,216 +29,86 @@
 
 <div id="main">
     
-    <h1 class="page-title">State</h1>
+    <h1 class="page-title">loaders/EntityLoader.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>
-        State
-        </h2>
-        
-            <div class="class-description">Class representing a State.</div>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-<div class="section-method">
-
-    
-    <h2>Constructor</h2>
-    
-
-    <h4 class="name" id="State"><span class="type-signature"></span>new State<span class="signature">(timestamp, engine)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Create a Player instance.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core_State.js.html">core/State.js</a>, <a href="core_State.js.html#line4">line 4</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>timestamp</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Number</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                Properties of the player. When loading a saved
-player, this will likely be a JSON object.
-                
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>engine</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><code>Array</code></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                Engine which should be copied.
-                
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Aurora is distributed under the MIT license.
+
+import FS from "fs";
+import Entity from "../core/Entity";
+
+function calcPercent( a, b ) {
+	return Math.round( ( a / b ) * 1000 ) / 10;
+}
+
+/** @classdesc Core singleton representing an instance of the Aurora Engine. The
+	* engine is responsible for the creation (and registration) of entities, as
+	* well as initialization and running of systems containing game logic.
+	* @returns - The newly created Engine.
+	*/
+class EntityLoader {
+
+	/** @description Load an Entity from a JSON file.
+		* @param {String} src - Filepath to load.
+		* @param {Function} onLoad - Callback to execute on successful load.
+		* @param {Function} onProgress - Callback to execute on progress.
+		* @param {Function} onError - Callback to execute on error.
+		* @returns {Entity} - A new Enity instance loaded from JSON.
+		*/
+	load( src, onLoad, onProgress, onError ) {
+		if ( typeof onLoad !== "function" ) {
+			return;
+		}
+		if ( typeof onError !== "function" ) {
+			return;
+		}
+
+		const stats = FS.statSync( src );
+		const stream = FS.createReadStream( src, { highWaterMark: 16 });
+		const chunks = [];
+
+		// Handle any errors while reading
+		stream.on( "error", ( err ) => {
+			return onError( err );
+		});
+
+		// Listen for data
+		stream.on( "data", ( chunk ) => {
+			chunks.push( chunk );
+			const percent = calcPercent( stream.bytesRead / stats.size );
+			if ( typeof onProgress !== "function" ) {
+				onProgress( percent );
+			}
+		});
+
+		// File is done being read
+		stream.on( "close", () => {
+			// Create a buffer of the chunks from the stream
+			const entity = this.parse( Buffer.concat( chunks ) );
+			return onLoad( entity );
+		});
+	}
+
+	/** @description Create an Entity from a JSON object.
+		* @param {Object} data - JSON object to parse.
+		* @returns {Entity} - A new Enity instance created from JSON.
+		*/
+	parse( data ) {
+		return new Entity( data );
+	}
+}
+
+export default EntityLoader;
+</code></pre>
+        </article>
+    </section>
 
 
 
