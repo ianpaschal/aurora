@@ -38,7 +38,7 @@ class EntityLoader {
 		// Listen for data
 		stream.on( "data", ( chunk ) => {
 			chunks.push( chunk );
-			if ( typeof onProgress !== "function" ) {
+			if ( typeof onProgress === "function" ) {
 				onProgress( new Percentage( stream.bytesRead / stats.size ) );
 			}
 		});
@@ -46,7 +46,7 @@ class EntityLoader {
 		// File is done being read
 		stream.on( "close", () => {
 			// Create a buffer of the chunks from the stream
-			const entity = this.parse( Buffer.concat( chunks ) );
+			const entity = this.parse( JSON.parse( Buffer.concat( chunks ) ) );
 			return onLoad( entity );
 		});
 	}
