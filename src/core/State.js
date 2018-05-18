@@ -11,6 +11,8 @@ class State {
 		*/
 	constructor( timestamp, engine ) {
 		this.timestamp = timestamp;
+		this.entities = [];
+		this.players = [];
 		engine._entities.forEach( ( entity ) => {
 			this.entities.push( entity.getJSON() );
 		});

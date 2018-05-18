@@ -66,6 +66,10 @@ class Player {
 		return this._entityUUIDs;
 	}
 
+	getJSON() {
+		return JSON.stringify( this );
+	}
+
 	addVisibilityMap() {
 		// Create the canvas:
 		const canvas = document.createElement( "canvas" );
