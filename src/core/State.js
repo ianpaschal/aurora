@@ -9,8 +9,8 @@ class State {
 		* @param {Array} engine - Engine which should be copied.
 		* @returns {State} - The newly created State.
 		*/
-	constructor( timestamp, engine ) {
-		this.timestamp = timestamp;
+	constructor( engine ) {
+		this.timestamp = engine.lastTickTime;
 		this.entities = [];
 		this.players = [];
 		engine._entities.forEach( ( entity ) => {

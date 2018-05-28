@@ -4,25 +4,20 @@ import Present from "present";
 import { Scene, JSONLoader, TextureLoader } from "three";
 import Entity from "./Entity";
 import State from "./State";
+import PluginManager from "../managers/PluginManager";
+import StateManager from "../managers/StateManager";
 import validate from "../utils/validate";
 import { getItem, hasItem } from "../utils";
-import buildLoadStack from "../utils/buildLoadStack";
 import EntityLoader from "../loaders/EntityLoader";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
 	* engine is responsible for the creation (and registration) of entities, as
-	* well as initialization and running of systems containing game logic.
-	* @returns - The newly created Engine.
-	*/
+	* well as initialization and running of systems containing game logic. */
 class Engine {
 
 	/** @description Create an instance of the Aurora Engine. */
 	constructor() {
 		console.log( "Initializing a new Engine." );
-
-		this._scene = new Scene();
-		this._pluginLocations = [];
-		this._pluginStack = [];
 
 		// These are the things which are actually saved per game
 		this._entities = [];
@@ -31,40 +26,32 @@ class Engine {
 		// IDEA: Store players as components?
 		this._players = [];
 
+		// IDEA: Create a separate 3D class handling assets and scenes
 		this._assets = {
 			assembly: {},
 			geometry: {},
 			sound: {},
 			texture: {}
 		};
+		this._scene = new Scene();
 
-		// Timing:
+		// IDEA: Create a separate timer class which the engine queries
+		this._loop = null;
 		this._running = false;
 		this._lastTickTime = null;
 		this._step = 100;
 		this._accumulator = 0;
 		this._ticks = 0;
-		this._states = [];
-		this._maxStates = 10;
 
+		this._stateManager = new StateManager();
+		this._pluginManager = new PluginManager();
+
+		this._onUpdateStart = undefined;
+		this._onUpdateFinished = undefined;
+
+		// Make structure immutable and return
+		Object.seal( this );
 		return this;
-	}
-
-	addState( state ) {
-
-		if ( !state ) {
-			const timestamp = this._ticks * this._step;
-			state = new State( timestamp, this );
-		}
-
-		// Unshift so that _states[0] is always the most recent state.
-		this._states.unshift( state );
-
-		/* To avoid using too much memory, if _states is now longer than _maxStates,
-			trim _states to _maxStates length. */
-		if ( this._states.length > this._maxStates ) {
-			this._states = this._states.slice( 0, this._maxStates );
-		}
 	}
 
 	applyState( state ) {
@@ -103,16 +90,6 @@ class Engine {
 		});
 	}
 
-	/** @description Build the load stack. NOTE: Right now, this is essentially a
-		* just a wrapper for buildLoadStack(), which should be moved from utils into
-		* this file eventually.
-		* @readonly
-		* @returns {Array} - Array of asset items.
-		*/
-	findPlugins() {
-		return buildLoadStack( this._pluginLocations, this._pluginStack );
-	}
-
 	getAsset( type, id ) {
 		if ( !this._assets[ type ] ) {
 			return console.log( "No assets of type " + type + " exist." );
@@ -124,20 +101,6 @@ class Engine {
 		return asset;
 	}
 
-	// // TODO: Phase out in favor of getting asset.
-	// /** @description Get an assembly (Entity instance) by type.
-	// 	* @readonly
-	// 	* @param {String} type - Type of assembly to fetch.
-	// 	* @returns {(Assembly|null)} - Requested assembly, or null if not found.
-	// 	*/
-	// getAssembly( type ) {
-	// 	const assembly = getItem( type, this._assemblies, "_type" );
-	// 	if ( !assembly ) {
-	// 		return console.error( "Assembly not found!" );
-	// 	}
-	// 	return assembly;
-	// }
-
 	/** @description Get an Entity instance by UUID.
 		* @readonly
 		* @param {String} uuid - UUID of the entity to fetch.
@@ -145,46 +108,6 @@ class Engine {
 		*/
 	getEntity( uuid ) {
 		return getItem( uuid, this._entities, "_uuid" );
-	}
-
-	// // TODO: Phase out in favor of getting asset.
-	// /** @description Get a Three.Geometry instance by type.
-	// 	* @readonly
-	// 	* @param {String} type - Type of geometry to fetch.
-	// 	* @returns {(Geometry|null)} - Requested geometry, or null if not found.
-	// 	*/
-	// getGeometry( type ) {
-	// 	if ( this._geometries[ type ] ) {
-	// 		return this._geometries[ type ];
-	// 	}
-	// 	else {
-	// 		console.error( "Please supply a valid geometry type." );
-	// 	}
-	// }
-
-	/** @description Get a number of states from the end of the state stack.
-		* @readonly
-		* @param {Number} num - Number of recent states to fetch.
-		* @returns {Array} - Array of states, starting with the most recent.
-		*/
-	getLastStates( num ) {
-		return this._states.slice( 0, num ).reverse();
-	}
-
-	/** @description Get the timestamp of the last update.
-		* @readonly
-		* @returns {Number} - Timestamp of the last update.
-		*/
-	getLastTickTime() {
-		return this._lastTickTime;
-	}
-
-	/** @description Get a number of states in the state stack.
-		* @readonly
-		* @returns {Number} - The number of states in the state stack.
-		*/
-	getNumStates() {
-		return this._states.length;
 	}
 
 	/** @description Get a Player instance by index.
@@ -198,16 +121,6 @@ class Engine {
 		}
 		console.error( "Please supply a valid player index." );
 		return null;
-	}
-
-	// TODO: This should eventually be phased out. Scenes should be handled by clients.
-	/** @description Get the glogal scene instance. NOTE: This will likely become
-		* depreciated once rendering is handled exclusively by the client.
-		* @readonly
-		* @returns {Three.Scene}
-		*/
-	getScene() {
-		return this._scene;
 	}
 
 	/** @description Add an Entity instance to to the engine.
@@ -272,40 +185,82 @@ class Engine {
 		return this._systems;
 	}
 
-	/** @description Set the Engine's plugin stack.
-		* @param {Array} stack - Array of plugins to load.
-		* @returns {Array} - Updated array of plugins.
+	// GETTERS
+
+	/** @description Get the timestamp of the last update.
+		* @readonly
+		* @returns {Number} - Timestamp of the last update.
 		*/
-	setPluginStack( stack ) {
-		this._pluginStack = stack;
-		return this._pluginStack;
+	get lastTickTime() {
+		return this._lastTickTime;
+	}
+
+	get onUpdateDone() {
+		return this._onUpdateDone;
+	}
+
+	get onUpdateStart() {
+		return this._onUpdateStart;
+	}
+
+	/** @description Get the glogal PluginManager instance.
+		* @readonly
+		* @returns {PluginManager}
+		*/
+	get pluginManager() {
+		return this._pluginManager;
+	}
+
+	/** @description Get the glogal scene instance. NOTE: This will likely become
+		* depreciated once rendering is handled exclusively by the client.
+		* @readonly
+		* @returns {Three.Scene}
+		*/
+	get scene() {
+		return this._scene;
+	}
+
+	get stateManager() {
+		return this._stateManager;
+	}
+
+	// SETTERS
+
+	set pluginManager( pluginManager ) {
+		// TODO: Add validation
+		this._pluginManager = pluginManager;
+	}
+
+	set stateManager( stateManager ) {
+		// TODO: Add validation
+		this._stateManager = stateManager;
 	}
 
 	/** @description Set a function to execute after every update tick.
 		* @param {Function} fn - Function to execute.
 		* @returns {(Function|Null)} - Updated handler function, or null if invalid.
 		*/
-	setOnUpdateEnd( fn ) {
+	set onUpdateFinished( fn ) {
 		if ( typeof fn != "function" ) {
 			console.error( "Please supply a valid function." );
 			return null;
 		}
-		this._onUpdateEnd = fn;
-		return this._onUpdateEnd;
+		this._onUpdateFinished = fn;
 	}
 
 	/** @description Set a function to execute before every update tick.
 		* @param {Function} fn - Function to execute.
 		* @returns {(Function|Null)} - Updated handler function, or null if invalid.
 		*/
-	setOnUpdateStart( fn ) {
+	set onUpdateStart( fn ) {
 		if ( typeof fn != "function" ) {
 			console.error( "Please supply a valid function." );
 			return null;
 		}
 		this._onUpdateStart = fn;
-		return this._onUpdateStart;
 	}
+
+	// MISC.
 
 	/** @description Start the execution of the update loop. */
 	start() {
@@ -351,11 +306,12 @@ class Engine {
 		this._ticks++;
 
 		// Run any post-update behavior.
-		if ( this._onUpdateEnd ) {
-			this._onUpdateEnd();
+		if ( this._onUpdateFinished ) {
+			this._onUpdateFinished();
 		}
 	}
 
+	// IDEA: Handled by PluginStack?
 	loadAssets( stack, onProgress, onFinished ) {
 		const scope = this;
 		let loaded = 0;

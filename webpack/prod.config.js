@@ -11,7 +11,12 @@ module.exports = merge( baseConfig, {
 	plugins: [
 		// Minify JS
 		new UglifyJsPlugin({
-			sourceMap: false
+			sourceMap: false,
+			uglifyOptions: {
+				compress: {
+					drop_console: true,
+				}
+			}
 		})
 	]
 });

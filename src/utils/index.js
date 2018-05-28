@@ -28,7 +28,6 @@ export function hasItem( target, array, prop ) {
 	return true;
 }
 
-export function interpolate() {
-
-	return;
+export function interpolate( a, b, x ) {
+	return ( ( b - a ) * x ) + a;
 }
