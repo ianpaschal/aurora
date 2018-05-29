@@ -1,7 +1,6 @@
 // Aurora is distributed under the MIT license.
 
 import FS from "fs";
-import Entity from "../core/Entity";
 import Percentage from "../math/Percentage";
 
 /** @classdesc Core singleton representing an instance of the Aurora Engine. The
