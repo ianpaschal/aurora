@@ -164,7 +164,7 @@ class Engine {
 		* @returns {Array} - Updated array of plugin locations.
 		*/
 	registerPluginLocation( path ) {
-		// TODO: Validation.
+		// TODO: Add validation
 		this._pluginLocations.push( path );
 		return this._pluginLocations;
 	}
@@ -211,7 +211,7 @@ class Engine {
 		return this._pluginManager;
 	}
 
-	/** @description Get the glogal scene instance. NOTE: This will likely become
+	/** @description Get the glogal scene instance. This will likely become
 		* depreciated once rendering is handled exclusively by the client.
 		* @readonly
 		* @returns {Three.Scene}

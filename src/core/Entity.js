@@ -274,7 +274,7 @@ class Entity {
 		* @returns {Array} - Updated array of tasks.
 		*/
 	setTasks( tasks ) {
-		// TODO: Add some validation!
+		// TODO: Add validation
 		this._tasks = tasks;
 		this.tasksDirty = true;
 		this.setDirty();
@@ -286,7 +286,7 @@ class Entity {
 		* @returns {Array} - Updated array of tasks.
 		*/
 	appendTasks( tasks ) {
-		// TODO: Add some validation!
+		// TODO: Add validation
 		this._tasks.concat( tasks );
 		this.setDirty();
 		return this.tasks;

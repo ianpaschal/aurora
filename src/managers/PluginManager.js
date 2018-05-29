@@ -22,7 +22,7 @@ class PluginManager {
 		* @returns {Array} - Updated array of plugin locations.
 		*/
 	addLocation( path ) {
-		// TODO: Validation.
+		// TODO: Add validation
 		this._pluginLocations.push( path );
 		return this._pluginLocations;
 	}

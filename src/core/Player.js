@@ -53,7 +53,7 @@ class Player {
 		* @returns {Array} - Updated array of entity UUIDs.
 		*/
 	own( entity ) {
-		// TODO: Validation.
+		// TODO: Add validation
 		this._entityUUIDs.push( entity.getUUID() );
 		return this._entityUUIDs;
 	}

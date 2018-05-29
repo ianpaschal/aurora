@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-// TODO: Remove, depreciated.
+// TODO: Remove, depreciated
 
 class EntityCache {
 	constructor() {

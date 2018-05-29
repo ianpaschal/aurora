@@ -62,7 +62,7 @@ class Component {
 		* @returns {Component} - Component with updated data.
 		*/
 	copy( source ) {
-		// TODO: Validation.
+		// TODO: Add validation
 		this._type = source.getType();
 		this._data = deepCopy( source.getData() );
 		return this;
@@ -111,7 +111,7 @@ class Component {
 		* @returns {Object} - Updated data object.
 		*/
 	setData( json ) {
-		// TODO: Validation.
+		// TODO: Add validation
 		this._data = json;
 		return this._data;
 	}
@@ -121,7 +121,7 @@ class Component {
 		* @returns {String} - Updated type for the Component.
 		*/
 	setType( type ) {
-		// TODO: Validation.
+		// TODO: Add validation
 		this._type = type;
 		return this._type;
 	}
