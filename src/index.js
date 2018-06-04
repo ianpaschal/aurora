@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-// This is removed via Webpack when creating a production pack
+// This is removed via Webpack when creating a production bundle
 console.warn(
 	"You are running Aurora in development mode.",
 	"Make sure to turn on production mode when deploying for production.",

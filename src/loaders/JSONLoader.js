@@ -10,12 +10,11 @@ import Percentage from "../math/Percentage";
 	*/
 class JSONLoader {
 
-	/** @description Load an Entity from a JSON file.
+	/** @description Asynchronously load a JSON file.
 		* @param {String} src - Filepath to load.
 		* @param {Function} onLoad - Callback to execute on successful load.
 		* @param {Function} onProgress - Callback to execute on progress.
 		* @param {Function} onError - Callback to execute on error.
-		* @returns {Entity} - A new Enity instance loaded from JSON.
 		*/
 	load( src, onLoad, onProgress, onError ) {
 		if ( typeof onLoad !== "function" ) {
@@ -48,6 +47,15 @@ class JSONLoader {
 			const json = JSON.parse( Buffer.concat( chunks ) );
 			return onLoad( json );
 		});
+	}
+
+	/** @description Synchronously load a JSON file.
+		* @param {String} src - Filepath to load.
+		* @returns {Object} - A new object created from JSON.
+		*/
+	loadSync( src ) {
+		const json = JSON.parse( FS.readFileSync( src ) );
+		return json;
 	}
 }
 
