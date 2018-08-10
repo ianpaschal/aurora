@@ -10,12 +10,15 @@ import validate from "../utils/validate";
 import { getItem, hasItem } from "../utils";
 import EntityLoader from "../loaders/EntityLoader";
 
-/** @classdesc Core singleton representing an instance of the Aurora Engine. The
-	* engine is responsible for the creation (and registration) of entities, as
-	* well as initialization and running of systems containing game logic. */
+/**
+ * @classdesc Core singleton representing an instance of the Aurora Engine. The engine is responsible for the creation
+ * (and registration) of entities, as well as initialization and running of systems containing game logic.
+ */
 class Engine {
 
-	/** @description Create an instance of the Aurora Engine. */
+	/**
+	 * @description Create an instance of the Aurora Engine.
+	 */
 	constructor() {
 		console.log( "Initializing a new Engine." );
 
@@ -66,8 +69,7 @@ class Engine {
 					const data = entity.components[ type ];
 					component.apply( data );
 				});
-			}
-			else {
+			} else {
 				const instance = new Entity( entity );
 				this.registerEntity( instance );
 			}
@@ -82,8 +84,7 @@ class Engine {
 					const data = entity._components[ type ];
 					component.apply( data );
 				});
-			}
-			else {
+			} else {
 				const instance = new Entity( entity );
 				this.registerEntity( instance );
 			}

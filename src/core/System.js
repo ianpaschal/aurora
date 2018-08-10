@@ -1,19 +1,22 @@
 // Aurora is distributed under the MIT license.
 
-/** @classdesc Class representing a System. */
+/**
+ * @classdesc Class representing a System.
+ */
 class System {
 
-	/** @description Create a System.
-		* @param {Object} config - Properties of this system.
-		* @param {String} config.name - Name of this system (primiarly used for logging purposes).
-		* @param {Bool} config.fixed - Whether the system should update as often as possible or use a fixed step size.
-		* @param {Number} config.step - Step size (in ms). Only used if `props.fixed` is `false`.
-		* @param {Array} config.componentTypes - Types to watch
-		* @param {Function} config.init - Function to run when first connecting the system to the engine.
-		* @param {Function} config.add - Function to run on an entity when adding it to the system.
-		* @param {Function} config.update - Function to run each time the engine updates the main loop.
-		* @returns {System} - The newly created System.
-		*/
+	/**
+	 * @description Create a System.
+	 * @param {Object} config - Properties of this system
+	 * @param {String} config.name - Name of this system (primiarly used for logging purposes)
+	 * @param {Bool} config.fixed - Whether the system should update as often as possible or use a fixed step size
+	 * @param {Number} config.step - Step size (in ms). Only used if 'props.fixed' is 'false'
+	 * @param {Array} config.componentTypes - Types to watch
+	 * @param {Function} config.init - Function to run when first connecting the system to the engine
+	 * @param {Function} config.add - Function to run on an entity when adding it to the system
+	 * @param {Function} config.update - Function to run each time the engine updates the main loop
+	 * @returns {System} - The newly created System
+	 */
 	constructor( config ) {
 		this._name = config.name || "unnamed";
 		this._fixed = config.fixed || false;
@@ -34,12 +37,12 @@ class System {
 		return this;
 	}
 
-	/** @description Watch an entity by adding its UUID to to the system. After
-		* adding, the system will run the entity through the internal add function
-		* to do any additional processing.
-		* @param {Entity} entity - Entity instance to add.
-		* @returns {Array} - Updated array of entity UUIDs.
-		*/
+	/**
+	 * @description Watch an entity by adding its UUID to to the system. After adding, the system will run the entity
+	 * through the internal add function to do any additional processing.
+	 * @param {Entity} entity - Entity instance to add
+	 * @returns {Array} - Updated array of entity UUIDs
+	 */
 	addEntity( entity ) {
 		this._entityUUIDs.push( entity.getUUID() );
 		this._addFn( entity );
@@ -78,8 +81,7 @@ class System {
 				this._updateFn( this._step );
 				this._savedTime -= this._step;
 			}
-		}
-		else {
+		} else {
 			this._updateFn( delta );
 		}
 	}
