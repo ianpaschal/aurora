@@ -4,20 +4,19 @@ import FS from "fs";
 import Entity from "../core/Entity";
 import Percentage from "../math/Percentage";
 
-/** @classdesc Core singleton representing an instance of the Aurora Engine. The
-	* engine is responsible for the creation (and registration) of entities, as
-	* well as initialization and running of systems containing game logic.
-	* @returns - The newly created Engine.
-	*/
+/**
+ * @classdesc ...
+ */
 class EntityLoader {
 
-	/** @description Load an Entity from a JSON file.
-		* @param {String} src - Filepath to load.
-		* @param {Function} onLoad - Callback to execute on successful load.
-		* @param {Function} onProgress - Callback to execute on progress.
-		* @param {Function} onError - Callback to execute on error.
-		* @returns {Entity} - A new Enity instance loaded from JSON.
-		*/
+	/**
+	 * @description Load an Entity from a JSON file.
+	 * @param {String} src - Filepath to load
+	 * @param {Function} onLoad - Callback to execute on successful load
+	 * @param {Function} onProgress - Callback to execute on progress
+	 * @param {Function} onError - Callback to execute on error
+	 * @returns {Entity} - A new enity instance loaded from JSON
+	 */
 	load( src, onLoad, onProgress, onError ) {
 		if ( typeof onLoad !== "function" ) {
 			return;
@@ -51,10 +50,11 @@ class EntityLoader {
 		});
 	}
 
-	/** @description Create an Entity from a JSON object.
-		* @param {Object} data - JSON object to parse.
-		* @returns {Entity} - A new Enity instance created from JSON.
-		*/
+	/**
+	 * @description Create an Entity from a JSON object.
+	 * @param {Object} data - JSON object to parse
+	 * @returns {Entity} - A new Enity instance created from JSON
+	 */
 	parse( data ) {
 		return new Entity( data );
 	}
