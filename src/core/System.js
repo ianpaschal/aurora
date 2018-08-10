@@ -37,6 +37,26 @@ class System {
 		return this;
 	}
 
+	// Getters & Setters
+
+	/**
+	 * @description
+	 * @returns
+	 */
+	get watchAll() {
+		return this._watchAll;
+	}
+
+	/**
+	 * @description Set the system to watch all entities. Not used for now.
+	 * @param {Boolean} watch -
+	 */
+	set watchAll( watch ) {
+		this._watchAll = watch;
+	}
+
+	// Other methods
+
 	/**
 	 * @description Watch an entity by adding its UUID to to the system. After adding, the system will run the entity
 	 * through the internal add function to do any additional processing.
@@ -49,10 +69,11 @@ class System {
 		return this._entityUUIDs;
 	}
 
-	/** @description Initialize the system (as a part of linking to the engine).
-		* After linking the engine, the system will run its stored init function.
-		* @param {Engine} engine - Engine instance to link to.
-		*/
+	/**
+	 * @description Initialize the system (as a part of linking to the engine). After linking the engine, the system will
+	 * run its stored init function.
+	 * @param {Engine} engine - Engine instance to link to
+	 */
 	init( engine ) {
 		if( !engine ) {
 			console.warn(
@@ -68,11 +89,11 @@ class System {
 		this._initFn();
 	}
 
-	/** @description Update the system with a given amount of time to simulate.
-		* The system will run its stored update function using either a fixed step
-		* or variable step (specified at creation) and the supplied delta time.
-		* @param {Number} delta - Time in milliseconds to simulate.
-		*/
+	/**
+	 * @description Update the system with a given amount of time to simulate. The system will run its stored update
+	 * function using either a fixed step or variable step (specified at creation) and the supplied delta time.
+	 * @param {Number} delta - Time in milliseconds to simulate
+	 */
 	update( delta ) {
 		if ( this._fixed ) {
 			// Add time to the accumulator & simulate if greater than the step size:
@@ -86,14 +107,14 @@ class System {
 		}
 	}
 
-	/** @description Check if an entity's component list includes all of the
-		* system's required components. Instead of checking every component on an
-		* entity, including unneeded ones, cycle through the system's components and
-		* check that each one is present within the entity's component list.
-		* @readonly
-		* @param {Array} entityComponents - Array of components to check.
-		* @returns {Boolean} - Whether the system should be watching the entity.
-		*/
+	/**
+	 * @description Check if an entity's component list includes all of the system's required components. Instead of
+	 * checking every component on an entity, including unneeded ones, cycle through the system's components and check
+	 * that each one is present within the entity's component list.
+	 * @readonly
+	 * @param {Array} entityComponents - Array of components to check
+	 * @returns {Boolean} - Whether the system should be watching the entity
+	 */
 	isWatchable( entity ) {
 		for ( const type of this._watchedComponents ) {
 			if ( !entity.hasComponent( type ) ) {
@@ -104,11 +125,11 @@ class System {
 		return true;
 	}
 
-	/** @description Add component types to the system's watch list. Cannot be
-		* modified after creation.
-		* @private
-		* @param {Array} componentTypes - The component types to add.
-		*/
+	/**
+	 * @description Add component types to the system's watch list. Cannot be modified after creation.
+	 * @private
+	 * @param {Array} componentTypes - The component types to add
+	 */
 	_addWatchedComponents( componentTypes ) {
 		componentTypes.forEach( ( type ) => {
 			const index = this._watchedComponents.indexOf( type );
@@ -118,11 +139,11 @@ class System {
 		});
 	}
 
-	/** @description Remove component types from the system's watch list. Cannot
-		* be modified after creation.
-		* @private
-		* @param {Array} componentTypes - The component types to remove.
-		*/
+	/**
+	 * @description Remove component types from the system's watch list. Cannot be modified after creation.
+	 * @private
+	 * @param {Array} componentTypes - The component types to remove.
+	 */
 	_removeWatchedComponents( componentTypes ) {
 		componentTypes.forEach( ( type ) => {
 			const index = this._watchedComponents.indexOf( type );
@@ -131,14 +152,6 @@ class System {
 			}
 		});
 	}
-
-	/** @description Set the system to watch all entities. Not used for now.
-		* @private
-		*/
-	_setWatchAll( watch = true ) {
-		this._watchAll = watch;
-	}
-
 }
 
 export default System;

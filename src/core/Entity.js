@@ -20,24 +20,32 @@ class Entity {
 	 * @param {Array} [config.tasks] - Array of task objects (upcoming) for the entity to execute
 	 */
 	constructor( config ) {
-		if ( config ) {
-			this._UUID = config.UUID || UUID();
-			this._type = config.type || "no-type";
-			this._name = config.name || "No Name";
-			this._components = [];
-			config.components.forEach( ( data ) => {
-				this._addComponent( new Component( data ) );
-			});
-			this._tasks = config.tasks || [];
-			this.tasksDirty = false;
-		} else {
-			this._UUID = UUID();
-			this._type = "untyped";
-			this._name = "No Name";
-			this._components = [];
-			this._tasks = [];
+
+		const defaults = {
+			UUID: UUID(),
+			type: "no-type",
+			name: "No Name",
+			components: [],
+			tasks: []
+		};
+
+		// For every property in the defaults, apply the config value if it exists, otherwise use the default value
+		for ( const prop in defaults ) {
+			if ( defaults.hasOwnProperty( prop ) ) {
+
+				// Treat the components property slightly differently, for all else use the value in defaults
+				if ( prop === "components" && config.components ) {
+					this._components = [];
+					config.components.forEach( ( data ) => {
+						this._addComponent( new Component( data ) );
+					});
+				} else {
+					this[ "_" + prop ] = config[ prop ] || defaults[ prop ];
+				}
+			}
 		}
 
+		// Newly constructed entities should never be dirty after creation
 		this._dirty = false;
 
 		return this;
@@ -124,10 +132,11 @@ class Entity {
 		return this._name;
 	}
 
-	/** @description Get the Entity's task list.
-		* @readonly
-		* @returns {Array} - The Entity's task list.
-		*/
+	/**
+	 * @description Get the Entity's task list.
+	 * @readonly
+	 * @returns {Array} - The Entity's task list
+	 */
 	get tasks() {
 		return this._tasks;
 	}
@@ -145,18 +154,20 @@ class Entity {
 		return this.tasks;
 	};
 
-	/** @description Get the Entity's type.
-		* @readonly
-		* @returns {String} - The Entity's type.
-		*/
+	/**
+	 * @description Get the Entity's type.
+	 * @readonly
+	 * @returns {String} - The Entity's type.
+	 */
 	get type() {
 		return this._type;
 	}
 
-	/** @description Get the Entity's UUID.
-		* @readonly
-		* @returns {String} - The Entity's UUID.
-		*/
+	/**
+	 * @description Get the Entity's UUID.
+	 * @readonly
+	 * @returns {String} - The Entity's UUID.
+	 */
 	get UUID() {
 		return this._UUID;
 	}
@@ -184,14 +195,13 @@ class Entity {
 		return this._components;
 	}
 
-	/** @description Remove a Component instance from the Entity. This method
-		* should only be called internally, and never after the Entity has been
-		* registered.
-		* @private
-		* @param {String} type - Type of the Component to remove.
-		* @returns {(Array|null)} - Updated array of Components, or null the
-		* Component already existed.
-		*/
+	/**
+	 * @description Remove a Component instance from the Entity. This method should only be called internally, and never
+	 * after the Entity has been registered.
+	 * @private
+	 * @param {String} type - Type of the Component to remove.
+	 * @returns {(Array|null)} - Updated array of Components, or null the component already existed.
+	 */
 	_removeComponent( type ) {
 		const index = this._components.indexOf( this.getComponent( type ) );
 		if ( index < 0 ) {
