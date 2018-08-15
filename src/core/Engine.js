@@ -11,8 +11,9 @@ import { getItem, hasItem } from "../utils";
 import EntityLoader from "../loaders/EntityLoader";
 
 /**
- * @classdesc Core singleton representing an instance of the Aurora Engine. The engine is responsible for the creation
- * (and registration) of entities, as well as initialization and running of systems containing game logic.
+ * @classdesc Core singleton representing an instance of the Aurora engine. The
+ * engine is responsible for the creation (and registration) of entities, as
+ * well as initialization and running of systems containing game logic.
  */
 class Engine {
 
