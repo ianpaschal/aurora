@@ -6,35 +6,23 @@
   "dependencies": {
     "deepmerge": "^2.1.0",
     "present": "^1.0.0",
-    "simplex-noise": "^2.4.0",
     "three": "^0.90.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
-    "css-loader": "^0.25.0",
     "eslint": "^4.17.0",
     "eslint-plugin-import": "^2.9.0",
-    "file-loader": "^0.9.0",
-    "grunt": "^1.0.2",
-    "grunt-eslint": "^20.1.0",
-    "grunt-jsdoc": "^2.2.1",
-    "grunt-webpack": "^3.0.2",
     "jsdoc": "^3.5.5",
-    "load-grunt-tasks": "^3.5.2",
     "minami": "^1.2.3",
+    "parcel-bundler": "^1.9.7",
     "typescript": "^3.0.1",
-    "typescript-eslint-parser": "^18.0.0",
-    "uglifyjs-webpack-plugin": "^1.2.5",
-    "webpack": "^2.7.0",
-    "webpack-bundle-analyzer": "^2.11.1",
-    "webpack-merge": "^4.1.2"
+    "typescript-eslint-parser": "^18.0.0"
   },
   "scripts": {
     "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
     "lint": "eslint --fix",
-    "pack:dev": "NODE_ENV=development webpack --config webpack/dev.config.js",
-    "pack:prod": "NODE_ENV=production webpack --config webpack/prod.config.js"
+    "bundle": "parcel build ./src/index.js"
   },
   "repository": {
     "type": "git",
