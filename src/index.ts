@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-// This is removed via Webpack when creating a production bundle
+// This is removed via Parcel when creating a production bundle
 console.warn(
 	"You are running Aurora in development mode.",
 	"Make sure to turn on production mode when deploying for production.",
@@ -18,7 +18,7 @@ export { default as System } from "./core/System";
 // Loaders
 export { default as EntityLoader } from "./loaders/EntityLoader";
 export { default as JSONLoader } from "./loaders/JSONLoader";
-export { default as MaterialLoader } from "./loaders/MaterialLoader";
+// export { default as MaterialLoader } from "./loaders/MaterialLoader";
 
 // Managers
 export { default as PluginManager } from "./managers/PluginManager";
