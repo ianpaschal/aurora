@@ -10,19 +10,23 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.1",
     "babel-eslint": "^8.2.1",
     "eslint": "^4.17.0",
     "eslint-plugin-import": "^2.9.0",
+    "jest": "^23.5.0",
     "jsdoc": "^3.5.5",
     "minami": "^1.2.3",
     "parcel-bundler": "^1.9.7",
+    "ts-jest": "^23.1.4",
     "typescript": "^3.0.1",
     "typescript-eslint-parser": "^18.0.0"
   },
   "scripts": {
+    "bundle": "parcel build ./src/index.js",
     "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
     "lint": "eslint --fix",
-    "bundle": "parcel build ./src/index.js"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -42,5 +46,19 @@
   "bugs": {
     "url": "https://github.com/ianpaschal/aurora/issues"
   },
-  "homepage": "https://github.com/ianpaschal/aurora#readme"
+  "homepage": "https://github.com/ianpaschal/aurora#readme",
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }
