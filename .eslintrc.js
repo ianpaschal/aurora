@@ -1,4 +1,5 @@
 module.exports = {
+	"parser": "typescript-eslint-parser",
 	"env": {
 		"browser": true,
 		"es6": true,
@@ -7,7 +8,11 @@ module.exports = {
 	"plugins": [],
 	"parserOptions": {
 		"ecmaVersion": 6,
-		"sourceType": "module"
+		"sourceType": "module",
+		"ecmaFeatures": {
+      "modules": true,
+      "jsx": true
+    }
 	},
 	"rules": {
 		"array-bracket-spacing":     [ 2, "always" ],
@@ -29,7 +34,7 @@ module.exports = {
 		"no-duplicate-imports":      [ 2 ],
 		"no-multiple-empty-lines":   [ 2, { "max": 1, "maxEOF": 0, "maxBOF": 0 } ],
 		"no-new-object":             [ 2 ],
-		"no-undef":                  [ 2 ],
+		// "no-undef":                  [ 2 ],
 		"no-unused-vars":            [ 1, { "vars": "all", "args": "after-used", "ignoreRestSiblings": false } ],
 		"no-use-before-define":      [ 2, { "functions": false } ],
 		"no-useless-constructor":    [ 2 ],
