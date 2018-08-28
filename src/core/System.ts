@@ -12,17 +12,17 @@ interface Entity {
 /**
  * @classdesc Class representing a System.
  */
-class System {
+export default class System {
 	private _displayName:    string;
 	private _engine:         Engine;
 	private _entityUUIDs:    string[];
 	private _fixed:          boolean;
 	private _methods:        {};
 	private _name:           string;
-	private _onAddEntity:    ( Entity ) => void;
-	private _onInit:         ()         => void;
-	private _onRemoveEntity: ( string ) => void;
-	private _onUpdate:       ( number ) => void;
+	private _onAddEntity:    ( entity: Entity ) => void;
+	private _onInit:         () => void;
+	private _onRemoveEntity: ( entity: Entity ) => void;
+	private _onUpdate:       ( delta: number ) => void;
 	private _savedTime:      number;
 	private _step:           number;
 	private _componentTypes: string[];
@@ -68,6 +68,8 @@ class System {
 		} else {
 			// TODO: Error handling/warn no components exist
 		}
+
+		this._methods = {};
 
 		/*
 			It's not possible to instantiate with a list of entity IDs since the
@@ -141,9 +143,9 @@ class System {
 	 * @param {string} key - Identifier for the method
 	 * @param {any} payload - Any data which should be passed to the method
 	 */
-	dispatch( key: string, payload: any ): void {
+	dispatch( key: string, payload?: any ): void {
 		// TODO: Error handling
-		this._methods[ key ]( payload );
+		return this._methods[ key ]( payload );
 	}
 
 	/**
@@ -319,5 +321,3 @@ class System {
 		return this._name;
 	}
 }
-
-export default System;

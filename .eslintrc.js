@@ -10,9 +10,9 @@ module.exports = {
 		"ecmaVersion": 6,
 		"sourceType": "module",
 		"ecmaFeatures": {
-      "modules": true,
-      "jsx": true
-    }
+			"modules": true,
+			"jsx": true
+		}
 	},
 	"rules": {
 		"array-bracket-spacing":     [ 2, "always" ],
@@ -34,7 +34,7 @@ module.exports = {
 		"no-duplicate-imports":      [ 2 ],
 		"no-multiple-empty-lines":   [ 2, { "max": 1, "maxEOF": 0, "maxBOF": 0 } ],
 		"no-new-object":             [ 2 ],
-		// "no-undef":                  [ 2 ],
+		"no-undef":                  [ 2 ],
 		"no-unused-vars":            [ 1, { "vars": "all", "args": "after-used", "ignoreRestSiblings": false } ],
 		"no-use-before-define":      [ 2, { "functions": false } ],
 		"no-useless-constructor":    [ 2 ],
@@ -50,5 +50,17 @@ module.exports = {
 		"space-in-parens":           [ 2, "always", { "exceptions": [ "{}" ] } ],
 		"space-infix-ops":           [ 2 ],
 		"template-curly-spacing":    [ 2, "always" ]
-	}
+	},
+	"overrides": [
+		{
+			"files": [
+				"**/*.ts",
+				"**/*.tsx"
+			],
+			"rules": {
+				"no-unused-vars":        [ "off" ],
+				"no-undef":              [ "off" ]
+			}
+		}
+	]
 }

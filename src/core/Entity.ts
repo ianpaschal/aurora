@@ -4,10 +4,26 @@ import UUID from "uuid/v4";
 import { getItem, hasItem } from "../utils";
 import Component from "./Component";
 
+interface Config {
+	components: [Component];
+}
+
 /**
  * @classdesc Class representing an Entity.
  */
 class Entity {
+
+	_components: any[];
+	_dirty: boolean;
+	_tasks: any;
+	_UUID: any;
+	_type: any;
+	_name: any;
+	tasksDirty: boolean;
+
+	setDirty(): any {
+		throw new Error( "Method not implemented." );
+	}
 
 	/**
 	 * Create an entity. A JSON object can be used when loading a previously created entity from disk, or creating an
@@ -19,7 +35,7 @@ class Entity {
 	 * @param {Array} [config.components] - Array of component data to generate component instances from
 	 * @param {Array} [config.tasks] - Array of task objects (upcoming) for the entity to execute
 	 */
-	constructor( config ) {
+	constructor( config?: Config ) {
 
 		const defaults = {
 			UUID: UUID(),
@@ -100,7 +116,6 @@ class Entity {
 	 */
 	set dirty( dirty ) {
 		this._dirty = dirty;
-		return this._dirty;
 	}
 
 	/**
@@ -151,7 +166,6 @@ class Entity {
 		this._tasks = tasks;
 		this.tasksDirty = true;
 		this.setDirty();
-		return this.tasks;
 	};
 
 	/**
@@ -194,6 +208,9 @@ class Entity {
 		this._dirty = true;
 		return this._components;
 	}
+	getUUID(): any {
+		throw new Error( "Method not implemented." );
+	}
 
 	/**
 	 * @description Remove a Component instance from the Entity. This method should only be called internally, and never
@@ -218,7 +235,7 @@ class Entity {
 	 * @returns {Entity} - New instance with the same components
 	 */
 	clone() {
-		return new this.constructor().copy( this );
+		return new Entity().copy( this );
 	}
 
 	/**
@@ -227,8 +244,8 @@ class Entity {
 	 * @returns {Array} - Updated array of Components copied from source
 	 */
 	copy( source ) {
-		this._type = source.getType();
-		this._name = source.getName();
+		this._type = source.type;
+		this._name = source.name;
 		this._components = [];
 		source.getComponents().forEach( ( component ) => {
 			this._components.push( component.clone() );

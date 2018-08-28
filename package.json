@@ -48,6 +48,7 @@
   },
   "homepage": "https://github.com/ianpaschal/aurora#readme",
   "jest": {
+    "collectCoverage": true,
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },

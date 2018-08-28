@@ -12,6 +12,9 @@ dist
 # Dependency directories
 node_modules/
 
+# Code coverage
+/coverage
+
 # Caches
 .npm
 .eslintcache

@@ -7,12 +7,12 @@ class Percentage {
 
 	/**
 	 * @description Create an instance of a percentage.
-	 * @param {*} a - Numerator of the percentage
-	 * @param {*} b - Demoninator of the percentage
-	 * @param {*} places - Number of decimal places to round to
-	 * @returns {Number} - A float number representing the percentage
+	 * @param {number} a - Numerator of the percentage
+	 * @param {number} b - Demoninator of the percentage
+	 * @param {number} places - Number of decimal places to round to
+	 * @returns {Percentage} - A float number representing the percentage
 	 */
-	constructor( a, b, places ) {
+	constructor( a: number, b: number, places: number ) {
 		places = places || 2;
 		const percent = ( a / b ) * 100;
 		return Number.parseFloat( percent ).toFixed( places );

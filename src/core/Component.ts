@@ -4,10 +4,19 @@ import UUID from "uuid/v4";
 import { deepCopy } from "../utils";
 import deepMerge from "deepmerge";
 
+interface Config {
+	UUID: string;
+	type: string;
+	data: {};
+}
+
 /**
- * @classdesc Class representing a Component.
+ * @classdesc Class representing a component.
  */
 class Component {
+	_UUID: string;
+	_type: string;
+	_data: any;
 
 	/**
 	 * @description Create a Component.
@@ -20,7 +29,7 @@ class Component {
 	 * the component
 	 * @returns {Component} - The newly created component
 	 */
-	constructor( config ) {
+	constructor( config?:Config ) {
 
 		// If building from JSON
 		if ( config ) {
@@ -43,7 +52,7 @@ class Component {
 	 * @readonly
 	 * @returns {Object} - The component's data
 	 */
-	get data() {
+	get data(): {} {
 		return this._data;
 	}
 
@@ -53,10 +62,9 @@ class Component {
 	 * @param {Object} json - JSON data to apply to the Component.
 	 * @returns {Object} - Updated data object.
 	 */
-	set data( json ) {
+	set data( data: {}) {
 		// TODO: Add validation
-		this._data = json;
-		return this._data;
+		this._data = data;
 	}
 
 	/**
@@ -87,10 +95,9 @@ class Component {
 	 * @param {String} type - New type for the component
 	 * @returns {String} - Updated type for the component
 	 */
-	set type( type ) {
+	set type( type: string ) {
 		// TODO: Add validation
 		this._type = type;
-		return this._type;
 	}
 
 	/**
@@ -122,9 +129,7 @@ class Component {
 	 * @returns {Component} - New component instance with the same data
 	 */
 	clone() {
-		const clone = new this.constructor();
-		clone.copy( this );
-		return clone;
+		return new Component().copy( this );
 	}
 
 	/**
@@ -132,11 +137,10 @@ class Component {
 	 * @param {Component} source - Component to copy from
 	 * @returns {Component} - Component with updated data
 	 */
-	copy( source ) {
+	copy( source: Component ): void {
 		// TODO: Add validation
-		this._type = source.getType();
-		this._data = deepCopy( source.getData() );
-		return this;
+		this._type = source.type;
+		this._data = deepCopy( source.data );
 	}
 }
 

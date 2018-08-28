@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-import * as Three from "three";
+import { Color, Vector3 } from "three";
 import UUID from "uuid/v4";
 
 /**
@@ -8,6 +8,13 @@ import UUID from "uuid/v4";
  * areas of expansion are world visibility ("fog-of-war"), assigning AIs, and resource/economy tracking.
  */
 class Player {
+	_dirty: boolean;
+	_entityUUIDs: any;
+	_UUID: any;
+	_name: any;
+	_tasks: any;
+	_start: any;
+	_visibilityMap: HTMLCanvasElement;
 
 	/**
 	 * @description Create a Player instance.
@@ -24,8 +31,8 @@ class Player {
 		const defaults = {
 			UUID: UUID(),
 			name: "Unnamed Player",
-			color: new Three.Color( 0xCCCCCC ),
-			start: new Three.Vector3(),
+			color: new Color( 0xCCCCCC ),
+			start: new Vector3(),
 			entityUUIDs: []
 		};
 
@@ -60,7 +67,6 @@ class Player {
 	 */
 	set dirty( dirty ) {
 		this._dirty = dirty;
-		return this._dirty;
 	}
 
 	/**
@@ -132,8 +138,8 @@ class Player {
 	addVisibilityMap() {
 		// Create the canvas:
 		const canvas = document.createElement( "canvas" );
-		canvas.setAttribute( "width", 1024 );
-		canvas.setAttribute( "height", 1024 );
+		canvas.setAttribute( "width", "1024" );
+		canvas.setAttribute( "height", "1024" );
 		// Paint it black:
 		const context = canvas.getContext( "2d" );
 		context.fillStyle = "white";

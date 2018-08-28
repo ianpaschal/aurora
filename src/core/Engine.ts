@@ -16,6 +16,23 @@ import EntityLoader from "../loaders/EntityLoader";
  * well as initialization and running of systems containing game logic.
  */
 class Engine {
+	_accumulator:      number;
+	_assets:           { assembly: {}; geometry: {}; sound: {}; texture: {}; };
+	_entities:         any[];
+	_lastTickTime:     any;
+	_loop:             any;
+	_onUpdateDone:     any;
+	_onUpdateFinished: any;
+	_onUpdateStart:    any;
+	_players:          any[];
+	_pluginLocations:  any;
+	_pluginManager:    any;
+	_running:          boolean;
+	_scene:            any;
+	_stateManager:     any;
+	_step:             number;
+	_systems:          any[];
+	_ticks:            number;
 
 	/**
 	 * @description Create an instance of the Aurora Engine.
@@ -58,7 +75,7 @@ class Engine {
 		return this;
 	}
 
-	applyState( state ) {
+	applyState( state: State ) {
 		this._lastTickTime = state.timestamp;
 		state.entities.forEach( ( entity ) => {
 			if ( hasItem( entity._uuid, this._entities, "_uuid" ) ) {
@@ -245,7 +262,7 @@ class Engine {
 	set onUpdateFinished( fn ) {
 		if ( typeof fn != "function" ) {
 			console.error( "Please supply a valid function." );
-			return null;
+			return;
 		}
 		this._onUpdateFinished = fn;
 	}
@@ -257,7 +274,7 @@ class Engine {
 	set onUpdateStart( fn ) {
 		if ( typeof fn != "function" ) {
 			console.error( "Please supply a valid function." );
-			return null;
+			return;
 		}
 		this._onUpdateStart = fn;
 	}
