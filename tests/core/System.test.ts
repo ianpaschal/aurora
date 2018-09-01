@@ -1,11 +1,26 @@
 import System from "../../src/core/System";
+import Entity from "../../src/core/Entity";
 
 describe( "System", () => {
 	let instance: System;
 	let mockMethod;
 	const config = {
 		name: "my-system-name",
-		componentTypes: [ "position", "velocity" ]
+		step: 100,
+		componentTypes: [ "position", "velocity" ],
+		fixed: true,
+		onUpdate( delta: number ) {
+
+		},
+		onInit() {
+
+		},
+		onAddEntity( entity: Entity ): void {
+
+		},
+		onRemoveEntity( entity: Entity ): void {
+
+		}
 	};
 
 	// Create a new system instance to run tests on
@@ -31,6 +46,16 @@ describe( "System", () => {
 	test( "Dispatch calls the user-defined method once.", () => {
 		instance.dispatch( "mock-method" );
 		expect( mockMethod.mock.calls.length ).toBe( 1 );
+	});
+
+	test( "Accumulator should save left over time", () => {
+
+		instance.update( 105 );
+		expect( instance.accumulator ).toBe( 5 );
+	});
+
+	test( "Set step from config.", () => {
+		expect( instance.step ).toBe( config.step );
 	});
 
 });
