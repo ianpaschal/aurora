@@ -1,13 +1,8 @@
 // Aurora is distributed under the MIT license.
 
-// For typing
-interface Engine {
-	scene: null;
-}
-interface Entity {
-	UUID:         string; // This is actually a getter for the _UUID property
-	hasComponent: ( string ) => boolean;
-}
+import Engine from "./Engine"; // Typing
+import Entity from "./Entity"; // Typing
+import { SystemConfig } from "../utils/interfaces"; // Typing
 
 /**
  * @classdesc Class representing a System.
@@ -23,39 +18,32 @@ export default class System {
 	private _onInit:         () => void;
 	private _onRemoveEntity: ( entity: Entity ) => void;
 	private _onUpdate:       ( delta: number ) => void;
-	private _savedTime:      number;
+	private _accumulator:    number;
 	private _step:           number;
 	private _componentTypes: string[];
 
-	/** @description Create a System.
+	/**
+	 * @description Create a System.
 	 * @param {Object} config - Properties of this system
 	 * @param {string} config.name - Name of this system
-	 * @param {boolean} config.fixed - Whether the system should update as often
-	 * as possible or use a fixed step size
-	 * @param {number} config.step - Step size in milliseconds (only used if
-	 * `props.fixed` is `false`)
+	 * @param {boolean} config.fixed - Whether the system should update as often as possible or use a fixed step size
+	 * @param {number} config.step - Step size in milliseconds (only used if `props.fixed` is `false`)
 	 * @param {array} config.componentTypes - Types to watch
-	 * @param {function} config.onInit - Function to run when first connecting the
-	 * system to the engine
-	 * @param {function} config.onAddEntity - Function to run on an entity when
-	 * adding it to the system's watch list
-	 * @param {function} config.onRemoveEntity - Function to run on an entity when
-	 * removing it from the system's watch list
-	 * @param {function} config.onUpdate - Function to run each time the engine
-	 * updates the main loop
+	 * @param {Function} config.onInit - Function to run when first connecting the system to the engine
+	 * @param {Function} config.onAddEntity - Function to run on an entity when adding it to the system's watchlist
+	 * @param {Function} config.onRemoveEntity - Function to run on an entity when removing it from the system's watchlist
+	 * @param {Function} config.onUpdate - Function to run each time the engine updates the main loop
 	 * @returns {System} - The newly created system
 	 */
-	constructor( config ) {
+	constructor( config?: SystemConfig ) {
 		this._name = "no-name";
 		this._fixed = false;
 		this._step = 100;
-		this._savedTime = 0;
+		this._accumulator = 0;
 		this._displayName = this._name[ 0 ].toUpperCase() + this._name.substr( 1 );
 
 		for ( const prop in config ) {
-			// if ( System.hasOwnProperty( "_" + prop ) ) {
 			this[ "_" + prop ] = config[ prop ];
-			// }
 		}
 
 		if ( !config.onUpdate ) {
@@ -71,20 +59,16 @@ export default class System {
 
 		this._methods = {};
 
-		/*
-			It's not possible to instantiate with a list of entity IDs since the
-			entities might not exist, and the actual entity is needed so that the
-			add hook can be run successfully on the entity instance.
-		*/
+		/* It's not possible to instantiate with a list of entity IDs since the entities might not exist, and the actual
+			entity is needed so that the add hook can be run successfully on the entity instance. */
 		this._entityUUIDs = [];
 	}
 
 	// INIT & UPDATE
 
 	/**
-	 * @description Initialize the system (as a part of linking to the engine).
-	 * After linking the engine, the system will run its stored init hook method.
-	 * Cannot be modified after the system is registered with the engine.
+	 * @description Initialize the system (as a part of linking to the engine). After linking the engine, the system will
+	 * run its stored init hook method. Cannot be modified after the system is registered with the engine.
 	 * @param {Engine} engine - Engine instance to link to
 	 */
 	init( engine: Engine ): void {
@@ -105,19 +89,18 @@ export default class System {
 	}
 
 	/**
-	 * @description Update the system with a given amount of time to simulate.
-	 * The system will run its stored update function using either a fixed step
-	 * or variable step (specified at creation) and the supplied delta time.
-	 * Cannot be modified after the system is registered with the engine.
+	 * @description Update the system with a given amount of time to simulate. The system will run its stored update
+	 * function using either a fixed step or variable step (specified at creation) and the supplied delta time. Cannot be
+	 * modified after the system is registered with the engine.
 	 * @param {number} delta - Time in milliseconds to simulate
 	 */
 	update( delta: number ): void {
 		if ( this._fixed ) {
 			// Add time to the accumulator & simulate if greater than the step size:
-			this._savedTime += delta;
-			if ( this._savedTime >= this._step ) {
+			this._accumulator += delta;
+			if ( this._accumulator >= this._step ) {
 				this._onUpdate( this._step );
-				this._savedTime -= this._step;
+				this._accumulator -= this._step;
 			}
 		} else {
 			this._onUpdate( delta );
@@ -132,14 +115,14 @@ export default class System {
 	 * @param {string} key - Identifier for the method
 	 * @param {function} method - Method to be called by user in the future
 	 */
-	addMethod( key: string, method: () => any ): void {
+	addMethod( key: string, method: Function ): void {
 		// TODO: Error handling
 		this._methods[ key ] = method;
 	}
 
 	/**
-	 * @description Call a user-added method from outside the system. Cannot be
-	 * modified after the system is registered with the engine.
+	 * @description Call a user-added method from outside the system. Cannot be modified after the system is registered
+	 * with the engine.
 	 * @param {string} key - Identifier for the method
 	 * @param {any} payload - Any data which should be passed to the method
 	 */
@@ -149,8 +132,8 @@ export default class System {
 	}
 
 	/**
-	 * @description Remove a user-added method from the system. Cannot be modified
-	 * after the system is registered with the engine.
+	 * @description Remove a user-added method from the system. Cannot be modified after the system is registered with the
+	 * engine.
 	 * @param {string} key - Identifier for the method
 	 */
 	removeMethod( key: string ): void {
@@ -186,7 +169,7 @@ export default class System {
 	 * @returns {boolean} - True if the given entity is being watched
 	 */
 	isWatchingEntity( entity: Entity ): boolean {
-		if ( this._entityUUIDs.indexOf( entity.UUID ) > -1 ) {
+		if ( this._entityUUIDs.indexOf( entity.uuid ) > -1 ) {
 			return true;
 		}
 		return false;
@@ -206,28 +189,27 @@ export default class System {
 	}
 
 	/**
-	 * @description Watch an entity by adding its UUID to to the system. After
-	 * adding, the system will run the entity through the internal add function
-	 * to do any additional processing.
+	 * @description Watch an entity by adding its UUID to to the system. After adding, the system will run the entity
+	 * through the internal add function to do any additional processing.
 	 * @param {Entity} entity - Entity instance to watch
 	 * @returns {array} - Updated array of watched entity UUIDs
 	 */
 	watchEntity( entity: Entity ): string[] {
 
 		// Check if this entity is already being watched
-		if ( this._entityUUIDs.indexOf( entity.UUID ) > -1 ) {
+		if ( this._entityUUIDs.indexOf( entity.uuid ) > -1 ) {
 			// TODO: Error handling
 			// Already exists
 			return;
 		}
-		this._entityUUIDs.push( entity.UUID );
+		this._entityUUIDs.push( entity.uuid );
 		this._onAddEntity( entity );
 		return this._entityUUIDs;
 	}
 
 	/**
-	 * @description Add a single component type to the system's watch list. Cannot
-	 * be modified after the system is registered with the engine.
+	 * @description Add a single component type to the system's watch list. Cannot be modified after the system is
+	 * registered with the engine.
 	 * @param {string} componentType - Component type to watch
 	 * @returns {array} - Updated array of watched component types
 	 */
@@ -246,8 +228,8 @@ export default class System {
 	}
 
 	/**
-	 * @description Add component types to the system's watch list. Cannot be
-	 * modified after the system is registered with the engine.
+	 * @description Add component types to the system's watch list. Cannot be modified after the system is registered with
+	 * the engine.
 	 * @param {Array} componentTypes - The component types to watch
 	 * @returns {array} - Updated array of watched component types
 	 */
@@ -265,7 +247,7 @@ export default class System {
 	 * @returns {array} - Updated array of watched entity UUIDs
 	 */
 	unwatchEntity( entity: Entity ): string[] {
-		const index = this._entityUUIDs.indexOf( entity.UUID );
+		const index = this._entityUUIDs.indexOf( entity.uuid );
 		if ( index < 0 ) {
 			// TODO: Add error handling
 			return;
@@ -275,8 +257,8 @@ export default class System {
 	}
 
 	/**
-	 * @description Remove a single component type to the system's watch list.
-	 * Cannot be modified after the system is registered with the engine.
+	 * @description Remove a single component type to the system's watch list. Cannot be modified after the system is
+	 * registered with the engine.
 	 * @param {string} componentType - Component type to stop watching
 	 * @returns {array} - Updated array of watched component types
 	 */
@@ -289,8 +271,8 @@ export default class System {
 	}
 
 	/**
-	 * @description Remove component types from the system's watch list. Cannot be
-	 * modified after the system is registered with the engine.
+	 * @description Remove component types from the system's watch list. Cannot be modified after the system is registered
+	 * with the engine.
 	 * @param {Array} componentTypes - The component types to remove
 	 * @returns {array} - Updated array of watched component types
 	 * */
@@ -308,8 +290,8 @@ export default class System {
 	get step() {
 		return this._step;
 	}
-	get savedTime() {
-		return this._savedTime;
+	get accumulator() {
+		return this._accumulator;
 	}
 	get watchedComponentTypes() {
 		return this._componentTypes;

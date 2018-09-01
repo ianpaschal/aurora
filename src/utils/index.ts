@@ -4,7 +4,7 @@ export function capitalize( str ) {
 	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 }
 
-export function deepCopy( obj ) {
+export function copy( obj ) {
 	return JSON.parse( JSON.stringify( obj ) );
 }
 

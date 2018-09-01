@@ -1,7 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import { Color, Vector3 } from "three";
-import UUID from "uuid/v4";
+import * as UUID from "uuid";
 
 /**
  * @classdesc Class representing a Player. At the time of writing the Player class is very lightweight but the likely

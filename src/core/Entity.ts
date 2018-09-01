@@ -1,48 +1,37 @@
 // Aurora is distributed under the MIT license.
 
-import UUID from "uuid/v4";
+import * as uuid from "uuid";
 import { getItem, hasItem } from "../utils";
 import Component from "./Component";
-
-interface Config {
-	components: [Component];
-}
+import System from "./System"; // Typing
+import { EntityConfig } from "../utils/interfaces"; // Typing
 
 /**
  * @classdesc Class representing an Entity.
  */
-class Entity {
+export default class Entity {
 
 	_components: any[];
-	_dirty: boolean;
-	_tasks: any;
-	_UUID: any;
-	_type: any;
-	_name: any;
-	tasksDirty: boolean;
-
-	setDirty(): any {
-		throw new Error( "Method not implemented." );
-	}
+	_name:       string;
+	_type:       string;
+	_uuid:       string;
 
 	/**
-	 * Create an entity. A JSON object can be used when loading a previously created entity from disk, or creating an
-	 * entity to be used as an assembly to clone into new entity instances.
+	 * @description Create an entity. A JSON object can be used when loading a previously created entity from disk, or
+	 * creating an entity to be used as an assembly to clone into new entity instances.
 	 * @param {Object} [config] - JSON object containing entity data
 	 * @param {String} [config.uuid] - UUID of the entity
 	 * @param {String} [config.type] - Type of the entity
 	 * @param {String} [config.name] - Name of the entity (typically also called "unit type" in-game)
 	 * @param {Array} [config.components] - Array of component data to generate component instances from
-	 * @param {Array} [config.tasks] - Array of task objects (upcoming) for the entity to execute
 	 */
-	constructor( config?: Config ) {
+	constructor( config?: EntityConfig ) {
 
 		const defaults = {
-			UUID: UUID(),
-			type: "no-type",
-			name: "No Name",
-			components: [],
-			tasks: []
+			uuid:       uuid(),
+			type:       "no-type",
+			name:       "No Name",
+			components: []
 		};
 
 		// For every property in the defaults, apply the config value if it exists, otherwise use the default value
@@ -60,21 +49,15 @@ class Entity {
 				}
 			}
 		}
-
-		// Newly constructed entities should never be dirty after creation
-		this._dirty = false;
-
 		return this;
 	}
-
-	// Getters & Setters
 
 	/**
 	 * @description Get all of the entity's components.
 	 * @readonly
 	 * @returns {Array} - Array of the entity's components
 	 */
-	get components() {
+	get components(): Component[] {
 		return this._components;
 	}
 
@@ -86,36 +69,9 @@ class Entity {
 	get componentTypes() {
 		const componentTypes = [];
 		this._components.forEach( ( component ) => {
-			componentTypes.push( component.getType() );
+			componentTypes.push( component.type );
 		});
 		return componentTypes;
-	}
-
-	/**
-	 * @description Get the entity's current task.
-	 * @readonly
-	 * @returns {Object} - The entity's current task
-	 */
-	get currentTask() {
-		return this._tasks[ 0 ];
-	}
-
-	/**
-	 * @description Check if any component has been changed since the last update.
-	 * @readonly
-	 * @returns {Bool} - True if the entity has been changed
-	 */
-	get dirty() {
-		return this._dirty;
-	}
-
-	/**
-	 * @description Set the entity as dirty or clean.
-	 * @param {Bool} dirty - Value to set the dirty flag
-	 * @returns {Bool} - The Component's dirty flag
-	 */
-	set dirty( dirty ) {
-		this._dirty = dirty;
 	}
 
 	/**
@@ -126,10 +82,9 @@ class Entity {
 	get JSON() {
 		// Provide new keys instead of stringifying private properties (with '_')
 		const data = {
-			UUID: this._UUID,
+			uuid: this._uuid,
 			type: this._type,
 			name: this._name,
-			tasks: this._tasks,
 			components: []
 		};
 		this._components.forEach( ( component ) => {
@@ -148,27 +103,6 @@ class Entity {
 	}
 
 	/**
-	 * @description Get the Entity's task list.
-	 * @readonly
-	 * @returns {Array} - The Entity's task list
-	 */
-	get tasks() {
-		return this._tasks;
-	}
-
-	/**
-	 * @description Overwite the current task list with an array tasks.
-	 * @param {Array} tasks - Array of task objects to replace existing tasks
-	 * @returns {Array} - Updated array of tasks
-	 */
-	set tasks( tasks ) {
-		// TODO: Add validation
-		this._tasks = tasks;
-		this.tasksDirty = true;
-		this.setDirty();
-	};
-
-	/**
 	 * @description Get the Entity's type.
 	 * @readonly
 	 * @returns {String} - The Entity's type.
@@ -182,11 +116,9 @@ class Entity {
 	 * @readonly
 	 * @returns {String} - The Entity's UUID.
 	 */
-	get UUID() {
-		return this._UUID;
+	get uuid() {
+		return this._uuid;
 	}
-
-	// Other methods
 
 	/**
 	 * @description Add a component instance to the entity. This method should only be called internally, and never after
@@ -195,21 +127,17 @@ class Entity {
 	 * @param {Component} component - The component to add
 	 * @returns {(Array|null)} - Updated array of components, or null if the component already existed
 	 */
-	_addComponent( component ) {
+	_addComponent( component: Component ) {
 		// Don't add if it already exists:
-		if ( this.hasComponent( component.getType() ) ) {
+		if ( this.hasComponent( component.type ) ) {
 			console.warn( "Couldn't add "
-				+ component.getType() + " to " + this.getUUID()
+				+ component.type + " to " + this._uuid
 				+ ": Component already exists!"
 			);
 			return null;
 		}
 		this._components.push( component );
-		this._dirty = true;
 		return this._components;
-	}
-	getUUID(): any {
-		throw new Error( "Method not implemented." );
 	}
 
 	/**
@@ -219,14 +147,13 @@ class Entity {
 	 * @param {String} type - Type of the Component to remove.
 	 * @returns {(Array|null)} - Updated array of Components, or null the component already existed.
 	 */
-	_removeComponent( type ) {
+	_removeComponent( type: string ) {
 		const index = this._components.indexOf( this.getComponent( type ) );
 		if ( index < 0 ) {
 			console.warn( "Component with id " + type + "doesn't exist!" );
 			return null;
 		}
 		this._components.splice( index, 1 );
-		this._dirty = true;
 		return this._components;
 	}
 
@@ -234,8 +161,10 @@ class Entity {
 	 * @description Clone the entity.
 	 * @returns {Entity} - New instance with the same components
 	 */
-	clone() {
-		return new Entity().copy( this );
+	clone(): Entity {
+		const clone = new Entity();
+		clone.copy( this );
+		return clone;
 	}
 
 	/**
@@ -250,7 +179,6 @@ class Entity {
 		source.getComponents().forEach( ( component ) => {
 			this._components.push( component.clone() );
 		});
-		this._dirty = true;
 		return this._components;
 	}
 
@@ -296,7 +224,6 @@ class Entity {
 		for ( let i = 0; i < this._components.length; i++ ) {
 			if ( this._components[ i ].getType() === type ) {
 				this._components[ i ].apply( data );
-				this.setDirty();
 				return this._components[ i ];
 			}
 		}
@@ -304,40 +231,16 @@ class Entity {
 		return null;
 	}
 
-	/** @description Append an array of tasks to the current task queue.
-		* @param {Array} tasks - Array of task objects to replace existing tasks.
-		* @returns {Array} - Updated array of tasks.
-		*/
-	appendTasks( tasks ) {
-		// TODO: Add validation
-		this._tasks.concat( tasks );
-		this.setDirty();
-		return this.tasks;
-	};
+	isWatchable( system: System ) {
+		// Faster to loop through search criteria vs. all components on entity
+		for ( const type of system.watchedComponentTypes ) {
 
-	/** @description Insert an array of tasks into the front of the current task
-		* queue.
-		* @param {Array} tasks - Array of task objects to replace existing tasks.
-		* @returns {Array} - Updated array of tasks.
-		*/
-	insertTasks( tasks ) {
-		this._tasks = tasks.concat( this._tasks );
-		this.tasksDirty = true;
-		this.setDirty();
-		return this.tasks;
-	};
-
-	/** @description Advance the current task by one.
-		* @returns {Array} - Updated array of tasks.
-		*/
-	// Advance forward in the task queue:
-	advanceTasks() {
-		this._tasks.shift();
-		this.tasksDirty = true;
-		this.setDirty();
-		return this.tasks;
-	};
+			// Return early if any required component is missing on entity
+			if ( !this.hasComponent( type ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
-
-export default Entity;

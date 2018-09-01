@@ -4,6 +4,8 @@
   "description": "A small entity-component-system game engine for real-time-strategy games.",
   "main": "./src/index.js",
   "dependencies": {
+    "@types/deepmerge": "^2.1.0",
+    "@types/uuid": "^3.4.3",
     "deepmerge": "^2.1.0",
     "present": "^1.0.0",
     "three": "^0.90.0",

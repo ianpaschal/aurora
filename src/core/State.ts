@@ -1,11 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-// For typing
-interface Engine {
-	lastTickTime: number;
-	_entities:    any[];
-	_players:     any[];
-}
+import Engine from "./Engine"; // Typing
 
 /**
  * @classdesc Class representing a State.
@@ -13,33 +8,34 @@ interface Engine {
 export default class State {
 	_timestamp: any;
 	_entities:  any[];
-	_players:   any[];
 
 	/**
 	 * @description Create a Player instance.
-	 * @param {Number} timestamp
-	 * @param {Array} engine - Engine which should be copied
+	 * @param {number} timestamp
+	 * @param {Engine} engine - Engine which should be copied
 	 * @returns {State} - The newly created State
 	 */
 	constructor( engine: Engine ) {
 		this._timestamp = engine.lastTickTime;
 		this._entities = [];
-		this._players = [];
-		engine._entities.forEach( ( entity ) => {
-			this._entities.push( entity.getJSON() );
-		});
-		engine._players.forEach( ( player ) => {
-			this._players.push( player.getJSON() );
+		engine.entities.forEach( ( entity ) => {
+			// Copy of the entity's data using non-private property keys
+			const components = [];
+			entity.components.forEach( ( component ) => {
+				components.push( component.data );
+			});
+			this._entities.push({
+				uuid: entity.uuid,
+				type: entity.type,
+				name: entity.name,
+				components: components
+			});
 		});
 		return this;
 	}
 
 	get entities() {
 		return this._entities;
-	}
-
-	get players() {
-		return this._players;
 	}
 
 	get timestamp() {

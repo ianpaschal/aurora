@@ -1,51 +1,43 @@
 // Aurora is distributed under the MIT license.
 
-import UUID from "uuid/v4";
-import { deepCopy } from "../utils";
-import deepMerge from "deepmerge";
-
-interface Config {
-	UUID: string;
-	type: string;
-	data: {};
-}
+import * as uuid from "uuid";
+import { copy } from "../utils";
+import * as merge from "deepmerge";
+import { ComponentConfig } from "../utils/interfaces"; // Typing
 
 /**
  * @classdesc Class representing a component.
  */
-class Component {
-	_UUID: string;
+export default class Component {
+	_uuid: string;
 	_type: string;
 	_data: any;
 
 	/**
 	 * @description Create a Component.
-	 * @param {Object} [config] - JSON object containing component data. This is
-	 * used when loading a previously created ecomponent from disk, or creating
-	 * the components which comprise an assembly.
-	 * @param {String} [config.uuid] - UUID of the component
-	 * @param {String} [config.type] - Type of the component
-	 * @param {Object} [config.data] - JSON object containing the actual data for
-	 * the component
+	 * @param {Object} [config] - Object containing component data. This is used when loading a previously created
+	 * component from disk, or creating the components which comprise an assembly.
+	 * @param {string} [config.uuid] - UUID of the component
+	 * @param {string} [config.type] - Type of the component
+	 * @param {Object} [config.data] - Object containing the actual data for the component
 	 * @returns {Component} - The newly created component
 	 */
-	constructor( config?:Config ) {
+	constructor( config?: ComponentConfig ) {
 
-		// If building from JSON
+		// If building from existing data
 		if ( config ) {
-			this._UUID = config.UUID;
+			this._uuid = config.uuid;
 			this._type = config.type;
-			this._data = config.data;
-		} else {
-			this._UUID = UUID();
-			this._type = "noname";
-			this._data = {}; // NOTE: Some components use an array
+			this._data = copy( config.data ); // Copy instead of referencing the data
+			return this;
 		}
 
+		// Assign default values
+		this._uuid = uuid();
+		this._type = "noname";
+		this._data = {}; // NOTE: Some components use an array
 		return this;
 	}
-
-	// Getters & Setters
 
 	/**
 	 * @description Get the component's data.
@@ -57,34 +49,34 @@ class Component {
 	}
 
 	/**
-	 * @description Set JSON data in this Component. Note: This method differs
-	 * from `.apply()` in that it completely overwrites any existing data.
-	 * @param {Object} json - JSON data to apply to the Component.
-	 * @returns {Object} - Updated data object.
+	 * @description Set the data for the component. Note: This method differs from `.mergeData()` in that it completely
+	 * overwrites any existing data within the component.
+	 * @param {Object} data - Data object to apply
+	 * @returns {Object} - The component's updated updated data object
 	 */
 	set data( data: {}) {
 		// TODO: Add validation
-		this._data = data;
+		this._data = copy( data );
 	}
 
 	/**
 	 * @description Get the component's data as a JSON string.
 	 * @readonly
-	 * @returns {String} - The component's data as a JSON string
+	 * @returns {string} - The component's data as a JSON string
 	 */
 	get JSON() {
 		// Provide new keys instead of stringifying private properties (with '_')
 		return JSON.stringify({
-			data: this._data,
+			data: this._data, // TODO: This should get each component and stringify that
 			type: this._type,
-			UUID: this._UUID
+			uuid: this._uuid
 		}, null, 4 );
 	}
 
 	/**
 	 * @description Get the component's type.
 	 * @readonly
-	 * @returns {String} - The component's type
+	 * @returns {string} - The component's type
 	 */
 	get type() {
 		return this._type;
@@ -92,11 +84,9 @@ class Component {
 
 	/**
 	 * @description Set the component's type.
-	 * @param {String} type - New type for the component
-	 * @returns {String} - Updated type for the component
+	 * @param {string} type - New type for the component
 	 */
 	set type( type: string ) {
-		// TODO: Add validation
 		this._type = type;
 	}
 
@@ -105,22 +95,19 @@ class Component {
 	 * @readonly
 	 * @returns {String} - The component's UUID
 	 */
-	get UUID() {
-		return this._UUID;
+	get uuid() {
+		return this._uuid;
 	}
 
-	// Other methods
-
 	/**
-	 * @description Apply JSON data to this Component. Note: When two different
-	 * types share the same key (i.e. a string and a boolean), the new value (in
-	 * the JSON) will overwrite the existing value. This also applies to objects
+	 * @description Merge a data object into this component. Note: When two different types share the same key (i.e. a
+	 * string and a boolean), the new value (in the JSON) will overwrite the existing value. This also applies to objects
 	 * and arrays.
-	 * @param {Object} json - JSON data to apply to the component
-	 * @returns {Object} - Updated data object
+	 * @param {Object} data - JSON data to apply to the component
+	 * @returns {(Object|Array)} - Updated data object/array
 	 */
-	applyData( json ) {
-		this._data = deepMerge( this._data, json );
+	mergeData( data ): {}|[] {
+		this._data = merge( this._data, data );
 		return this._data;
 	}
 
@@ -128,8 +115,10 @@ class Component {
 	 * @description Clone the component.
 	 * @returns {Component} - New component instance with the same data
 	 */
-	clone() {
-		return new Component().copy( this );
+	clone(): Component {
+		const clone = new Component();
+		clone.copy( this );
+		return clone;
 	}
 
 	/**
@@ -138,10 +127,10 @@ class Component {
 	 * @returns {Component} - Component with updated data
 	 */
 	copy( source: Component ): void {
-		// TODO: Add validation
-		this._type = source.type;
-		this._data = deepCopy( source.data );
-	}
-}
 
-export default Component;
+		// Don't copy the UUID!
+		this._type = source.type;
+		this._data = copy( source.data );
+	}
+
+}

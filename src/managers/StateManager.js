@@ -88,6 +88,25 @@ class StateManager {
 		});
 		return ordered;
 	}
+
+	applyState( state: State ) {
+		this._lastTickTime = state.timestamp;
+		state.entities.forEach( ( entity ) => {
+			if ( hasItem( entity.uuid, this._entities, "uuid" ) ) {
+				const instance = this.getEntity( entity.uuid );
+				/* Don't bother checking if entity has component because if it's already
+					been registered it will be frozen. */
+				instance.components.forEach( ( component ) => {
+					const type = component.type;
+					const data = entity.components[ type ];
+					component.mergeData( data );
+				});
+			} else {
+				const instance = new Entity( entity );
+				this.addEntity( instance );
+			}
+		});
+	}
 }
 
 export default StateManager;
