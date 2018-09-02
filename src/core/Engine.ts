@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-import Present from "present";
+import * as present from "present";
 import Entity from "./Entity";
 import System from "./System";
 import { getItem, hasItem } from "../utils";
@@ -10,11 +10,12 @@ import { getItem, hasItem } from "../utils";
  * (and registration) of entities, as well as initialization and running of systems containing game logic.
  */
 export default class Engine {
+
 	private _assemblies:       Entity[];
 	private _entities:         Entity[];
 	private _lastTickTime:     number;
-	private _onUpdateComplete: Function; // Hook called when update is complete
-	private _onUpdateStart:    Function; // Hook called when update starts
+	private _onTickComplete: Function; // Hook called when update is complete
+	private _onTickStart:    Function; // Hook called when update starts
 	private _running:          boolean;  // Whether or not the engine is running
 	private _systems:          System[];
 
@@ -35,11 +36,9 @@ export default class Engine {
 		this._running = false;
 		this._lastTickTime = null;
 
-		this._onUpdateStart = undefined;
-		this._onUpdateComplete = undefined;
+		this._onTickStart = undefined;
+		this._onTickComplete = undefined;
 
-		// Make structure immutable and return
-		Object.freeze( this );
 		return this;
 	}
 
@@ -47,8 +46,8 @@ export default class Engine {
 		return getItem( type, this._assemblies, "type" );
 	}
 
-	hasAssembly() {
-
+	hasAssembly( type ) {
+		return hasItem( type, this._assemblies, "type" );
 	}
 
 	/** @description Get an Entity instance by UUID.
@@ -73,7 +72,22 @@ export default class Engine {
 	}
 
 	hasSystem( name ) {
+		return hasItem( name, this._systems, "name" );
+	}
 
+	addAssembly( assembly: Entity ): Entity[] {
+
+		// Validate
+		if ( this.hasAssembly( assembly.type ) ) {
+			throw Error( "Assembly of that type UUID has already been added!" );
+		}
+
+		// Freeze entity's structure
+		Object.seal( assembly );
+
+		this._assemblies.push( assembly );
+
+		return this._assemblies;
 	}
 
 	/**
@@ -83,6 +97,11 @@ export default class Engine {
 	 * @returns {Entity[]} - Updated array of entity instances
 	 */
 	addEntity( entity: Entity ): Entity[] {
+
+		// Validate
+		if ( this.hasEntity( entity.uuid ) ) {
+			throw Error( "Entity with that UUID has already been added!" );
+		}
 
 		// Freeze entity's structure
 		Object.seal( entity );
@@ -107,12 +126,22 @@ export default class Engine {
 	 */
 	addSystem( system: System ): System[] {
 
-		// Freeze entity's structure
-		Object.seal( system );
+		// Validate
+		if ( this.hasSystem( system.name ) ) {
+			throw Error( "System with that name has already been added!" );
+		}
 
+		// Add it and start it
 		this._systems.push( system );
 		system.init( this );
 
+		// Freeze entity's structure
+		Object.freeze( system );
+
+		return this._systems;
+	}
+
+	get systems(): System[] {
 		return this._systems;
 	}
 
@@ -125,30 +154,36 @@ export default class Engine {
 	 * @description Set a function to execute after every update tick.
 	 * @param {Function} fn - Function to execute
 	 */
-	set onUpdateComplete( fn: Function ) {
-		this._onUpdateComplete = fn;
+	set onTickComplete( fn: Function ) {
+		this._onTickComplete = fn;
 	}
+
 	/**
 	 * @description Get the function currently set to execute after every tick.
 	 * @returns {Function} - Function currently set to execute
 	 */
-	get onUpdateComplete(): Function {
-		return this._onUpdateComplete;
+	get onTickComplete(): Function {
+		return this._onTickComplete;
 	}
 
 	/**
 	 * @description Set a function to execute before every update tick.
 	 * @param {Function} fn - Function to execute
 	 */
-	set onUpdateStart( fn: Function ) {
-		this._onUpdateStart = fn;
+	set onTickStart( fn: Function ) {
+		this._onTickStart = fn;
 	}
+
 	/**
 	 * @description Get the function currently set to execute before every tick.
 	 * @returns {Function} - Function currently set to execute
 	 */
-	get onUpdateStart(): Function {
-		return this._onUpdateStart;
+	get onTickStart(): Function {
+		return this._onTickStart;
+	}
+
+	get running(): boolean {
+		return this._running;
 	}
 
 	/**
@@ -157,11 +192,10 @@ export default class Engine {
 	start(): void {
 
 		// Always reset in case engine was stopped and restarted
-		this._lastTickTime = Present();
-
-		this._running = true;
+		this._lastTickTime = present();
 
 		// Start ticking!
+		this._running = true;
 		this.tick();
 	}
 
@@ -178,12 +212,13 @@ export default class Engine {
 	 */
 	tick(): void {
 		if ( this._running ) {
-			const now = Present();
+			const now = present();
 			const delta = now - this._lastTickTime;
 			this._lastTickTime = now;
+
 			// Run any pre-update behavior
-			if ( this._onUpdateStart ) {
-				this._onUpdateStart();
+			if ( this._onTickStart ) {
+				this._onTickStart();
 			}
 
 			// Perform the update on every system
@@ -192,8 +227,8 @@ export default class Engine {
 			});
 
 			// Run any post-update behavior
-			if ( this._onUpdateComplete ) {
-				this._onUpdateComplete();
+			if ( this._onTickComplete ) {
+				this._onTickComplete();
 			}
 		}
 	}

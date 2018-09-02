@@ -11,10 +11,10 @@ import { EntityConfig } from "../utils/interfaces"; // Typing
  */
 export default class Entity {
 
-	_components: any[];
-	_name:       string;
-	_type:       string;
-	_uuid:       string;
+	private _components: any[];
+	private _name:       string;
+	private _type:       string;
+	private _uuid:       string;
 
 	/**
 	 * @description Create an entity. A JSON object can be used when loading a previously created entity from disk, or
@@ -27,29 +27,28 @@ export default class Entity {
 	 */
 	constructor( config?: EntityConfig ) {
 
-		const defaults = {
-			uuid:       uuid(),
-			type:       "no-type",
-			name:       "No Name",
-			components: []
-		};
+		// Define defaults
+		this._uuid = uuid();
+		this._type = "no-type";
+		this._name = "No Name";
+		this._components = [];
 
-		// For every property in the defaults, apply the config value if it exists, otherwise use the default value
-		for ( const prop in defaults ) {
-			if ( defaults.hasOwnProperty( prop ) ) {
+		// Apply config values
+		if ( config ) {
+			for ( const prop in config ) {
+				if ( config.hasOwnProperty( prop ) ) {
 
-				// Treat the components property slightly differently, for all else use the value in defaults
-				if ( prop === "components" && config.components ) {
-					this._components = [];
-					config.components.forEach( ( data ) => {
-						this._addComponent( new Component( data ) );
-					});
-				} else {
-					this[ "_" + prop ] = config[ prop ] || defaults[ prop ];
+					// Handle components slightly differently, otherwise simply overwite props with config values
+					if ( prop === "components" ) {
+						config.components.forEach( ( data ) => {
+							this.addComponent( new Component( data ) );
+						});
+					} else {
+						this[ "_" + prop ] = config[ prop ];
+					}
 				}
 			}
 		}
-		return this;
 	}
 
 	/**
@@ -127,7 +126,7 @@ export default class Entity {
 	 * @param {Component} component - The component to add
 	 * @returns {(Array|null)} - Updated array of components, or null if the component already existed
 	 */
-	_addComponent( component: Component ) {
+	addComponent( component: Component ) {
 		// Don't add if it already exists:
 		if ( this.hasComponent( component.type ) ) {
 			console.warn( "Couldn't add "
@@ -147,7 +146,7 @@ export default class Entity {
 	 * @param {String} type - Type of the Component to remove.
 	 * @returns {(Array|null)} - Updated array of Components, or null the component already existed.
 	 */
-	_removeComponent( type: string ) {
+	removeComponent( type: string ) {
 		const index = this._components.indexOf( this.getComponent( type ) );
 		if ( index < 0 ) {
 			console.warn( "Component with id " + type + "doesn't exist!" );
@@ -211,7 +210,7 @@ export default class Entity {
 		* @returns {Bool} - True if the component is present within the Entity.
 		*/
 	hasComponent( type ) {
-		return hasItem( type, this._components, "_type" );
+		return hasItem( type, this._components, "type" );
 	}
 
 	/** @description Overwrite the data for a Component with the given type within

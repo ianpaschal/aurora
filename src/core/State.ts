@@ -6,8 +6,9 @@ import Engine from "./Engine"; // Typing
  * @classdesc Class representing a State.
  */
 export default class State {
-	_timestamp: any;
-	_entities:  any[];
+
+	private _timestamp: number;
+	private _entities:  any[];
 
 	/**
 	 * @description Create a Player instance.

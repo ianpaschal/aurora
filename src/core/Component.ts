@@ -9,9 +9,10 @@ import { ComponentConfig } from "../utils/interfaces"; // Typing
  * @classdesc Class representing a component.
  */
 export default class Component {
-	_uuid: string;
-	_type: string;
-	_data: any;
+
+	private _data: {}|[];
+	private _type: string;
+	private _uuid: string;
 
 	/**
 	 * @description Create a Component.
@@ -24,19 +25,25 @@ export default class Component {
 	 */
 	constructor( config?: ComponentConfig ) {
 
-		// If building from existing data
-		if ( config ) {
-			this._uuid = config.uuid;
-			this._type = config.type;
-			this._data = copy( config.data ); // Copy instead of referencing the data
-			return this;
-		}
-
-		// Assign default values
+		// Define defaults
 		this._uuid = uuid();
 		this._type = "noname";
 		this._data = {}; // NOTE: Some components use an array
-		return this;
+
+		// Apply config values
+		if ( config ) {
+			for ( const prop in config ) {
+				if ( config.hasOwnProperty( prop ) ) {
+
+					// Handle data slightly differently, otherwise simply overwite props with config values
+					if ( prop === "data" ) {
+						this._data = copy( config.data );
+					} else {
+						this[ "_" + prop ] = config[ prop ];
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -44,7 +51,7 @@ export default class Component {
 	 * @readonly
 	 * @returns {Object} - The component's data
 	 */
-	get data(): {} {
+	get data(): {}|[] {
 		return this._data;
 	}
 
@@ -54,8 +61,7 @@ export default class Component {
 	 * @param {Object} data - Data object to apply
 	 * @returns {Object} - The component's updated updated data object
 	 */
-	set data( data: {}) {
-		// TODO: Add validation
+	set data( data: {}|[] ) {
 		this._data = copy( data );
 	}
 
@@ -65,9 +71,10 @@ export default class Component {
 	 * @returns {string} - The component's data as a JSON string
 	 */
 	get JSON() {
+
 		// Provide new keys instead of stringifying private properties (with '_')
 		return JSON.stringify({
-			data: this._data, // TODO: This should get each component and stringify that
+			data: this._data,
 			type: this._type,
 			uuid: this._uuid
 		}, null, 4 );
@@ -78,7 +85,7 @@ export default class Component {
 	 * @readonly
 	 * @returns {string} - The component's type
 	 */
-	get type() {
+	get type(): string {
 		return this._type;
 	}
 
@@ -95,14 +102,14 @@ export default class Component {
 	 * @readonly
 	 * @returns {String} - The component's UUID
 	 */
-	get uuid() {
+	get uuid(): string {
 		return this._uuid;
 	}
 
+	// Where is the set uuid() method? Doesn't exist! Don't change the UUID!
+
 	/**
-	 * @description Merge a data object into this component. Note: When two different types share the same key (i.e. a
-	 * string and a boolean), the new value (in the JSON) will overwrite the existing value. This also applies to objects
-	 * and arrays.
+	 * @description Merge a data object into this component.
 	 * @param {Object} data - JSON data to apply to the component
 	 * @returns {(Object|Array)} - Updated data object/array
 	 */
@@ -128,7 +135,7 @@ export default class Component {
 	 */
 	copy( source: Component ): void {
 
-		// Don't copy the UUID!
+		// Don't copy the UUID, only the type and data
 		this._type = source.type;
 		this._data = copy( source.data );
 	}

@@ -1,4 +1,4 @@
-import isBetween from "../../src/math/isBetween";
+import isBetween from "../../../src/math/isBetween";
 
 describe( "isBetween", () => {
 

@@ -1,8 +1,33 @@
 {
   "name": "aurora",
   "version": "1.0.1",
-  "description": "A small entity-component-system game engine for real-time-strategy games.",
-  "main": "./src/index.js",
+  "description": "A small entity-component-system game engine/framework.",
+  "keywords": [
+    "entity-component-system",
+    "game-engine",
+    "javascript",
+    "node",
+    "nodejs",
+    "real-time-strategy",
+    "rts"
+  ],
+  "author": "Ian Paschal",
+  "license": "MIT",
+  "homepage": "https://github.com/ianpaschal/aurora#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianpaschal/aurora.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ianpaschal/aurora/issues"
+  },
+  "main": "/dist/index.js",
+  "scripts": {
+    "bundle": "parcel build ./src/index.js",
+    "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
+    "lint": "eslint --fix",
+    "test": "jest --silent --config .jest.json"
+  },
   "dependencies": {
     "@types/deepmerge": "^2.1.0",
     "@types/uuid": "^3.4.3",
@@ -23,45 +48,5 @@
     "ts-jest": "^23.1.4",
     "typescript": "^3.0.1",
     "typescript-eslint-parser": "^18.0.0"
-  },
-  "scripts": {
-    "bundle": "parcel build ./src/index.js",
-    "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "lint": "eslint --fix",
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ianpaschal/aurora.git"
-  },
-  "keywords": [
-    "entity-component-system",
-    "game-engine",
-    "javascript",
-    "node",
-    "nodejs",
-    "real-time-strategy",
-    "rts"
-  ],
-  "author": "Ian Paschal",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ianpaschal/aurora/issues"
-  },
-  "homepage": "https://github.com/ianpaschal/aurora#readme",
-  "jest": {
-    "collectCoverage": true,
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
   }
 }

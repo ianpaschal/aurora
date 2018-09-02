@@ -8,7 +8,9 @@ import { SystemConfig } from "../utils/interfaces"; // Typing
  * @classdesc Class representing a System.
  */
 export default class System {
-	private _displayName:    string;
+
+	private _accumulator:    number;
+	private _componentTypes: string[];
 	private _engine:         Engine;
 	private _entityUUIDs:    string[];
 	private _fixed:          boolean;
@@ -18,9 +20,7 @@ export default class System {
 	private _onInit:         () => void;
 	private _onRemoveEntity: ( entity: Entity ) => void;
 	private _onUpdate:       ( delta: number ) => void;
-	private _accumulator:    number;
 	private _step:           number;
-	private _componentTypes: string[];
 
 	/**
 	 * @description Create a System.
@@ -36,32 +36,50 @@ export default class System {
 	 * @returns {System} - The newly created system
 	 */
 	constructor( config?: SystemConfig ) {
-		this._name = "no-name";
-		this._fixed = false;
-		this._step = 100;
-		this._accumulator = 0;
-		this._displayName = this._name[ 0 ].toUpperCase() + this._name.substr( 1 );
 
-		for ( const prop in config ) {
-			this[ "_" + prop ] = config[ prop ];
-		}
-
-		if ( !config.onUpdate ) {
-			// TODO: Error handling/warn this system will do nothing
-		}
-
+		// Define defaults
+		this._accumulator    = 0;
 		this._componentTypes = [];
-		if ( config.componentTypes ) {
-			this.watchComponentTypes( config.componentTypes );
-		} else {
-			// TODO: Error handling/warn no components exist
+		this._engine         = undefined;
+		this._entityUUIDs    = [];
+		this._fixed          = false;
+		this._methods        = {};
+		this._name           = "no-name";
+		this._onAddEntity    = ( entity: Entity ) => {};
+		this._onInit         = () => {};
+		this._onRemoveEntity = ( entity: Entity ) => {};
+		this._onUpdate       = ( delta: number ) => {};
+		this._step           = 100;
+
+		// Apply config values
+		for ( const prop in config ) {
+			if ( config.hasOwnProperty( prop ) ) {
+
+				// Handle component types and methods slightly differently, otherwise simply overwite props with config values
+				const specialCases = [ "componentTypes", "methods", "entityUUIDs" ];
+
+				// If not a special case
+				if ( specialCases.indexOf( prop ) > -1 ) {
+
+					switch( prop ) {
+						case "methods":
+							this.addMethods( config.methods );
+							break;
+						case "componentTypes":
+							this.watchComponentTypes( config.componentTypes );
+							break;
+						case "entityUUIDs":
+							/* It's not possible to instantiate with a list of entity IDs since the entities might not exist, and the
+								actual entity is needed so that the add hook can be run successfully on the entity instance. */
+							break;
+					}
+				} else {
+					this[ "_" + prop ] = config[ prop ];
+				}
+
+			}
 		}
 
-		this._methods = {};
-
-		/* It's not possible to instantiate with a list of entity IDs since the entities might not exist, and the actual
-			entity is needed so that the add hook can be run successfully on the entity instance. */
-		this._entityUUIDs = [];
 	}
 
 	// INIT & UPDATE
@@ -74,12 +92,12 @@ export default class System {
 	init( engine: Engine ): void {
 		if( !engine ) {
 			console.warn(
-				"System " + this._displayName + ":",
+				"System " + this._name + ":",
 				"Attempted to initialize system without an engine!"
 			);
 			return;
 		}
-		console.log( "Initializing a new system: " + this._displayName + "." );
+		console.log( "Initializing a new system: " + this._name + "." );
 		this._engine = engine;
 
 		// Run the actual init behavior:
@@ -98,7 +116,7 @@ export default class System {
 		if ( this._fixed ) {
 			// Add time to the accumulator & simulate if greater than the step size:
 			this._accumulator += delta;
-			if ( this._accumulator >= this._step ) {
+			while ( this._accumulator >= this._step ) {
 				this._onUpdate( this._step );
 				this._accumulator -= this._step;
 			}
@@ -115,9 +133,17 @@ export default class System {
 	 * @param {string} key - Identifier for the method
 	 * @param {function} method - Method to be called by user in the future
 	 */
-	addMethod( key: string, method: Function ): void {
+	addMethod( key: string, fn: Function ): void {
 		// TODO: Error handling
-		this._methods[ key ] = method;
+		this._methods[ key ] = fn;
+	}
+
+	addMethods( methods: {}): void {
+		for ( const key in methods ) {
+			if ( methods.hasOwnProperty( key ) ) {
+				this.addMethod( key, methods[ key ] );
+			}
+		}
 	}
 
 	/**

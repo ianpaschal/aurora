@@ -1,4 +1,4 @@
-import State from "../../src/core/State";
+import State from "../../../src/core/State";
 
 // Mock an engine
 describe( "State", () => {

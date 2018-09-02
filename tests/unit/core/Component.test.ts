@@ -1,4 +1,4 @@
-import Component from "../../src/core/Component";
+import Component from "../../../src/core/Component";
 import * as uuid from "uuid";
 
 describe( "Component (with config)", () => {
