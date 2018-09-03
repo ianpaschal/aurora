@@ -91,7 +91,7 @@ describe( "Component (with config)", () => {
 	});
 
 	test( "Converting component to JSON", () => {
-		expect( instance.JSON ).toEqual( JSON.stringify( config, null, 4 ) );
+		expect( instance.json ).toEqual( JSON.stringify( config, null, 4 ) );
 	});
 
 });
@@ -140,7 +140,7 @@ describe( "Component (without config)", () => {
 	});
 
 	test( "can be converted to JSON.", () => {
-		expect( instance.JSON ).toEqual( JSON.stringify({
+		expect( instance.json ).toEqual( JSON.stringify({
 			data: instance.data,
 			type: instance.type,
 			uuid: instance.uuid

@@ -1,24 +1,18 @@
-import { Engine, Entity, System } from "../../src";
-
-// Do set up to create an engine with
-// - at least 2 systems
-// - at least 5 entities, each with slightly different data
-// - Each entity should have a different number of components
-// - At least one of each component should be unique and at least one should be shared
+import { Engine, Entity, System, State } from "../../src";
 
 const systemFooConfig = {
-	componentTypes: [ "foo-data" ],
+	componentTypes: [ "foo" ],
 	name: "foo-system",
 	fixed: false,
 	onUpdate( t ) {
-		alert( "The Foo system has updated!" );
+		console.log( "The Foo system has updated!" );
 	},
 	methods: {
 		"foo": function() {
-			alert( "Foo!" );
+			console.log( "Foo!" );
 		},
 		"bar": function() {
-			alert( "Bar!" );
+			console.log( "Bar!" );
 		}
 	}
 };
@@ -27,14 +21,14 @@ const systemBarConfig = {
 	name: "bar-system",
 	fixed: false,
 	onUpdate( t ) {
-		alert( "The Foo system has updated!" );
+		console.log( "The Foo system has updated!" );
 	},
 	methods: {
 		"foo": function() {
-			alert( "Foo!" );
+			console.log( "Foo!" );
 		},
 		"bar": function() {
-			alert( "Bar!" );
+			console.log( "Bar!" );
 		}
 	}
 };
@@ -117,6 +111,19 @@ describe( "Typical set-up", () => {
 		expect( engine.entities.length ).toBe( 1 );
 	});
 
+	// Assemblies + Engine
+	test( ".addAssembly() should add an assembly to the engine", () => {
+		engine.addAssembly( entity );
+		expect( engine.assemblies.length ).toBe( 1 );
+	});
+
+	test( ".addAssembly() should throw an error if assembly of that type exists", () => {
+		engine.addAssembly( entity );
+		expect( () => {
+			engine.addAssembly( entity );
+		}).toThrowError();
+	});
+
 	test( ".hasEntity() should identify which entities were added.", () => {
 		engine.addEntity( entity );
 		expect( engine.hasEntity( entity.uuid ) ).toBe( true );
@@ -126,5 +133,73 @@ describe( "Typical set-up", () => {
 	test( ".getEntity() should retrieve the correct entity.", () => {
 		engine.addEntity( entity );
 		expect( engine.getEntity( entity.uuid ) ).toBe( entity );
+	});
+});
+
+// -----
+
+/*
+- Describe: Entities added to the engine...
+	- Test: ...should be identifiable as having been added.
+	- Test: ...should be retrievable by their UUID.
+	- Test: ...should have their UUIDs added to any systems which watch one or more of that entity’s component types.
+*/
+
+describe( "Entities added to the engine…", () => {
+	let engine: Engine;
+	let entity: Entity;
+	let system: System;
+	beforeEach( () => {
+		engine = new Engine();
+		system = new System( systemFooConfig );
+		entity = new Entity({ components: [ { type: "foo" } ] });
+		engine.addSystem( system );
+		engine.addEntity( entity );
+	});
+
+	test( "should be addable to the system, if components match.", () => {
+
+		// New entity which was not already added
+		const entity2 = new Entity({ components: [ { type: "foo" } ] });
+
+		// Expect success
+		const originalLength = system.watchedEntityUUIDs.length;
+		expect( () => {
+			system.watchEntity( entity2 );
+		}).not.toThrowError();
+		expect( system.watchedEntityUUIDs.length ).toBe( originalLength + 1 );
+
+		// Expect failure; entity has already been added
+		expect( () => {
+			system.watchEntity( entity2 );
+		}).toThrowError();
+	});
+
+});
+
+// State stuff
+
+describe( "states", () => {
+	let engine: Engine;
+	let entity: Entity;
+	let system: System;
+	beforeEach( () => {
+		engine = new Engine();
+		system = new System( systemFooConfig );
+		entity = new Entity({ components: [ { type: "foo" } ] });
+		engine.addSystem( system );
+		engine.addEntity( entity );
+	});
+
+	test( "state should have entities", () => {
+		const state = new State( engine );
+		expect( state.entities.length ).toBe( 1 );
+	});
+
+	test( "timestamp should be correct", () => {
+
+		engine.start();
+		const state = new State( engine );
+		expect( state.timestamp ).toBeGreaterThan( 0 );
 	});
 });

@@ -14,6 +14,7 @@ export default class System {
 	private _engine:         Engine;
 	private _entityUUIDs:    string[];
 	private _fixed:          boolean;
+	private _frozen:         boolean;
 	private _methods:        {};
 	private _name:           string;
 	private _onAddEntity:    ( entity: Entity ) => void;
@@ -43,6 +44,7 @@ export default class System {
 		this._engine         = undefined;
 		this._entityUUIDs    = [];
 		this._fixed          = false;
+		this._frozen         = false;
 		this._methods        = {};
 		this._name           = "no-name";
 		this._onAddEntity    = ( entity: Entity ) => {};
@@ -104,6 +106,9 @@ export default class System {
 		if ( this._onInit ) {
 			this._onInit();
 		}
+
+		// Freeze the system to make it immutable:
+		this._frozen = true;
 	}
 
 	/**
@@ -223,10 +228,8 @@ export default class System {
 	watchEntity( entity: Entity ): string[] {
 
 		// Check if this entity is already being watched
-		if ( this._entityUUIDs.indexOf( entity.uuid ) > -1 ) {
-			// TODO: Error handling
-			// Already exists
-			return;
+		if ( this._entityUUIDs.indexOf( entity.uuid ) >= 0 ) {
+			throw Error( `Entity ${ entity.uuid } is already being watched!` );
 		}
 		this._entityUUIDs.push( entity.uuid );
 		this._onAddEntity( entity );
@@ -241,11 +244,15 @@ export default class System {
 	 */
 	watchComponentType( componentType: string ): string[] {
 
+		// Early return if frozen; this avoids updating the entity watch list during
+		// execution.
+		if ( this._frozen ) {
+			throw Error( "Cannot modify watchedComponentTypes after adding to engine." );
+		}
+
 		// Check if this component type is already present
 		if ( this._componentTypes.indexOf( componentType ) > -1 ) {
-			// TODO: Error handling
-			// Already exists
-			return;
+			throw Error( `Component type ${ componentType } is already being watched!` );
 		}
 
 		// If not, add it to the system
@@ -273,10 +280,11 @@ export default class System {
 	 * @returns {array} - Updated array of watched entity UUIDs
 	 */
 	unwatchEntity( entity: Entity ): string[] {
+		console.log( "Looking for", entity.uuid, "in", this._entityUUIDs );
+		// console.log( this._entityUUIDs );
 		const index = this._entityUUIDs.indexOf( entity.uuid );
 		if ( index < 0 ) {
-			// TODO: Add error handling
-			return;
+			throw Error( `Could not unwatch entity ${ entity.uuid }; not watched.` );
 		}
 		this._entityUUIDs.splice( index, 1 );
 		return this._entityUUIDs;
@@ -290,9 +298,14 @@ export default class System {
 	 */
 	unwatchComponentType( componentType: string ): string[] {
 		const index = this._componentTypes.indexOf( componentType );
-		if ( index > -1 ) {
-			this._componentTypes.splice( index, 1 );
+		if ( this._componentTypes.length < 2 ) {
+			throw Error( "Cannot remove component type, this system will be left with 0." );
 		}
+		if ( index == -1 ) {
+			throw Error( "Component type not found on system." );
+		}
+		this._componentTypes.splice( index, 1 );
+
 		return this._componentTypes;
 	}
 

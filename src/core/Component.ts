@@ -70,7 +70,7 @@ export default class Component {
 	 * @readonly
 	 * @returns {string} - The component's data as a JSON string
 	 */
-	get JSON() {
+	get json() {
 
 		// Provide new keys instead of stringifying private properties (with '_')
 		return JSON.stringify({

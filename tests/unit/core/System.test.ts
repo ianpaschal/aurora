@@ -1,5 +1,4 @@
 import System from "../../../src/core/System";
-import Entity from "../../../src/core/Entity";
 
 describe( "System", () => {
 	let instance: System;
@@ -9,18 +8,7 @@ describe( "System", () => {
 		step: 100,
 		componentTypes: [ "position", "velocity" ],
 		fixed: true,
-		onUpdate( delta: number ) {
-
-		},
-		onInit() {
-
-		},
-		onAddEntity( entity: Entity ): void {
-
-		},
-		onRemoveEntity( entity: Entity ): void {
-
-		}
+		onUpdate( delta: number ) {}
 	};
 
 	// Create a new system instance to run tests on
@@ -49,7 +37,6 @@ describe( "System", () => {
 	});
 
 	test( "Accumulator should save left over time", () => {
-
 		instance.update( 105 );
 		expect( instance.accumulator ).toBe( 5 );
 	});
@@ -57,5 +44,71 @@ describe( "System", () => {
 	test( "Set step from config.", () => {
 		expect( instance.step ).toBe( config.step );
 	});
+
+	test ( "Set fixed from config.", () => {
+		expect( instance.fixed ).toBe( config.fixed );
+	});
+
+	test( "Can't remove component type if only one exists", () => {
+		expect( () => {
+			instance.unwatchComponentType( "position" ); // Remove 1 of 2
+		}).not.toThrowError();
+		expect( () => {
+			instance.unwatchComponentType( "velocity" ); // Remove 2 of 2
+		}).toThrowError();
+	});
+
+	test( "Only remove component types which are present.", () => {
+		const originalLength = instance.watchedComponentTypes.length;
+		expect( () => {
+			instance.unwatchComponentType( "position" );
+		}).not.toThrowError();
+		expect( instance.watchedComponentTypes.length ).toBe( originalLength - 1 );
+		expect( () => {
+			instance.unwatchComponentType( "foo" );
+		}).toThrow();
+	});
+
+	test( ".unwatchComponentTypes() with 1 item array", () => {
+		expect( () => {
+			instance.unwatchComponentTypes( [ "position" ] );
+		}).not.toThrowError();
+	});
+
+	test( ".unwatchComponentTypes() with 2 item array should fail", () => {
+		expect( () => {
+			instance.unwatchComponentTypes( [ "position", "velocity" ] );
+		}).toThrowError();
+
+	});
+
+	test( ".unwatchComponentTypes() with invalid item in array should fail", () => {
+		expect( () => {
+			instance.unwatchComponentTypes( [ "foo", "position" ] );
+		}).toThrowError();
+	});
+
+	test( "is watching component type", () => {
+
+		// Expect success
+		expect( instance.isWatchingComponentType( "position" ) ).toBe( true );
+
+		// Expect failure
+		expect( instance.isWatchingComponentType( "foo" ) ).toBe( false );
+	});
+
+	test( "watch component type", () => {
+		const originalLength = instance.watchedComponentTypes.length;
+		instance.watchComponentType( "foo" );
+		expect( instance.watchedComponentTypes.length ).toBe( originalLength + 1 );
+	});
+
+	test( "watch component type which already exists should fail", () => {
+		expect( () => {
+			instance.watchComponentType( "position" );
+		}).toThrowError();
+	});
+
+	// See integration tests for entity removal
 
 });

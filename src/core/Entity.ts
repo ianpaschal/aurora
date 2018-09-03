@@ -78,7 +78,7 @@ export default class Entity {
 	 * @readonly
 	 * @returns {String} - The Entity's data as a JSON string
 	 */
-	get JSON() {
+	get json() {
 		// Provide new keys instead of stringifying private properties (with '_')
 		const data = {
 			uuid: this._uuid,
@@ -87,7 +87,11 @@ export default class Entity {
 			components: []
 		};
 		this._components.forEach( ( component ) => {
-			data.components.push( component.getJSON() );
+			data.components.push({
+				data: component.data,
+				type: component.type,
+				uuid: component.uuid
+			});
 		});
 		return JSON.stringify( data, null, 4 );
 	}
@@ -129,11 +133,7 @@ export default class Entity {
 	addComponent( component: Component ) {
 		// Don't add if it already exists:
 		if ( this.hasComponent( component.type ) ) {
-			console.warn( "Couldn't add "
-				+ component.type + " to " + this._uuid
-				+ ": Component already exists!"
-			);
-			return null;
+			throw Error( `Component with type ${ component.type } was already added!` );
 		}
 		this._components.push( component );
 		return this._components;
@@ -148,9 +148,8 @@ export default class Entity {
 	 */
 	removeComponent( type: string ) {
 		const index = this._components.indexOf( this.getComponent( type ) );
-		if ( index < 0 ) {
-			console.warn( "Component with id " + type + "doesn't exist!" );
-			return null;
+		if ( index === -1 ) {
+			throw Error( `Component with type ${ type } doesn't exist!` );
 		}
 		this._components.splice( index, 1 );
 		return this._components;
@@ -175,7 +174,7 @@ export default class Entity {
 		this._type = source.type;
 		this._name = source.name;
 		this._components = [];
-		source.getComponents().forEach( ( component ) => {
+		source.components.forEach( ( component ) => {
 			this._components.push( component.clone() );
 		});
 		return this._components;
@@ -198,10 +197,9 @@ export default class Entity {
 	getComponentData( type ) {
 		const component = this.getComponent( type );
 		if ( !component ) {
-			console.warn( "Component with type " + type + " doesn't exist!" );
-			return null;
+			throw Error( `Component with type ${ type } doesn't exist!` );
 		}
-		return component.getData();
+		return component.data;
 	}
 
 	/** @description Check if a component is present within the Entity.
@@ -221,16 +219,15 @@ export default class Entity {
 		*/
 	setComponentData( type, data ) {
 		for ( let i = 0; i < this._components.length; i++ ) {
-			if ( this._components[ i ].getType() === type ) {
-				this._components[ i ].apply( data );
+			if ( this._components[ i ].type === type ) {
+				this._components[ i ].mergeData( data );
 				return this._components[ i ];
 			}
 		}
-		console.warn( "Component with type " + type + " doesn't exist!" );
-		return null;
+		throw Error( `Component with type ${ type } doesn't exist!` );
 	}
 
-	isWatchable( system: System ) {
+	isWatchableBy( system: System ) {
 		// Faster to loop through search criteria vs. all components on entity
 		for ( const type of system.watchedComponentTypes ) {
 

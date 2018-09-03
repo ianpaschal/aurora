@@ -42,6 +42,10 @@ export default class Engine {
 		return this;
 	}
 
+	get assemblies() {
+		return this._assemblies;
+	}
+
 	getAssembly( type ) {
 		return getItem( type, this._assemblies, "type" );
 	}
@@ -110,7 +114,7 @@ export default class Engine {
 
 		// Check all systems to see if they should be watching this entity
 		this._systems.forEach( ( system ) => {
-			if ( entity.isWatchable( system ) ) {
+			if ( entity.isWatchableBy( system ) ) {
 				system.watchEntity( entity );
 			}
 		});
