@@ -8,4 +8,5 @@ install:
   - npm install
 script:
   - npm run lint
-  - npm run pack:prod
+  - npm run test
+  - npm run bundle
