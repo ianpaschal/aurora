@@ -18,4 +18,4 @@ script:
   - npm run test
   - npm run bundle
 after_script:
-  - ./cc-test-reporter after-build --debug -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
