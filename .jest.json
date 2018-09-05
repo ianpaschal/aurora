@@ -22,10 +22,7 @@
     }
   },
   "coveragePathIgnorePatterns": [
-    "/src/loaders",
-    "/src/managers",
-    "/src/systems",
-    "/src/utils",
-    "/src/math"
+    "/src/math",
+    "/src/utils"
   ]
 }
