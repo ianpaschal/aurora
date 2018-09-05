@@ -1,4 +1,4 @@
-import { Entity, Component } from "../../../src";
+import { Component, Engine, Entity, State, System } from "../../src";
 import * as uuid from "uuid";
 
 describe( "Entity", () => {

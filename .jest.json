@@ -21,8 +21,5 @@
       "statements": -10
     }
   },
-  "coveragePathIgnorePatterns": [
-    "/src/math",
-    "/src/utils"
-  ]
+  "coveragePathIgnorePatterns": []
 }

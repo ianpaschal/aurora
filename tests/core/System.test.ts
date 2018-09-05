@@ -1,4 +1,4 @@
-import { Engine, Entity, System } from "../../../src";
+import { Component, Engine, Entity, State, System } from "../../src";
 
 describe( "System", () => {
 	let instance: System;

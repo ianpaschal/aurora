@@ -1,4 +1,4 @@
-import { Engine, Entity, System, State } from "../../src";
+import { Engine, Entity, System, State } from "../src";
 
 const systemFooConfig = {
 	componentTypes: [ "foo" ],

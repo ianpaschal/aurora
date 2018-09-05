@@ -1,4 +1,4 @@
-import { Engine, System, Entity } from "../../../src";
+import { Component, Engine, Entity, State, System } from "../../src";
 
 /* Instantiation Tests
  * -
