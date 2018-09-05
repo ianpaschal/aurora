@@ -2,7 +2,7 @@
 
 // This is removed via Parcel when creating a production bundle
 console.warn(
-	"You are running Aurora in development mode.",
+	"If you are seeing this message, you are running Aurora in development mode.",
 	"Make sure to turn on production mode when deploying for production.",
 	"See more tips at https://ianpaschal.github.io/aurora/guide/deployment"
 );
@@ -14,20 +14,10 @@ export { default as Entity } from "./core/Entity";
 export { default as State } from "./core/State";
 export { default as System } from "./core/System";
 
-// Loaders
-// export { default as EntityLoader } from "./loaders/EntityLoader";
-// export { default as JSONLoader } from "./loaders/JSONLoader";
-// export { default as MaterialLoader } from "./loaders/MaterialLoader";
-
-// Managers
-// export { default as PluginManager } from "./managers/PluginManager";
-// export { default as StateManager } from "./managers/StateManager";
-
 // Math
 export { default as isBetween } from "./math/isBetween";
-export { default as Math2D } from "./math/Math2D";
-export { default as Math3D } from "./math/Math3D";
-export { default as Percentage } from "./math/Percentage";
+export { default as math2D } from "./math/math2D";
+export { default as math3D } from "./math/math3D";
 
 // Utils
 import * as utils from "./utils";

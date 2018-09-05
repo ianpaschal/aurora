@@ -1,23 +1,14 @@
 // Aurora is distributed under the MIT license.
 
-import validate from "../utils/validate";
-
 export default {
 
 	/**
 	 * @description Find the distance between two points in 3D space.
 	 * @param {Vector3} p1 - Starting point
 	 * @param {Vector3} p2 - Ending point
-	 * @returns {Number} - Distance between the points
+	 * @returns {number} - Distance between the points
 	 */
-	distance( p1, p2 ) {
-
-		// Validate that p1 and p2 are both valid for calculation
-		if ( !validate( "vector3", p1 ) || !validate( "vector3", p2 ) ) {
-			console.error( "Could not compute with an invalid coordinate." );
-			return;
-		}
-
+	distance( p1: Vector3, p2: Vector3 ): number {
 		const x = Math.abs( p2.x - p1.x );
 		const y = Math.abs( p2.y - p1.y );
 		const z = Math.abs( p2.z - p1.z );
@@ -30,14 +21,7 @@ export default {
 	 * @param {Vector3} p2 - Ending point
 	 * @returns {Vector3} - Midpoint between the points
 	 */
-	midpoint( p1, p2 ) {
-
-		// Validate that p1 and p2 are both valid for calculation
-		if ( !validate( "vector3", p1 ) || !validate( "vector3", p2 ) ) {
-			console.error( "Could not compute with an invalid coordinate." );
-			return;
-		}
-
+	midpoint( p1: Vector3, p2: Vector3 ): Vector3 {
 		return {
 			x: ( p1.x + p2.x ) / 2,
 			y: ( p1.y + p2.y ) / 2,
