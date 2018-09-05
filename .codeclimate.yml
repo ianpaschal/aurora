@@ -24,11 +24,8 @@ checks:
     config:
       threshold: 4
 engines:
-  tslint:
+  eslint:
     enabled: true
-    checks:
-      indent:
-        enabled: false
 exclude_patterns:
 - ".*"
 - ".**/**"
