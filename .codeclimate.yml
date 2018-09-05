@@ -30,7 +30,7 @@ engines:
       indent:
         enabled: false
 exclude_patterns:
-- "**/**"
-- ".*"
+- "**/*"
+- ".**"
 - ".**/**"
 - "!/src/**"
