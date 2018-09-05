@@ -1,6 +1,6 @@
 {
   "collectCoverage": true,
-  "coverageReporters": ["lcov"],
+  "coverageReporters": ["json", "lcov", "text"],
   "transform": {
     "^.+\\.tsx?$": "ts-jest"
   },
