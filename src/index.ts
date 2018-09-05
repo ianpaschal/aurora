@@ -15,10 +15,10 @@ export { default as State } from "./core/State";
 export { default as System } from "./core/System";
 
 // Math
-export { default as interpolate } from "./math/interpolate";
-export { default as isBetween } from "./math/isBetween";
-export { default as math2D } from "./math/math2D";
-export { default as math3D } from "./math/math3D";
+// export { default as interpolate } from "./math/interpolate";
+// export { default as isBetween } from "./math/isBetween";
+// export { default as math2D } from "./math/math2D";
+// export { default as math3D } from "./math/math3D";
 
 // Utils
 import * as utils from "./utils";
