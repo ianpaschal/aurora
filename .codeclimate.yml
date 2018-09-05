@@ -32,4 +32,5 @@ engines:
 exclude_patterns:
 - "**/**"
 - ".*"
+- ".**/**"
 - "!/src/**"
