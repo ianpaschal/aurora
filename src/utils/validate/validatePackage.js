@@ -21,8 +21,7 @@ export default function( dir, callback ) {
 		// Check if object has 'name' (and is valid):
 		if ( !obj.name ) {
 			err = "Property 'name' is missing!";
-		}
-		else if ( typeof obj.name !== "string" ) {
+		} else if ( typeof obj.name !== "string" ) {
 			err = "Property 'name' is not a valid string!";
 		}
 		// Check if object has 'version' (and is valid):
@@ -32,11 +31,9 @@ export default function( dir, callback ) {
 		// Check if object has 'contents' (and is valid):
 		else if ( !obj.contents ) {
 			err = "Property 'contents' is missing!";
-		}
-		else if ( typeof obj.contents !== "array" ) {
+		} else if ( typeof obj.contents !== "array" ) {
 			err = "Property 'contents' is not a valid array!";
-		}
-		else if ( obj.contents.length < 1 ) {
+		} else if ( obj.contents.length < 1 ) {
 			err = "Property 'contents' is empty!";
 		}
 		// Check if plugin exists twice (only first copy is registered)

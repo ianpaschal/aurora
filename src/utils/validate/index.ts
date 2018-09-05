@@ -1,6 +1,5 @@
 // Aurora is distributed under the MIT license.
 
-import Player from "../../core/Player";
 import System from "../../core/System";
 /**
 	* Defines if validator returns true or false when unable to find a matching
@@ -38,12 +37,6 @@ const validators = {
 			return false;
 		}
 		return true;
-	},
-	isPlayer( input ) {
-		if ( input instanceof Player ) {
-			return true;
-		}
-		return false;
 	},
 	isSystem( input ) {
 		if ( input instanceof System ) {

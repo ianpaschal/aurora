@@ -1,4 +1,5 @@
 module.exports = {
+	"parser": "typescript-eslint-parser",
 	"env": {
 		"browser": true,
 		"es6": true,
@@ -7,7 +8,11 @@ module.exports = {
 	"plugins": [],
 	"parserOptions": {
 		"ecmaVersion": 6,
-		"sourceType": "module"
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"modules": true,
+			"jsx": true
+		}
 	},
 	"rules": {
 		"array-bracket-spacing":     [ 2, "always" ],
@@ -20,7 +25,7 @@ module.exports = {
 		"computed-property-spacing": [ 2, "always" ],
 		"dot-notation":              [ 2 ],
 		"indent":                    [ 2, "tab", { "SwitchCase": 1 } ],
-		"max-len":                   [ 2, { "code": 80, "comments": 120, "tabWidth": 2, "ignoreTrailingComments": true, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true } ],
+		"max-len":                   [ 2, { "code": 80, "comments": 120, "tabWidth": 2, "ignoreTrailingComments": true, "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreRegExpLiterals": true, "ignoreStrings": true } ],
 		"max-lines":                 [ 2, { "max": 250, "skipBlankLines": true, "skipComments": true } ],
 		"max-statements":            [ 2, 30 ],
 		"no-confusing-arrow":        [ 2, { "allowParens": false } ],
@@ -45,5 +50,17 @@ module.exports = {
 		"space-in-parens":           [ 2, "always", { "exceptions": [ "{}" ] } ],
 		"space-infix-ops":           [ 2 ],
 		"template-curly-spacing":    [ 2, "always" ]
-	}
+	},
+	"overrides": [
+		{
+			"files": [
+				"**/*.ts",
+				"**/*.tsx"
+			],
+			"rules": {
+				"no-unused-vars":        [ "off" ],
+				"no-undef":              [ "off" ]
+			}
+		}
+	]
 }

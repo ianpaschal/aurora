@@ -4,7 +4,7 @@ export function capitalize( str ) {
 	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 }
 
-export function deepCopy( obj ) {
+export function copy( obj ) {
 	return JSON.parse( JSON.stringify( obj ) );
 }
 
@@ -26,8 +26,4 @@ export function hasItem( target, array, prop ) {
 		return false;
 	}
 	return true;
-}
-
-export function interpolate( a, b, x ) {
-	return ( ( b - a ) * x ) + a;
 }
