@@ -1,5 +1,5 @@
 <p>
-	<img src="https://github.com/ianpaschal/aurora/raw/develop/logo.svg" />
+	<img src="https://github.com/ianpaschal/aurora/blob/develop/logo.svg" />
 </p>
 <p>
 	<a href="https://www.npmjs.com/package/aurora">
