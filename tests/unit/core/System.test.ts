@@ -1,14 +1,17 @@
-import System from "../../../src/core/System";
+import { Engine, Entity, System } from "../../../src";
 
 describe( "System", () => {
 	let instance: System;
 	let mockMethod;
+	const mockOnInit = jest.fn();
+	mockOnInit.mockReturnValue( true );
 	const config = {
 		name: "my-system-name",
 		step: 100,
 		componentTypes: [ "position", "velocity" ],
 		fixed: true,
-		onUpdate( delta: number ) {}
+		onUpdate( delta: number ) {},
+		onInit: mockOnInit
 	};
 
 	// Create a new system instance to run tests on
@@ -110,5 +113,82 @@ describe( "System", () => {
 	});
 
 	// See integration tests for entity removal
+
+});
+
+// Clean style:
+
+let instance: System;
+let entityA: Entity;
+let entityB: Entity;
+let engine: Engine;
+const mockMethod = jest.fn();
+const mockOnInit = jest.fn();
+mockOnInit.mockReturnValue( true );
+mockMethod.mockReturnValue( true );
+const config = {
+	name: "foo-system",
+	step: 100,
+	componentTypes: [ "foo", "bar" ],
+	fixed: true,
+	onUpdate( delta: number ) {},
+	onInit: mockOnInit,
+	methods: {
+		"foo": mockMethod
+	}
+};
+beforeEach( () => {
+	engine = new Engine();
+	instance = new System( config );
+	entityA = new Entity({
+		components: [
+			{ type: "foo" },
+			{ type: "bar" }
+		]
+	});
+	entityB = new Entity({
+		components: [
+			{ type: "foo" }
+		]
+	});
+
+});
+
+describe( "System.init()", () => {
+
+	// TODO: Test if it doesn't exist
+
+	it( "should call its ._onInit handler function if it exists.", () => {
+		instance.init( engine );
+		expect( mockOnInit.mock.calls.length ).toBe( 1 );
+	});
+
+});
+
+describe( "System.removeMethod( key )", () => {
+
+	it( "should remove the method with the given key if it exists.", () => {
+		instance.removeMethod( "foo" );
+		expect( () => {
+			instance.dispatch( "foo", {});
+		}).toThrowError();
+	});
+
+	it( "should throw an error if no method for that key exists.", () => {
+		expect( () => {
+			instance.removeMethod( "bar" );
+		}).toThrowError();
+	});
+});
+
+describe( "System.canWatch( entity )", () => {
+
+	it( "should return true if all system component types are present.", () => {
+		expect( instance.canWatch( entityA ) ).toBe( true );
+	});
+
+	it ( "should return false if any system component types are missing.", () => {
+		expect( instance.canWatch( entityB ) ).toBe( false );
+	});
 
 });

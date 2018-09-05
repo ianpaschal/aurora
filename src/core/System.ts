@@ -70,10 +70,6 @@ export default class System {
 						case "componentTypes":
 							this.watchComponentTypes( config.componentTypes );
 							break;
-						case "entityUUIDs":
-							/* It's not possible to instantiate with a list of entity IDs since the entities might not exist, and the
-								actual entity is needed so that the add hook can be run successfully on the entity instance. */
-							break;
 					}
 				} else {
 					this[ "_" + prop ] = config[ prop ];
@@ -92,13 +88,6 @@ export default class System {
 	 * @param {Engine} engine - Engine instance to link to
 	 */
 	init( engine: Engine ): void {
-		if( !engine ) {
-			console.warn(
-				"System " + this._name + ":",
-				"Attempted to initialize system without an engine!"
-			);
-			return;
-		}
 		console.log( "Initializing a new system: " + this._name + "." );
 		this._engine = engine;
 
@@ -158,7 +147,9 @@ export default class System {
 	 * @param {any} payload - Any data which should be passed to the method
 	 */
 	dispatch( key: string, payload?: any ): void {
-		// TODO: Error handling
+		if ( !this._methods[ key ] ) {
+			throw Error( `Method ${ key } does not exist!` );
+		}
 		return this._methods[ key ]( payload );
 	}
 
@@ -168,7 +159,9 @@ export default class System {
 	 * @param {string} key - Identifier for the method
 	 */
 	removeMethod( key: string ): void {
-		// TODO: Error handling
+		if ( !this._methods[ key ] ) {
+			throw Error( `Method ${ key } does not exist!` );
+		}
 		delete this._methods[ key ];
 	}
 
@@ -180,7 +173,7 @@ export default class System {
 	 * @param {Entity} entity - Entity to check
 	 * @returns {boolean} - True if the given entity is watchable
 	 */
-	isWatchable( entity: Entity ): boolean {
+	canWatch( entity: Entity ): boolean {
 		// TODO: Error handling
 		// Faster to loop through search criteria vs. all components on entity
 		for ( const type of this._componentTypes ) {

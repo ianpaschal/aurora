@@ -49,6 +49,12 @@ describe( "Systems added to the engine", () => {
 		expect( systemFoo.isWatchingEntity( entityB ) ).toBe( false );
 	});
 
+	test( "should throw an error if attempting to modify component watch list.", () => {
+		expect( () => {
+			systemFoo.watchComponentType( "bar" );
+		}).toThrowError();
+	});
+
 });
 
 // Entities + Engine
