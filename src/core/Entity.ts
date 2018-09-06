@@ -35,19 +35,17 @@ export default class Entity {
 
 		// Apply config values
 		if ( config ) {
-			for ( const prop in config ) {
-				if ( config.hasOwnProperty( prop ) ) {
+			Object.keys( config ).forEach( ( key ) => {
 
-					// Handle components slightly differently, otherwise simply overwite props with config values
-					if ( prop === "components" ) {
-						config.components.forEach( ( data ) => {
-							this.addComponent( new Component( data ) );
-						});
-					} else {
-						this[ "_" + prop ] = config[ prop ];
-					}
+				// Handle components slightly differently, otherwise simply overwite props with config values
+				if ( key === "components" ) {
+					config.components.forEach( ( data ) => {
+						this.addComponent( new Component( data ) );
+					});
+				} else {
+					this[ "_" + key ] = config[ key ];
 				}
-			}
+			});
 		}
 	}
 

@@ -32,17 +32,14 @@ export default class Component {
 
 		// Apply config values
 		if ( config ) {
-			for ( const prop in config ) {
-				if ( config.hasOwnProperty( prop ) ) {
-
-					// Handle data slightly differently, otherwise simply overwite props with config values
-					if ( prop === "data" ) {
-						this._data = copy( config.data );
-					} else {
-						this[ "_" + prop ] = config[ prop ];
-					}
+			Object.keys( config ).forEach( ( key ) => {
+				// Handle data slightly differently, otherwise simply overwite props with config values
+				if ( key === "data" ) {
+					this._data = copy( config.data );
+				} else {
+					this[ "_" + key ] = config[ key ];
 				}
-			}
+			});
 		}
 	}
 

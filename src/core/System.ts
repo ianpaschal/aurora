@@ -54,30 +54,25 @@ export default class System {
 		this._step           = 100;
 
 		// Apply config values
-		for ( const prop in config ) {
-			if ( config.hasOwnProperty( prop ) ) {
+		Object.keys( config ).forEach( ( key ) => {
 
-				// Handle component types and methods slightly differently, otherwise simply overwite props with config values
-				const specialCases = [ "componentTypes", "methods", "entityUUIDs" ];
+			// Handle component types and methods slightly differently, otherwise simply overwite props with config values
+			const specialCases = [ "componentTypes", "methods", "entityUUIDs" ];
 
-				// If not a special case
-				if ( specialCases.indexOf( prop ) > -1 ) {
-
-					switch( prop ) {
-						case "methods":
-							this.addMethods( config.methods );
-							break;
-						case "componentTypes":
-							this.watchComponentTypes( config.componentTypes );
-							break;
-					}
-				} else {
-					this[ "_" + prop ] = config[ prop ];
+			// If not a special case
+			if ( specialCases.indexOf( key ) > -1 ) {
+				switch( key ) {
+					case "methods":
+						this.addMethods( config.methods );
+						break;
+					case "componentTypes":
+						this.watchComponentTypes( config.componentTypes );
+						break;
 				}
-
+			} else {
+				this[ "_" + key ] = config[ key ];
 			}
-		}
-
+		});
 	}
 
 	// INIT & UPDATE
@@ -133,11 +128,9 @@ export default class System {
 	}
 
 	addMethods( methods: {}): void {
-		for ( const key in methods ) {
-			if ( methods.hasOwnProperty( key ) ) {
-				this.addMethod( key, methods[ key ] );
-			}
-		}
+		Object.keys( methods ).forEach( ( key ) => {
+			this.addMethod( key, methods[ key ] );
+		});
 	}
 
 	/**

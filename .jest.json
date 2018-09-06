@@ -1,5 +1,6 @@
 {
   "preset": "ts-jest",
+  "collectCoverage": true,
   "coverageReporters": ["json", "lcov", "text"],
   "coverageThreshold": {
     "global": {
