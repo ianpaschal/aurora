@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-import * as present from "present";
+import present from "present";
 import Entity from "./Entity";
 import System from "./System";
 import { getItem, hasItem } from "../utils";

@@ -1,6 +1,6 @@
 // Aurora is distributed under the MIT license.
 
-import * as uuid from "uuid";
+import uuid from "uuid";
 import { getItem, hasItem } from "../utils";
 import Component from "./Component";
 import System from "./System"; // Typing
