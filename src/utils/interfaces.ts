@@ -1,6 +1,5 @@
 // Aurora is distributed under the MIT license.
 
-import Component from "../core/Component"; // Typing
 import Entity from "../core/Entity"; // Typing
 
 export interface ComponentConfig {
