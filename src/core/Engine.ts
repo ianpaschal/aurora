@@ -11,13 +11,13 @@ import { getItem, hasItem } from "../utils";
  */
 export default class Engine {
 
-	private _assemblies:       Entity[];
-	private _entities:         Entity[];
-	private _lastTickTime:     number;
+	private _assemblies:     Entity[];
+	private _entities:       Entity[];
+	private _lastTickTime:   number;
 	private _onTickComplete: Function; // Hook called when update is complete
 	private _onTickStart:    Function; // Hook called when update starts
-	private _running:          boolean;  // Whether or not the engine is running
-	private _systems:          System[];
+	private _running:        boolean;  // Whether or not the engine is running
+	private _systems:        System[];
 
 	/**
 	 * @description Create an instance of the Aurora engine.
@@ -47,6 +47,9 @@ export default class Engine {
 	}
 
 	getAssembly( type ) {
+		if ( !this.hasAssembly( type ) ) {
+			throw Error( "No assembly of that type found!" );
+		}
 		return getItem( type, this._assemblies, "type" );
 	}
 
@@ -60,6 +63,9 @@ export default class Engine {
 		* @returns {(Entity|null)} - Requested entity, or null if not found.
 		*/
 	getEntity( uuid: string ): Entity|null {
+		if ( !this.hasEntity( uuid ) ) {
+			throw Error( "No enitity with that UUID found!" );
+		}
 		return getItem( uuid, this._entities, "uuid" );
 	}
 
@@ -72,6 +78,9 @@ export default class Engine {
 	}
 
 	getSystem( name: string ): System|null {
+		if ( !this.hasSystem( name ) ) {
+			throw Error( "No system with that name found!" );
+		}
 		return getItem( name, this._systems, "name" );
 	}
 
@@ -83,7 +92,7 @@ export default class Engine {
 
 		// Validate
 		if ( this.hasAssembly( assembly.type ) ) {
-			throw Error( "Assembly of that type UUID has already been added!" );
+			throw Error( "Assembly of that type has already been added!" );
 		}
 
 		// Freeze entity's structure
