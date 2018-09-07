@@ -3,7 +3,8 @@
 import present from "present";
 import Entity from "./Entity";
 import System from "./System";
-import { getItem, hasItem } from "../utils";
+import getItem from "../utils/getItem";
+import hasItem from "../utils/hasItem";
 
 /**
  * @classdesc Core singleton representing an instance of the Aurora engine. The engine is responsible for the creation

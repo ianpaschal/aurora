@@ -15,5 +15,7 @@ export { default as State } from "./core/State";
 export { default as System } from "./core/System";
 
 // Utils
-import * as utils from "./utils";
-export { utils };
+export { default as capitalize } from "./utils/capitalize";
+export { default as copy } from "./utils/copy";
+export { default as getItem } from "./utils/getItem";
+export { default as hasItem } from "./utils/hasItem";

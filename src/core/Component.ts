@@ -1,7 +1,7 @@
 // Aurora is distributed under the MIT license.
 
 import uuid from "uuid";
-import { copy } from "../utils";
+import copy from "../utils/copy";
 import merge from "deepmerge";
 import { ComponentConfig } from "../utils/interfaces"; // Typing
 
