@@ -1,13 +1,9 @@
 import { Component, Engine, Entity, State, System } from "../../src";
 
 let instance: Engine;
-let handler;
-let tickSpy;
 
 beforeEach( () => {
 	instance = new Engine();
-	handler = jest.fn();
-	tickSpy = jest.spyOn( Engine.prototype, "tick" );
 });
 
 // Constructor
@@ -179,6 +175,10 @@ describe( "Engine.hasSystem( name )", () => {
 // Other
 
 describe( "Engine.start()", () => {
+	let tickSpy;
+	beforeEach( () => {
+		tickSpy = jest.spyOn( Engine.prototype, "tick" );
+	});
 	it( ".should set the engine as running and trigger .tick().", () => {
 		instance.start();
 		expect( instance.running ).toBe( true );
@@ -187,6 +187,9 @@ describe( "Engine.start()", () => {
 		expect( instance.onTickComplete ).not.toBeDefined();
 		instance.start();
 		expect( tickSpy ).toHaveBeenCalledTimes( 1 );
+	});
+	afterEach( () => {
+		tickSpy.mockClear();
 	});
 });
 
@@ -198,6 +201,10 @@ describe( "Engine.stop()", () => {
 });
 
 describe( "Engine.tick()", () => {
+	let handler;
+	beforeEach( () => {
+		handler = jest.fn();
+	});
 	it( "should call .onTickStart() if it's defined.", () => {
 		instance.onTickStart = handler;
 		instance.start();
@@ -208,8 +215,4 @@ describe( "Engine.tick()", () => {
 		instance.start();
 		expect( instance.onTickComplete ).toHaveBeenCalledTimes( 1 );
 	});
-});
-
-afterEach( () => {
-	tickSpy.mockClear();
 });
