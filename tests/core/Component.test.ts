@@ -1,163 +1,147 @@
 import { Component, Engine, Entity, State, System } from "../../src";
 import uuid from "uuid";
 
-describe( "Component (with config)", () => {
+let instance: Component;
 
-	// Create a new system instance to run tests on for each test
-	let instance: Component;
-	let secondaryConfig;
+beforeEach( () => {
+	instance = new Component();
+});
+
+// Constructor
+
+describe( "Component.constructor()", () => {
+	// TODO: it should generate a valid UUID
+	it( "should set type as 'noname'.", () => {
+		expect( instance.type ).toBe( "noname" );
+	});
+	it( "should create an empty data object.", () => {
+		expect( instance.data ).toEqual({});
+	});
+});
+
+describe( "Component.constructor( config )", () => {
 	let config;
 	beforeEach( () => {
 		config = {
-			data: {
-				x: 0,
-				y: 0,
-				z: 0,
-				required: true
-			},
-			type: "position",
-			uuid: uuid()
-		};
-		secondaryConfig = {
-			uuid: uuid.v4(),
-			type: "different-type",
-			data: {
-				name: "a string",
-				required: false,
-				children: [
-					{ key: "data" },
-					{ key: 0 }
-				]
-			}
+			uuid: uuid(),
+			type: "foo",
+			data: {}
 		};
 		instance = new Component( config );
 	});
-
-	/* This test may seem redundant but is helpful for explicitly detecting if an property or method was removed or
-		renamed (as compared to a failed test which only indicates that method didn't work). i.e. Maybe it works but got
-		renamed. */
-	it( "should contain all properties and methods.", () => {
-		expect( instance.copy ).toBeDefined();
-		expect( instance.clone ).toBeDefined();
-		expect( instance.mergeData ).toBeDefined();
-	});
-
-	it( "should apply config correctly.", () => {
+	it( "should copy the config's uuid if it exists.", () => {
 		expect( instance.uuid ).toEqual( config.uuid );
+	});
+	it( "should copy the config's type if it exists.", () => {
 		expect( instance.type ).toEqual( config.type );
-
+	});
+	it( "should copy, not reference, the config's type if it exists.", () => {
 		// Make sure to clone the original data, not reference it:
 		expect( instance.data ).not.toBe( config.data );
 		expect( instance.data ).toEqual( config.data );
 	});
-
-	test( "clones correctly.", () => {
-		const clone = instance.clone();
-		expect( clone.uuid ).not.toEqual( instance.uuid );
-		expect( clone.type ).toEqual( instance.type );
-		expect( clone.data ).toEqual( instance.data );
-	});
-
-	test( "copies from other component correctly.", () => {
-		const source = new Component( secondaryConfig );
-		instance.copy( source );
-
-		// Copy should have it's own uuid
-		expect( instance.uuid ).not.toEqual( source.uuid );
-
-		// Should copy the type
-		expect( instance.type ).toBe( source.type );
-
-		// Ensure data is a copy, not a reference
-		expect( instance.data ).not.toBe( source.data );
-		expect( instance.data ).toEqual( source.data );
-	});
-
-	test( "can have data applied to it.", () => {
-
-		// .data should be overwritten/merged by source where applicable
-		instance.mergeData( secondaryConfig.data );
-		expect( instance.data ).toEqual({
-			name: "a string",
-			x: 0,
-			y: 0,
-			z: 0,
-			required: false,
-			children: [
-				{ key: "data" },
-				{ key: 0 }
-			]
-		});
-	});
-
-	test( "Converting component to JSON", () => {
-		expect( instance.json ).toEqual( JSON.stringify( config, null, 4 ) );
-	});
-
 });
 
-describe( "Component (without config)", () => {
+// Getters
 
-	// Create a new system instance to run tests on for each test
-	let instance: Component;
-	let config: {};
-	let secondaryConfig: {};
-	beforeEach( () => {
-		instance = new Component();
-		config = {
-			uuid: uuid.v4(),
-			type: "position",
-			data: {
-				x: 0,
-				y: 0,
-				z: 0,
-				required: true
-			}
-		};
-		secondaryConfig = {
-			uuid: uuid.v4(),
-			type: "different-type",
-			data: {
-				name: "a string",
-				required: false,
-				children: [
-					{ key: "data" },
-					{ key: 0 }
-				]
-			}
-		};
-	});
-
-	test( "is instantiated correctly.", () => {
-		// Validate it's an empty component:
-		expect( instance.type ).toBe( "noname" );
-		expect( instance.data ).toEqual({});
-	});
-
-	test( "can have data applied to it.", () => {
-
-		// .data should match source object
-	});
-
-	test( "can be converted to JSON.", () => {
+describe( "Component.json", () => {
+	it( "should return the correct JSON, without underscores.", () => {
 		expect( instance.json ).toEqual( JSON.stringify({
 			data: instance.data,
 			type: instance.type,
 			uuid: instance.uuid
 		}, null, 4 ) );
 	});
+});
 
-	test( "set data", () => {
+// Setters
+
+describe( "Component.data = ", () => {
+	it( "should copy, not reference, the new data, replacing everything.", () => {
 		const data = {
 			foo: "bar"
 		};
 		instance.data = data;
 		expect( instance.data ).toEqual( data );
 	});
+});
 
-	test( "set type", () => {
+describe( "Component.type = ", () => {
+	it( "should set the type accordingly.", () => {
 		const type = "foo";
 		instance.type = type;
 		expect( instance.type ).toEqual( type );
+	});
+});
+
+// Other
+
+describe( "Component.clone()", () => {
+	let clone: Component;
+	beforeEach( () => {
+		clone = instance.clone();
+	});
+	it( "should not clone the UUID.", () => {
+		expect( clone.uuid ).not.toEqual( instance.uuid );
+	});
+	it( "should clone the type.", () => {
+		expect( clone.type ).toEqual( instance.type );
+	});
+	it( "should clone the data.", () => {
+		// Ensure data is a copy, not a reference
+		expect( clone.data ).not.toBe( instance.data );
+		expect( clone.data ).toEqual( instance.data );
+	});
+});
+
+describe( "Component.copy( component )", () => {
+	let source: Component;
+	beforeEach( () => {
+		source = new Component({
+			uuid: uuid(),
+			type: "foo",
+			data: {
+				foo: 5
+			}
+		});
+		instance.copy( source );
+	});
+	it( "should not copy the UUID.", () => {
+		expect( instance.uuid ).not.toEqual( source.uuid );
+	});
+	it( "should copy the type.", () => {
+		expect( instance.type ).toEqual( source.type );
+	});
+	it( "should copy the data.", () => {
+		// Ensure data is a copy, not a reference
+		expect( instance.data ).not.toBe( source.data );
+		expect( instance.data ).toEqual( source.data );
+	});
+});
+
+describe( "Component.mergeData( data )", () => {
+	// TODO: Refine the tests for copying vs. overwriting data
+	it( "should add missing data to the instance.", () => {
+		instance.data = {
+			foo: true
+		};
+		instance.mergeData({
+			bar: 5
+		});
+		expect( instance.data ).toEqual({
+			foo: true,
+			bar: 5
+		});
+	});
+	it( "should overwrite existing data on the instance.", () => {
+		instance.data = {
+			foo: true
+		};
+		instance.mergeData({
+			foo: false
+		});
+		expect( instance.data ).toEqual({
+			foo: false
+		});
 	});
 });
