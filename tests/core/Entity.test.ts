@@ -141,6 +141,29 @@ describe( "Entity.getComponentData( type )", () => {
 	});
 });
 
+describe( "Entity.isWatchableBy( system )", () => {
+	let systemFoo: System;
+	let systemBar: System;
+	beforeEach( () => {
+		systemFoo = new System({
+			componentTypes: [ "foo" ],
+			name: "foo-system",
+			onUpdate( t ) {}
+		});
+		systemBar = new System({
+			componentTypes: [ "bar" ],
+			name: "bar-system",
+			onUpdate( t ) {}
+		});
+	});
+	test( "should return true if the entity has all required components.", () => {
+		expect( instance.isWatchableBy( systemFoo ) ).toBe( true );
+	});
+	test( "should return false if the entity is missing a component.", () => {
+		expect( instance.isWatchableBy( systemBar ) ).toBe( false );
+	});
+});
+
 describe( "Entity.removeComponent( type )", () => {
 	it( "should remove the component if it exists.", () => {
 		const length = instance.components.length;

@@ -18,6 +18,7 @@ const config = {
 		"foo": mockMethod
 	}
 };
+
 beforeEach( () => {
 	instance = new System( config );
 	entityA = new Entity({
@@ -158,15 +159,32 @@ describe( "System.update()", () => {
 	});
 });
 
-describe( "System.watchComponentType", () => {
+describe( "System.watchComponentType( type )", () => {
 	it( "should watch the component type.", () => {
-		const originalLength = instance.watchedComponentTypes.length;
 		instance.watchComponentType( "new-type" );
-		expect( instance.watchedComponentTypes.length ).toBe( originalLength + 1 );
+		expect( instance.watchedComponentTypes ).toContain( "new-type" );
 	});
 	it( "should throw an error if watching a duplicate type.", () => {
 		expect( () => {
 			instance.watchComponentType( "foo" );
+		}).toThrowError();
+	});
+});
+
+describe( "System.watchEntity( entity )", () => {
+	let entity: Entity;
+	beforeEach( () => {
+		entity = new Entity();
+	});
+	it( "should watch the entity.", () => {
+		const originalLength = instance.watchedEntityUUIDs.length;
+		instance.watchEntity( entity );
+		expect( instance.watchedEntityUUIDs ).toContain( entity.uuid );
+	});
+	it( "should throw an error if watching a duplicate type.", () => {
+		instance.watchEntity( entity );
+		expect( () => {
+			instance.watchEntity( entity );
 		}).toThrowError();
 	});
 });
