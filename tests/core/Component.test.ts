@@ -1,4 +1,4 @@
-import { Component, Engine, Entity, State, System } from "../../src";
+import { Component } from "../../src";
 import uuid from "uuid";
 
 let instance: Component;

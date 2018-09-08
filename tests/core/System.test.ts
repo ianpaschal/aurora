@@ -1,4 +1,4 @@
-import { Component, Engine, Entity, State, System } from "../../src";
+import { Engine, Entity, System } from "../../src";
 
 let instance: System;
 let entityA: Entity;
