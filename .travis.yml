@@ -1,6 +1,6 @@
 env:
   global:
-    - CC_TEST_REPORTER_ID=575206a0cd09b1027a40c9a0fb71da087210b8ec433c80e9136a1345de5cc842
+    - CC_TEST_REPORTER_ID=$CODECLIMATE_TOKEN
 language: node_js
 node_js:
   - "6"
@@ -19,3 +19,9 @@ script:
   - npm run bundle
 after_script:
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
+deploy:
+  provider: npm
+  email: ian.paschal@gmail.com
+  api_key: $NPM_TOKEN
+  on:
+    tags: true
