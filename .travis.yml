@@ -1,0 +1,28 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=$CODECLIMATE_TOKEN
+language: node_js
+node_js:
+  - "6"
+cache:
+  directories:
+    - node_modules
+install:
+  - npm install
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - npm run lint
+  - npm run test -- --coverage
+  - npm run bundle
+after_script:
+  - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
+deploy:
+  provider: npm
+  email: ian.paschal@gmail.com
+  api_key: $NPM_TOKEN
+  skip_cleanup: true
+  on:
+    branch: master

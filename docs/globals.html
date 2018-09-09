@@ -63,72 +63,180 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<p>
-					<img src="https://github.com/ianpaschal/aurora/blob/develop/logo.svg" />
-				</p>
-				<p>
-					<a href="https://www.npmjs.com/package/aurora">
-						<img src="https://img.shields.io/npm/v/aurora.svg" />
-					</a>
-					<a href="https://www.npmjs.com/package/aurora">
-						<img src="https://img.shields.io/npm/dt/aurora.svg" />
-					</a>
-					<a href="https://github.com/ianpaschal/aurora/blob/master/LICENSE">
-						<img src="https://img.shields.io/github/license/ianpaschal/aurora.svg" />
-					</a>
-					<a href="https://github.com/ianpaschal/aurora/issues">
-						<img src="https://img.shields.io/github/issues-raw/ianpaschal/aurora.svg" />
-					</a>
-					<a href="https://codeclimate.com/github/ianpaschal/aurora">
-						<img src="https://img.shields.io/travis/ianpaschal/aurora.svg?" />
-					</a>
-					<a href="https://codeclimate.com/github/ianpaschal/aurora">
-						<img src="https://img.shields.io/codeclimate/maintainability/ianpaschal/aurora.svg?" />
-					</a>
-					<a href="https://codeclimate.com/github/ianpaschal/aurora">
-						<img src="https://img.shields.io/codeclimate/coverage/ianpaschal/aurora.svg?" />
-					</a>
-				</p>
-				<p>Aurora is a small entity-component-system game engine for real-time-strategy games. It&#39;s also <em>sort of</em> a mod API, but more on that later...</p>
-				<blockquote>
-					<p>Aurora is being developed alongside its intended use case, <a href="https://github.com/ianpaschal/forge">Forge</a>, and still churns quite a bit. There&#39;s also lots of test code present which requires refactoring and possible removal, but the basic architecture is stable and usable.</p>
-				</blockquote>
-				<p>Aurora is based on four basic classes:</p>
-				<ul>
-					<li><code>Engine</code></li>
-					<li><code>Entity</code></li>
-					<li><code>Component</code></li>
-					<li><code>System</code></li>
-				</ul>
-				<p>In a nutshell:</p>
-				<ul>
-					<li>Components are JSON data with some useful helper methods.</li>
-					<li>Entities are are arrays of components with some useful helper methods.</li>
-					<li>Systems are pre-defined functions which are run each simulation loop and act on a subset of entities who have instances of the relevant components.</li>
-					<li>The engine:<ul>
-							<li>Tells all systems to update each game loop</li>
-							<li>Handles the creation and destruction of entities and components</li>
-							<li>Handles the loading of assets using <code>Three.js</code> (geometries, materials, etc.)</li>
-						</ul>
-					</li>
-				</ul>
-				<p>The <a href="https://github.com/ianpaschal/aurora/wiki">wiki</a> contains more detailed information about the architecture and usage of Aurora and extensive documentation of the different classes and methods available can be found in <a href="https://github.com/ianpaschal/aurora/tree/master/docs"><code>/docs</code></a> or at <a href="https://ianpaschal.github.io/aurora">ianpaschal.github.io/aurora</a>.</p>
-				<h2 id="mod-api">Mod API</h2>
-				<blockquote>
-					<p>&quot;I read something above that said Aurora is &#39;<em>sort of</em> a mod API&#39;.&quot;</p>
-				</blockquote>
-				<p>That&#39;s correct. With Aurora, there&#39;s not really a distinction between core content and mods. Because all entities are both represented and saved as JSON (plus whatever other image assets or sounds), it&#39;s easy to add new units to the game without actually having to <code>eval()</code> any Javascript. This is especially useful for modded multiplayer where the required mods can be safely sent to all players in the game.</p>
-				<p>Obviously this exempts &quot;systems&quot; from being added as <em>they</em> are the actual executable functions which process a world&#39;s entities, but exchanging those should eventually be possible as well as the users&#39; discretion.</p>
-				<p>Read more on the <a href="https://github.com/ianpaschal/aurora/wiki">wiki</a>.</p>
-				<h2 id="license">License</h2>
-				<p>Aurora is licensed under the MIT license.</p>
-			</div>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Classes</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-class"><a href="classes/component.html" class="tsd-kind-icon">Component</a></li>
+								<li class="tsd-kind-class"><a href="classes/engine.html" class="tsd-kind-icon">Engine</a></li>
+								<li class="tsd-kind-class"><a href="classes/entity.html" class="tsd-kind-icon">Entity</a></li>
+								<li class="tsd-kind-class"><a href="classes/state.html" class="tsd-kind-icon">State</a></li>
+								<li class="tsd-kind-class"><a href="classes/system.html" class="tsd-kind-icon">System</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface"><a href="interfaces/componentconfig.html" class="tsd-kind-icon">Component<wbr>Config</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/entityconfig.html" class="tsd-kind-icon">Entity<wbr>Config</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/systemconfig.html" class="tsd-kind-icon">System<wbr>Config</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function"><a href="globals.html#capitalize" class="tsd-kind-icon">capitalize</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#copy" class="tsd-kind-icon">copy</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#getitem" class="tsd-kind-icon">get<wbr>Item</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#hasitem" class="tsd-kind-icon">has<wbr>Item</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="capitalize" class="tsd-anchor"></a>
+					<h3>capitalize</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">capitalize<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ianpaschal/aurora/blob/cb06c05/src/utils/capitalize.ts#L6">utils/capitalize.ts:6</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>module</dt>
+									<dd><p>utils</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="copy" class="tsd-anchor"></a>
+					<h3>copy</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">copy<span class="tsd-signature-symbol">(</span>obj<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ianpaschal/aurora/blob/cb06c05/src/utils/copy.ts#L6">utils/copy.ts:6</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>module</dt>
+									<dd><p>utils</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>obj: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="getitem" class="tsd-anchor"></a>
+					<h3>get<wbr>Item</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Item<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, prop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ianpaschal/aurora/blob/cb06c05/src/utils/getItem.ts#L6">utils/getItem.ts:6</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>module</dt>
+									<dd><p>utils</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>target: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>array: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>prop: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="hasitem" class="tsd-anchor"></a>
+					<h3>has<wbr>Item</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">has<wbr>Item<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, prop<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ianpaschal/aurora/blob/cb06c05/src/utils/hasItem.ts#L6">utils/hasItem.ts:6</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>module</dt>
+									<dd><p>utils</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>target: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>array: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>prop: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
+					<li class="globals current ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 				</ul>

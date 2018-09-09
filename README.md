@@ -1,5 +1,5 @@
 <p>
-	<img src="https://github.com/ianpaschal/aurora/raw/master/header.png" />
+	<img src="https://github.com/ianpaschal/aurora/blob/develop/logo.svg" />
 </p>
 <p>
 	<a href="https://www.npmjs.com/package/aurora">
@@ -15,8 +15,15 @@
 		<img src="https://img.shields.io/github/issues-raw/ianpaschal/aurora.svg" />
 	</a>
 	<a href="https://codeclimate.com/github/ianpaschal/aurora">
+		<img src="https://img.shields.io/travis/ianpaschal/aurora.svg?" />
+	</a>
+	<a href="https://codeclimate.com/github/ianpaschal/aurora">
 		<img src="https://img.shields.io/codeclimate/maintainability/ianpaschal/aurora.svg?" />
 	</a>
+	<a href="https://codeclimate.com/github/ianpaschal/aurora">
+		<img src="https://img.shields.io/codeclimate/coverage/ianpaschal/aurora.svg?" />
+	</a>
+	
 </p>
 
 Aurora is a small entity-component-system game engine for real-time-strategy games. It's also _sort of_ a mod API, but more on that later...

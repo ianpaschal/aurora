@@ -1,38 +1,7 @@
 {
   "name": "aurora",
-  "version": "1.0.1",
-  "description": "A small entity-component-system game engine for real-time-strategy games.",
-  "main": "./src/index.js",
-  "dependencies": {
-    "deepmerge": "^2.1.0",
-    "present": "^1.0.0",
-    "simplex-noise": "^2.4.0",
-    "three": "^0.90.0",
-    "uuid": "^3.2.1"
-  },
-  "devDependencies": {
-    "babel-eslint": "^8.2.1",
-    "css-loader": "^0.25.0",
-    "eslint": "^4.17.0",
-    "eslint-plugin-import": "^2.9.0",
-    "file-loader": "^0.9.0",
-    "grunt": "^1.0.2",
-    "grunt-eslint": "^20.1.0",
-    "grunt-jsdoc": "^2.2.1",
-    "grunt-webpack": "^3.0.2",
-    "jsdoc": "^3.5.5",
-    "load-grunt-tasks": "^3.5.2",
-    "minami": "^1.2.3",
-    "webpack": "^2.7.0"
-  },
-  "scripts": {
-    "test": ".",
-    "docs": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ianpaschal/aurora.git"
-  },
+  "version": "2.0.0",
+  "description": "A small entity-component-system game engine/framework.",
   "keywords": [
     "entity-component-system",
     "game-engine",
@@ -44,8 +13,40 @@
   ],
   "author": "Ian Paschal",
   "license": "MIT",
+  "homepage": "https://github.com/ianpaschal/aurora#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianpaschal/aurora.git"
+  },
   "bugs": {
     "url": "https://github.com/ianpaschal/aurora/issues"
   },
-  "homepage": "https://github.com/ianpaschal/aurora#readme"
+  "main": "./dist/index.js",
+  "scripts": {
+    "bundle": "parcel build ./src/index.ts",
+    "docs": "typedoc --out docs/ src/ --module commonjs --mode file --hideGenerator --name Aurora",
+    "lint": "eslint --fix",
+    "test": "jest --silent --config jest.json"
+  },
+  "dependencies": {
+    "@types/deepmerge": "^2.1.0",
+    "@types/uuid": "^3.4.3",
+    "deepmerge": "^2.1.0",
+    "present": "^1.0.0",
+    "three": "^0.90.0",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.17.0",
+    "eslint-plugin-import": "^2.9.0",
+    "jest": "^23.5.0",
+    "parcel-bundler": "^1.9.7",
+    "ts-jest": "^23.10.0-beta.2",
+    "typedoc": "^0.12.0",
+    "typedoc-plugin-external-module-name": "^1.1.3",
+    "typescript": "^3.0.1",
+    "typescript-eslint-parser": "^18.0.0"
+  }
 }
