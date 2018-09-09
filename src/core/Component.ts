@@ -6,6 +6,7 @@ import merge from "deepmerge";
 import { ComponentConfig } from "../utils/interfaces"; // Typing
 
 /**
+ * @module fuck
  * @classdesc Class representing a component.
  */
 export default class Component {
@@ -49,7 +50,7 @@ export default class Component {
 	 * @readonly
 	 * @returns {Object} - The component's data
 	 */
-	get data(): {}|[] {
+	get data(): any {
 		return this._data;
 	}
 
@@ -59,7 +60,7 @@ export default class Component {
 	 * @param {Object} data - Data object to apply
 	 * @returns {Object} - The component's updated updated data object
 	 */
-	set data( data: {}|[] ) {
+	set data( data: any ) {
 		this._data = copy( data );
 	}
 

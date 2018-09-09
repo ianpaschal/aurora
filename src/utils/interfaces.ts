@@ -2,6 +2,9 @@
 
 import Entity from "../core/Entity"; // Typing
 
+/**
+ * @module utils
+ */
 export interface ComponentConfig {
 	data?:           {}|[];
 	type?:           string;

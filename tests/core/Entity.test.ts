@@ -186,9 +186,10 @@ describe( "Entity.setComponentData( key, data )", () => {
 			additionalProp: 7
 		};
 		instance.setComponentData( "foo", data );
-		const setData = instance.getComponentData( "foo" );
-		expect( Object.keys( setData ) ).toContain( "additionalProp" );
-		expect( setData.additionalProp ).toEqual( data.additionalProp );
+		const component = instance.getComponent( "foo" );
+		expect( Object.keys( component.data ) ).toContain( "additionalProp" );
+		console.log( "data:", component.data );
+		expect( component.data.additionalProp ).toEqual( data.additionalProp );
 	});
 	it( "should throw an error for components which are invalid/missing.", () => {
 		expect( () => {

@@ -8,6 +8,7 @@ import System from "./System"; // Typing
 import { EntityConfig } from "../utils/interfaces"; // Typing
 
 /**
+ * @module fuck
  * @classdesc Class representing an entity.
  */
 export default class Entity {
@@ -173,9 +174,9 @@ export default class Entity {
 	 * @description Get data by component type from the entity. This is basically a shorthand for .getComponent.getData();
 	 * @readonly
 	 * @param {string} type - Component type
-	 * @returns {Object} - Requested component data
+	 * @returns {any} - Requested component data
 	 */
-	getComponentData( type: string ): Object {
+	getComponentData( type: string ): any {
 		const component = this.getComponent( type );
 		if ( !component ) {
 			throw Error( `Component with type ${ type } doesn't exist!` );
@@ -234,13 +235,12 @@ export default class Entity {
 	 * @param {Object} data - Data object
 	 */
 	setComponentData( type: string, data: {}): void {
-		for ( let i = 0; i < this._components.length; i++ ) {
-			if ( this._components[ i ].type === type ) {
-				this._components[ i ].mergeData( data );
-				return this._components[ i ];
-			}
+		const index = this._components.indexOf( this.getComponent( type ) );
+		if ( index === -1 ) {
+			throw Error( `Component with type ${ type } doesn't exist!` );
 		}
-		throw Error( `Component with type ${ type } doesn't exist!` );
+		const component = this.getComponent( type );
+		component.mergeData( data );
 	}
 
 }

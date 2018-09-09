@@ -139,19 +139,6 @@ describe( "System.unwatchEntity", () => {
 	});
 });
 
-describe( "System.unwatchComponentTypes( typesArray )", () => {
-	it( "should unwatch arrays with one type in them.", () => {
-		expect( () => {
-			instance.unwatchComponentTypes( [ "foo" ] );
-		}).not.toThrowError();
-	});
-	it( "should throw an error if the array contains an invalid type.", () => {
-		expect( () => {
-			instance.unwatchComponentTypes( [ "foo", "not-present" ] );
-		}).toThrowError();
-	});
-});
-
 describe( "System.update()", () => {
 	it( "should save left over time in the accumulator.", () => {
 		instance.update( 105 );
