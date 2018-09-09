@@ -33,6 +33,7 @@ export default class Component {
 		// Apply config values
 		if ( config ) {
 			Object.keys( config ).forEach( ( key ) => {
+
 				// Handle data slightly differently, otherwise simply overwite props with config values
 				if ( key === "data" ) {
 					this._data = copy( config.data );
@@ -42,6 +43,8 @@ export default class Component {
 			});
 		}
 	}
+
+	// Property Exposers
 
 	/**
 	 * @description Get the component's data.
@@ -53,7 +56,7 @@ export default class Component {
 	}
 
 	/**
-	 * @description Set the data for the component. Note: This method differs from `.mergeData()` in that it completely
+	 * @description Set the component's data. Note: This method differs from `.mergeData()` in that it completely
 	 * overwrites any existing data within the component.
 	 * @param {Object} data - Data object to apply
 	 * @returns {Object} - The component's updated updated data object
@@ -68,8 +71,6 @@ export default class Component {
 	 * @returns {string} - The component's data as a JSON string
 	 */
 	get json() {
-
-		// Provide new keys instead of stringifying private properties (with '_')
 		return JSON.stringify({
 			data: this._data,
 			type: this._type,
@@ -102,18 +103,9 @@ export default class Component {
 	get uuid(): string {
 		return this._uuid;
 	}
-
 	// Where is the set uuid() method? Doesn't exist! Don't change the UUID!
 
-	/**
-	 * @description Merge a data object into this component.
-	 * @param {Object} data - JSON data to apply to the component
-	 * @returns {(Object|Array)} - Updated data object/array
-	 */
-	mergeData( data ): {}|[] {
-		this._data = merge( this._data, data );
-		return this._data;
-	}
+	// Other
 
 	/**
 	 * @description Clone the component.
@@ -126,15 +118,25 @@ export default class Component {
 	}
 
 	/**
-	 * @description Copy another Component's data, replacing all existing data.
+	 * @description Copy another component's data, resetting existing data.
 	 * @param {Component} source - Component to copy from
-	 * @returns {Component} - Component with updated data
+	 * @returns {Component} - Component with overwritten data
 	 */
 	copy( source: Component ): void {
 
 		// Don't copy the UUID, only the type and data
 		this._type = source.type;
 		this._data = copy( source.data );
+	}
+
+	/**
+	 * @description Merge a data object into this component.
+	 * @param {Object} data - JSON data to apply to the component
+	 * @returns {(Object|Array)} - Updated data object/array
+	 */
+	mergeData( data ): {}|[] {
+		this._data = merge( this._data, data );
+		return this._data;
 	}
 
 }
