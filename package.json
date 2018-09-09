@@ -1,6 +1,6 @@
 {
   "name": "aurora",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A small entity-component-system game engine/framework.",
   "keywords": [
     "entity-component-system",
@@ -21,9 +21,9 @@
   "bugs": {
     "url": "https://github.com/ianpaschal/aurora/issues"
   },
-  "main": "/dist/index.js",
+  "main": "./dist/index.js",
   "scripts": {
-    "bundle": "parcel build ./src/index.js",
+    "bundle": "parcel build ./src/index.ts",
     "docs": "typedoc --out docs/ src/ --module commonjs --mode file --hideGenerator --name Aurora",
     "lint": "eslint --fix",
     "test": "jest --silent --config jest.json"

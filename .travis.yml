@@ -23,5 +23,6 @@ deploy:
   provider: npm
   email: ian.paschal@gmail.com
   api_key: $NPM_TOKEN
+  skip_cleanup: true
   on:
-    tags: true
+    branch: master
