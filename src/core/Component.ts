@@ -16,12 +16,10 @@ export default class Component {
 
 	/**
 	 * @description Create a Component.
-	 * @param {Object} [config] - Object containing component data. This is used when loading a previously created
-	 * component from disk, or creating the components which comprise an assembly.
-	 * @param {string} [config.uuid] - UUID of the component
-	 * @param {string} [config.type] - Type of the component
-	 * @param {Object} [config.data] - Object containing the actual data for the component
-	 * @returns {Component} - The newly created component
+	 * @param {Object} [config] - Configuration object
+	 * @param {string} [config.uuid] - Component UUID
+	 * @param {string} [config.type] - Component type
+	 * @param {Object} [config.data] - Object containing data for the component
 	 */
 	constructor( config?: ComponentConfig ) {
 
@@ -44,7 +42,7 @@ export default class Component {
 		}
 	}
 
-	// Property Exposers
+	// Expose properties
 
 	/**
 	 * @description Get the component's data.
@@ -120,7 +118,6 @@ export default class Component {
 	/**
 	 * @description Copy another component's data, resetting existing data.
 	 * @param {Component} source - Component to copy from
-	 * @returns {Component} - Component with overwritten data
 	 */
 	copy( source: Component ): void {
 

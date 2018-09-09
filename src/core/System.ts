@@ -25,18 +25,17 @@ export default class System {
 
 	/**
 	 * @description Create a System.
-	 * @param {Object} config - Properties of this system
-	 * @param {string} config.name - Name of this system
-	 * @param {boolean} config.fixed - Whether the system should update as often as possible or use a fixed step size
-	 * @param {number} config.step - Step size in milliseconds (only used if `props.fixed` is `false`)
+	 * @param {Object} config - Configuration object
+	 * @param {string} config.name - System name
+	 * @param {boolean} config.fixed - Fixed step size or update as often as possible
+	 * @param {number} config.step - Step size in milliseconds (only used if `fixed` is `false`)
 	 * @param {array} config.componentTypes - Types to watch
 	 * @param {Function} config.onInit - Function to run when first connecting the system to the engine
 	 * @param {Function} config.onAddEntity - Function to run on an entity when adding it to the system's watchlist
 	 * @param {Function} config.onRemoveEntity - Function to run on an entity when removing it from the system's watchlist
 	 * @param {Function} config.onUpdate - Function to run each time the engine updates the main loop
-	 * @returns {System} - The newly created system
 	 */
-	constructor( config?: SystemConfig ) {
+	constructor( config: SystemConfig ) {
 
 		// Define defaults
 		this._accumulator    = 0;
@@ -63,10 +62,14 @@ export default class System {
 			if ( specialCases.indexOf( key ) > -1 ) {
 				switch( key ) {
 					case "methods":
-						this.addMethods( config.methods );
+						Object.keys( config.methods ).forEach( ( key ) => {
+							this.addMethod( key, config.methods[ key ] );
+						});
 						break;
 					case "componentTypes":
-						this.watchComponentTypes( config.componentTypes );
+						Object.keys( config.componentTypes ).forEach( ( key ) => {
+							this.watchComponentType( config.componentTypes[ key ] );
+						});
 						break;
 				}
 			} else {
@@ -75,7 +78,102 @@ export default class System {
 		});
 	}
 
-	// INIT & UPDATE
+	/**
+	 * @description Get the accumulated time of the system.
+	 * @readonly
+	 * @returns {number} - Time in milliseconds
+	 */
+	get accumulator(): number {
+		return this._accumulator;
+	}
+
+	/**
+	 * @description Get whether or not the system uses a fixed step.
+	 * @readonly
+	 * @returns {boolean} - True if the system uses a fixed step
+	 */
+	get fixed(): boolean {
+		return this._fixed;
+	}
+
+	/**
+	 * @description Get the step size of the system in milliseconds.
+	 * @readonly
+	 * @returns {number} - Time in milliseconds
+	 */
+	get step(): number {
+		return this._step;
+	}
+
+	/**
+	 * @description Get the entity's name.
+	 * @readonly
+	 * @returns {string} - Name string
+	 */
+	get name(): string {
+		return this._name;
+	}
+
+	/**
+	 * @description Get all of the component types the system is watching.
+	 * @readonly
+	 * @returns {string[]} - Array of component types
+	 */
+	get watchedComponentTypes(): string[] {
+		return this._componentTypes;
+	}
+
+	/**
+	 * @description Get all of the entity UUIDs the system is watching.
+	 * @readonly
+	 * @returns {string[]} - Array of UUID strings
+	 */
+	get watchedEntityUUIDs(): string[] {
+		return this._entityUUIDs;
+	}
+
+	/**
+	 * @description Add an extra method to the system. Cannot be modified after the system is registered with the engine.
+	 * @param {string} key - Method identifier
+	 * @param {function} fn - Method to be called by user in the future
+	 */
+	addMethod( key: string, fn: Function ): void {
+		// TODO: Error handling
+		this._methods[ key ] = fn;
+	}
+
+	/**
+	 * @description Check if the system can watch a given entity.
+	 * @readonly
+	 * @param {Entity} entity - Entity to check
+	 * @returns {boolean} - True if the given entity is watchable
+	 */
+	canWatch( entity: Entity ): boolean {
+		// TODO: Error handling
+		// Faster to loop through search criteria vs. all components on entity
+		for ( const type of this._componentTypes ) {
+
+			// Return early if any required component is missing on entity
+			if ( !entity.hasComponent( type ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * @description Call a user-added method from outside the system. Cannot be modified after the system is registered
+	 * with the engine.
+	 * @param {string} key - Method identifier
+	 * @param {any} payload - Any data which should be passed to the method
+	 * @returns {any} - Any data which the method returns
+	 */
+	dispatch( key: string, payload?: any ): any {
+		if ( !this._methods[ key ] ) {
+			throw Error( `Method ${ key } does not exist!` );
+		}
+		return this._methods[ key ]( payload );
+	}
 
 	/**
 	 * @description Initialize the system (as a part of linking to the engine). After linking the engine, the system will
@@ -93,6 +191,76 @@ export default class System {
 
 		// Freeze the system to make it immutable:
 		this._frozen = true;
+	}
+
+	/**
+	 * @description Check if the system is watching a given component type.
+	 * @readonly
+	 * @param {Entity} entity - Component type to check
+	 * @returns {boolean} - True if the given component type is being watched
+	 */
+	isWatchingComponentType( componentType: string ): boolean {
+		if ( this._componentTypes.indexOf( componentType ) > -1 ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @description Check if the system is watching a given entity.
+	 * @readonly
+	 * @param {Entity} entity - Entity instance to check
+	 * @returns {boolean} - True if the given entity instance is being watched
+	 */
+	isWatchingEntity( entity: Entity ): boolean {
+		if ( this._entityUUIDs.indexOf( entity.uuid ) > -1 ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @description Remove a user-added method from the system. Cannot be modified after the system is registered with the
+	 * engine.
+	 * @param {string} key - Method identifier
+	 */
+	removeMethod( key: string ): void {
+		if ( !this._methods[ key ] ) {
+			throw Error( `Method ${ key } does not exist!` );
+		}
+		delete this._methods[ key ];
+	}
+
+	/**
+	 * @description Remove a component type to the system's watch list. Cannot be modified after the system is registered
+	 * with the engine.
+	 * @param {string} componentType - Component type to stop watching
+	 * @returns {array} - Array of watched component types
+	 */
+	unwatchComponentType( componentType: string ): string[] {
+		const index = this._componentTypes.indexOf( componentType );
+		if ( this._componentTypes.length < 2 ) {
+			throw Error( "Cannot remove component type, this system will be left with 0." );
+		}
+		if ( index == -1 ) {
+			throw Error( "Component type not found on system." );
+		}
+		this._componentTypes.splice( index, 1 );
+		return this._componentTypes;
+	}
+
+	/**
+	 * @description Remove an entity UUID to the system's watch list.
+	 * @param {Entity} entity - Entity instance to stop watching
+	 * @returns {array} - Array of watched entity UUIDs
+	 */
+	unwatchEntity( entity: Entity ): string[] {
+		const index = this._entityUUIDs.indexOf( entity.uuid );
+		if ( index < 0 ) {
+			throw Error( `Could not unwatch entity ${ entity.uuid }; not watched.` );
+		}
+		this._entityUUIDs.splice( index, 1 );
+		return this._entityUUIDs;
 	}
 
 	/**
@@ -114,119 +282,11 @@ export default class System {
 		}
 	}
 
-	// USER-ADDED METHODS
-
-	/**
-	 * @description Add an extra method to the system. Cannot be modified after
-	 * the system is registered with the engine.
-	 * @param {string} key - Identifier for the method
-	 * @param {function} method - Method to be called by user in the future
-	 */
-	addMethod( key: string, fn: Function ): void {
-		// TODO: Error handling
-		this._methods[ key ] = fn;
-	}
-
-	addMethods( methods: {}): void {
-		Object.keys( methods ).forEach( ( key ) => {
-			this.addMethod( key, methods[ key ] );
-		});
-	}
-
-	/**
-	 * @description Call a user-added method from outside the system. Cannot be modified after the system is registered
-	 * with the engine.
-	 * @param {string} key - Identifier for the method
-	 * @param {any} payload - Any data which should be passed to the method
-	 */
-	dispatch( key: string, payload?: any ): void {
-		if ( !this._methods[ key ] ) {
-			throw Error( `Method ${ key } does not exist!` );
-		}
-		return this._methods[ key ]( payload );
-	}
-
-	/**
-	 * @description Remove a user-added method from the system. Cannot be modified after the system is registered with the
-	 * engine.
-	 * @param {string} key - Identifier for the method
-	 */
-	removeMethod( key: string ): void {
-		if ( !this._methods[ key ] ) {
-			throw Error( `Method ${ key } does not exist!` );
-		}
-		delete this._methods[ key ];
-	}
-
-	// ADDING ENTITIES/COMPONENTS TO THE SYSTEM
-
-	/**
-	 * @description Check if this system can watch a given entity.
-	 * @readonly
-	 * @param {Entity} entity - Entity to check
-	 * @returns {boolean} - True if the given entity is watchable
-	 */
-	canWatch( entity: Entity ): boolean {
-		// TODO: Error handling
-		// Faster to loop through search criteria vs. all components on entity
-		for ( const type of this._componentTypes ) {
-
-			// Return early if any required component is missing on entity
-			if ( !entity.hasComponent( type ) ) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * @description Check if this system is watching a given entity.
-	 * @readonly
-	 * @param {Entity} entity - Entity to check
-	 * @returns {boolean} - True if the given entity is being watched
-	 */
-	isWatchingEntity( entity: Entity ): boolean {
-		if ( this._entityUUIDs.indexOf( entity.uuid ) > -1 ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @description Check if this system is watching a given component type.
-	 * @readonly
-	 * @param {Entity} entity - Component type to check
-	 * @returns {boolean} - True if the given component type is being watched
-	 */
-	isWatchingComponentType( componentType: string ): boolean {
-		if ( this._componentTypes.indexOf( componentType ) > -1 ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @description Watch an entity by adding its UUID to to the system. After adding, the system will run the entity
-	 * through the internal add function to do any additional processing.
-	 * @param {Entity} entity - Entity instance to watch
-	 * @returns {array} - Updated array of watched entity UUIDs
-	 */
-	watchEntity( entity: Entity ): string[] {
-
-		// Check if this entity is already being watched
-		if ( this._entityUUIDs.indexOf( entity.uuid ) >= 0 ) {
-			throw Error( `Entity ${ entity.uuid } is already being watched!` );
-		}
-		this._entityUUIDs.push( entity.uuid );
-		this._onAddEntity( entity );
-		return this._entityUUIDs;
-	}
-
 	/**
 	 * @description Add a single component type to the system's watch list. Cannot be modified after the system is
 	 * registered with the engine.
 	 * @param {string} componentType - Component type to watch
-	 * @returns {array} - Updated array of watched component types
+	 * @returns {array} - Array of watched component types
 	 */
 	watchComponentType( componentType: string ): string[] {
 
@@ -247,84 +307,20 @@ export default class System {
 	}
 
 	/**
-	 * @description Add component types to the system's watch list. Cannot be modified after the system is registered with
-	 * the engine.
-	 * @param {Array} componentTypes - The component types to watch
-	 * @returns {array} - Updated array of watched component types
+	 * @description Watch an entity by adding its UUID to to the system. After adding, the system will run the entity
+	 * through the internal add function to do any additional processing.
+	 * @param {Entity} entity - Entity instance to watch
+	 * @returns {array} - Array of watched entity UUIDs
 	 */
-	watchComponentTypes( componentTypes: string[] ): string[] {
-		// TODO: Error handling
-		componentTypes.forEach( ( type ) => {
-			this.watchComponentType( type );
-		});
-		return this._componentTypes;
-	}
+	watchEntity( entity: Entity ): string[] {
 
-	/**
-	 * @description Stop watching an entity.
-	 * @param {Entity} entity - Entity instance to stop watching
-	 * @returns {array} - Updated array of watched entity UUIDs
-	 */
-	unwatchEntity( entity: Entity ): string[] {
-		console.log( "Looking for", entity.uuid, "in", this._entityUUIDs );
-		// console.log( this._entityUUIDs );
-		const index = this._entityUUIDs.indexOf( entity.uuid );
-		if ( index < 0 ) {
-			throw Error( `Could not unwatch entity ${ entity.uuid }; not watched.` );
+		// Check if this entity is already being watched
+		if ( this._entityUUIDs.indexOf( entity.uuid ) >= 0 ) {
+			throw Error( `Entity ${ entity.uuid } is already being watched!` );
 		}
-		this._entityUUIDs.splice( index, 1 );
+		this._entityUUIDs.push( entity.uuid );
+		this._onAddEntity( entity );
 		return this._entityUUIDs;
 	}
 
-	/**
-	 * @description Remove a single component type to the system's watch list. Cannot be modified after the system is
-	 * registered with the engine.
-	 * @param {string} componentType - Component type to stop watching
-	 * @returns {array} - Updated array of watched component types
-	 */
-	unwatchComponentType( componentType: string ): string[] {
-		const index = this._componentTypes.indexOf( componentType );
-		if ( this._componentTypes.length < 2 ) {
-			throw Error( "Cannot remove component type, this system will be left with 0." );
-		}
-		if ( index == -1 ) {
-			throw Error( "Component type not found on system." );
-		}
-		this._componentTypes.splice( index, 1 );
-
-		return this._componentTypes;
-	}
-
-	/**
-	 * @description Remove component types from the system's watch list. Cannot be modified after the system is registered
-	 * with the engine.
-	 * @param {Array} componentTypes - The component types to remove
-	 * @returns {array} - Updated array of watched component types
-	 * */
-	unwatchComponentTypes( componentTypes: string[] ): string[] {
-		componentTypes.forEach( ( type ) => {
-			this.unwatchComponentType( type );
-		});
-		return this._componentTypes;
-	}
-
-	// TODO: Add documentation to these methods
-	get fixed() {
-		return this._fixed;
-	}
-	get step() {
-		return this._step;
-	}
-	get accumulator() {
-		return this._accumulator;
-	}
-	get watchedComponentTypes() {
-		return this._componentTypes;
-	}
-	get watchedEntityUUIDs() {
-		return this._entityUUIDs;
-	}
-	get name() {
-		return this._name;
-	}
 }

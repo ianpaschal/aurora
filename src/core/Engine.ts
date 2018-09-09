@@ -24,6 +24,7 @@ export default class Engine {
 	 * @description Create an instance of the Aurora engine.
 	 */
 	constructor() {
+
 		// TODO: Build from JSON in the case of loading a save
 
 		console.log( "Aurora: Initializing a new engine." );
@@ -43,52 +44,90 @@ export default class Engine {
 		return this;
 	}
 
-	get assemblies() {
+	/**
+	 * @description Get all of the engine's assemblies.
+	 * @readonly
+	 * @returns {Entity[]} - Array of assembly (entity) instances
+	 */
+	get assemblies(): Entity[] {
 		return this._assemblies;
 	}
 
-	getAssembly( type ) {
-		if ( !this.hasAssembly( type ) ) {
-			throw Error( "No assembly of that type found!" );
-		}
-		return getItem( type, this._assemblies, "type" );
-	}
-
-	hasAssembly( type ) {
-		return hasItem( type, this._assemblies, "type" );
-	}
-
-	/** @description Get an Entity instance by UUID.
-		* @readonly
-		* @param {String} uuid - UUID of the entity to fetch.
-		* @returns {(Entity|null)} - Requested entity, or null if not found.
-		*/
-	getEntity( uuid: string ): Entity|null {
-		if ( !this.hasEntity( uuid ) ) {
-			throw Error( "No enitity with that UUID found!" );
-		}
-		return getItem( uuid, this._entities, "uuid" );
-	}
-
-	hasEntity( uuid ) {
-		return hasItem( uuid, this._entities, "uuid" );
-	}
-
-	get entities() {
+	/**
+	 * @description Get all of the engine's entities.
+	 * @readonly
+	 * @returns {Entity[]} - Array of entity instances
+	 */
+	get entities(): Entity[] {
 		return this._entities;
 	}
 
-	getSystem( name: string ): System|null {
-		if ( !this.hasSystem( name ) ) {
-			throw Error( "No system with that name found!" );
-		}
-		return getItem( name, this._systems, "name" );
+	/**
+	 * @description Get the function currently set to execute after every tick.
+	 * @readonly
+	 * @returns {Function} - Function currently set to execute
+	 */
+	get onTickComplete(): Function {
+		return this._onTickComplete;
 	}
 
-	hasSystem( name ) {
-		return hasItem( name, this._systems, "name" );
+	/**
+	 * @description Get the function currently set to execute before every tick.
+	 * @readonly
+	 * @returns {Function} - Function currently set to execute
+	 */
+	get onTickStart(): Function {
+		return this._onTickStart;
 	}
 
+	/**
+	 * @description Get whether or not the engine is currently running.
+	 * @readonly
+	 * @returns {boolean} - True if the engine is running
+	 */
+	get running(): boolean {
+		return this._running;
+	}
+
+	/**
+	 * @description Get all of the engine's systems.
+	 * @readonly
+	 * @returns {System[]} - Array of system instances
+	 */
+	get systems(): System[] {
+		return this._systems;
+	}
+
+	/**
+	 * @description Get the timestamp of the engine's last tick.
+	 * @readonly
+	 * @returns {number} - Timestamp in milliseconds
+	 */
+	get lastTickTime() {
+		return this._lastTickTime;
+	}
+
+	/**
+	 * @description Set a function to execute after every update tick.
+	 * @param {Function} fn - Function to execute
+	 */
+	set onTickComplete( fn: Function ) {
+		this._onTickComplete = fn;
+	}
+
+	/**
+	 * @description Set a function to execute before every update tick.
+	 * @param {Function} fn - Function to execute
+	 */
+	set onTickStart( fn: Function ) {
+		this._onTickStart = fn;
+	}
+
+	/**
+	 * @description Add an assembly (entity) instance to the engine.
+	 * @param {Entity} assembly - Assembly instance
+	 * @returns {Entity[]} - Array of assembly (entity) instances
+	 */
 	addAssembly( assembly: Entity ): Entity[] {
 
 		// Validate
@@ -105,10 +144,11 @@ export default class Engine {
 	}
 
 	/**
-	 * @description Add an entity instance to to the engine. After being added and
-	 * initialized, entities are immutable and updated every game loop.
-	 * @param {Entity} entity - Entity instance to add
-	 * @returns {Entity[]} - Updated array of entity instances
+	 * @description Add an entity instance to the engine. This will check which systems should watch it, and add it to
+	 * those systems (running the entity through each system's onAdd hook. After being added and initialized, entities are
+	 * immutable (although their component data is not).
+	 * @param {Entity} entity - Entity instance
+	 * @returns {Entity[]} - Array of entity instances
 	 */
 	addEntity( entity: Entity ): Entity[] {
 
@@ -133,10 +173,10 @@ export default class Engine {
 	}
 
 	/**
-	 * @description Add a system instance to the engine. After being added and
-	 * initialized, systems are immutable and are updated every game loop.
-	 * @param {System} system - System instance to initialize and add
-	 * @returns {System[]} - Updated array of system instances
+	 * @description Add a system instance to the engine. This will run the system's onInit hook. After being added and
+	 * initialized, systems are immutable and are updated every game tick.
+	 * @param {System} system - System instance
+	 * @returns {System[]} - Array of system instances
 	 */
 	addSystem( system: System ): System[] {
 
@@ -155,49 +195,73 @@ export default class Engine {
 		return this._systems;
 	}
 
-	get systems(): System[] {
-		return this._systems;
-	}
-
-	// Everything from here down is depreciated because the user supplies their own loop function
-	get lastTickTime() {
-		return this._lastTickTime;
+	/**
+	 * @description Get an assembly (entity) instance by type from the engine.
+	 * @readonly
+	 * @param {string} type - Assembly type
+	 * @returns {Entity} - Requested assembly (entity) instance
+	 */
+	getAssembly( type: string ): Entity {
+		if ( !this.hasAssembly( type ) ) {
+			throw Error( "No assembly of that type found!" );
+		}
+		return getItem( type, this._assemblies, "type" );
 	}
 
 	/**
-	 * @description Set a function to execute after every update tick.
-	 * @param {Function} fn - Function to execute
+	 * @description Get an entity instance by UUID from the engine.
+	 * @readonly
+	 * @param {string} uuid - Entity UUID
+	 * @returns {Entity} - Requested entity instance
 	 */
-	set onTickComplete( fn: Function ) {
-		this._onTickComplete = fn;
+	getEntity( uuid: string ): Entity {
+		if ( !this.hasEntity( uuid ) ) {
+			throw Error( "No enitity with that UUID found!" );
+		}
+		return getItem( uuid, this._entities, "uuid" );
 	}
 
 	/**
-	 * @description Get the function currently set to execute after every tick.
-	 * @returns {Function} - Function currently set to execute
+	 * @description Get a system instance by name from the engine.
+	 * @readonly
+	 * @param {string} name - System name
+	 * @returns {System} - Requested system instance
 	 */
-	get onTickComplete(): Function {
-		return this._onTickComplete;
+	getSystem( name: string ): System {
+		if ( !this.hasSystem( name ) ) {
+			throw Error( "No system with that name found!" );
+		}
+		return getItem( name, this._systems, "name" );
 	}
 
 	/**
-	 * @description Set a function to execute before every update tick.
-	 * @param {Function} fn - Function to execute
+	 * @description Check if an assembly is present within the engine.
+	 * @readonly
+	 * @param {string} name - Assembly name
+	 * @returns {boolean} - True if the assembly is present
 	 */
-	set onTickStart( fn: Function ) {
-		this._onTickStart = fn;
+	hasAssembly( type: string ): boolean {
+		return hasItem( type, this._assemblies, "type" );
 	}
 
 	/**
-	 * @description Get the function currently set to execute before every tick.
-	 * @returns {Function} - Function currently set to execute
+	 * @description Check if a system is present within the engine.
+	 * @readonly
+	 * @param {string} name - System name
+	 * @returns {boolean} - True if the entity is present
 	 */
-	get onTickStart(): Function {
-		return this._onTickStart;
+	hasEntity( uuid: string ): boolean {
+		return hasItem( uuid, this._entities, "uuid" );
 	}
 
-	get running(): boolean {
-		return this._running;
+	/**
+	 * @description Check if a system is present within the engine.
+	 * @readonly
+	 * @param {string} name - System name
+	 * @returns {boolean} - True if the system is present
+	 */
+	hasSystem( name: string ): boolean {
+		return hasItem( name, this._systems, "name" );
 	}
 
 	/**
@@ -221,7 +285,7 @@ export default class Engine {
 	}
 
 	/**
-	 * @description Update all systems.
+	 * @description Perform one tick and update all systems.
 	 * @private
 	 */
 	tick(): void {

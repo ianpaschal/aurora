@@ -8,7 +8,7 @@ import System from "./System"; // Typing
 import { EntityConfig } from "../utils/interfaces"; // Typing
 
 /**
- * @classdesc Class representing an Entity.
+ * @classdesc Class representing an entity.
  */
 export default class Entity {
 
@@ -18,13 +18,13 @@ export default class Entity {
 	private _uuid:       string;
 
 	/**
-	 * @description Create an entity. A JSON object can be used when loading a previously created entity from disk, or
+	 * @description Create an entity. An object can be used when loading a previously created entity from disk, or
 	 * creating an entity to be used as an assembly to clone into new entity instances.
-	 * @param {Object} [config] - JSON object containing entity data
-	 * @param {String} [config.uuid] - UUID of the entity
-	 * @param {String} [config.type] - Type of the entity
-	 * @param {String} [config.name] - Name of the entity (typically also called "unit type" in-game)
-	 * @param {Array} [config.components] - Array of component data to generate component instances from
+	 * @param {Object} [config] - Configuration object
+	 * @param {string} [config.uuid] - Entity UUID
+	 * @param {string} [config.type] - Entity type
+	 * @param {string} [config.name] - Entity name (typically also called "unit type" in-game)
+	 * @param {Array} [config.components] - Array of component data objects to generate component instances from
 	 */
 	constructor( config?: EntityConfig ) {
 
@@ -51,9 +51,9 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Get all of the entity's components.
+	 * @description Get all of the entity's component instances.
 	 * @readonly
-	 * @returns {Array} - Array of the entity's components
+	 * @returns {Component[]} - Array of component instances
 	 */
 	get components(): Component[] {
 		return this._components;
@@ -62,9 +62,9 @@ export default class Entity {
 	/**
 	 * @description Get all of the entity's component types.
 	 * @readonly
-	 * @returns {Array} - Array of component types present within the entity
+	 * @returns {string[]} - Array of component types
 	 */
-	get componentTypes() {
+	get componentTypes(): string[] {
 		const componentTypes = [];
 		this._components.forEach( ( component ) => {
 			componentTypes.push( component.type );
@@ -73,12 +73,11 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Get the Entity's data as a JSON string.
+	 * @description Get the entity's data as a JSON string.
 	 * @readonly
-	 * @returns {String} - The Entity's data as a JSON string
+	 * @returns {string} - JSON string
 	 */
-	get json() {
-		// Provide new keys instead of stringifying private properties (with '_')
+	get json(): string {
 		const data = {
 			uuid: this._uuid,
 			type: this._type,
@@ -96,29 +95,29 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Get the Entity's name.
+	 * @description Get the entity's name.
 	 * @readonly
-	 * @returns {String} - The Entity's name
+	 * @returns {string} - Name string
 	 */
-	get name() {
+	get name(): string {
 		return this._name;
 	}
 
 	/**
-	 * @description Get the Entity's type.
+	 * @description Get the entity's type.
 	 * @readonly
-	 * @returns {String} - The Entity's type.
+	 * @returns {string} - Type string
 	 */
-	get type() {
+	get type(): string {
 		return this._type;
 	}
 
 	/**
-	 * @description Get the Entity's UUID.
+	 * @description Get the entity's UUID.
 	 * @readonly
-	 * @returns {String} - The Entity's UUID.
+	 * @returns {string} - UUID string
 	 */
-	get uuid() {
+	get uuid(): string {
 		return this._uuid;
 	}
 
@@ -127,10 +126,9 @@ export default class Entity {
 	 * the entity has been registered.
 	 * @private
 	 * @param {Component} component - The component to add
-	 * @returns {(Array|null)} - Updated array of components, or null if the component already existed
+	 * @returns {Component[]} - Updated array of components, or null if the component already existed
 	 */
-	addComponent( component: Component ) {
-		// Don't add if it already exists:
+	addComponent( component: Component ): Component[] {
 		if ( this.hasComponent( component.type ) ) {
 			throw Error( `Component with type ${ component.type } was already added!` );
 		}
@@ -139,24 +137,8 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Remove a Component instance from the Entity. This method should only be called internally, and never
-	 * after the Entity has been registered.
-	 * @private
-	 * @param {String} type - Type of the Component to remove.
-	 * @returns {(Array|null)} - Updated array of Components, or null the component already existed.
-	 */
-	removeComponent( type: string ) {
-		const index = this._components.indexOf( this.getComponent( type ) );
-		if ( index === -1 ) {
-			throw Error( `Component with type ${ type } doesn't exist!` );
-		}
-		this._components.splice( index, 1 );
-		return this._components;
-	}
-
-	/**
 	 * @description Clone the entity.
-	 * @returns {Entity} - New instance with the same components
+	 * @returns {Entity} - New Entity instance
 	 */
 	clone(): Entity {
 		const clone = new Entity();
@@ -166,34 +148,34 @@ export default class Entity {
 
 	/**
 	 * @description Copy another entity (such as an assembly) into the entity, replacing all components.
-	 * @param {Entity} source - Assembly to clone into the new entity
-	 * @returns {Array} - Updated array of Components copied from source
+	 * @param {Entity} source - Entity to copy
 	 */
-	copy( source ) {
+	copy( source ): void {
 		this._type = source.type;
 		this._name = source.name;
 		this._components = [];
 		source.components.forEach( ( component ) => {
 			this._components.push( component.clone() );
 		});
-		return this._components;
 	}
 
-	/** @description Get a component instance by within the entity.
-		* @readonly
-		* @param {String} type - Type of the component to get.
-		* @returns {(Component|null)} - Requested component, or null if not found.
-		*/
-	getComponent( type ) {
+	/**
+	 * @description Get a component instance by type from the entity.
+	 * @readonly
+	 * @param {string} type - Component type
+	 * @returns {Component} - Requested component instance
+	 */
+	getComponent( type: string ): Component {
 		return getItem( type, this._components, "_type" );
 	}
+
 	/**
 	 * @description Get data by component type from the entity. This is basically a shorthand for .getComponent.getData();
 	 * @readonly
-	 * @param {String} type - Type of the component to get data from
-	 * @returns {(Object|null)} - Requested component data, or null if not found
+	 * @param {string} type - Component type
+	 * @returns {Object} - Requested component data
 	 */
-	getComponentData( type ) {
+	getComponentData( type: string ): Object {
 		const component = this.getComponent( type );
 		if ( !component ) {
 			throw Error( `Component with type ${ type } doesn't exist!` );
@@ -201,32 +183,24 @@ export default class Entity {
 		return component.data;
 	}
 
-	/** @description Check if a component is present within the Entity.
-		* @readonly
-		* @param {String} type - Type of the component to check.
-		* @returns {Bool} - True if the component is present within the Entity.
-		*/
-	hasComponent( type ) {
+	/**
+	 * @description Check if a component is present within the entity.
+	 * @readonly
+	 * @param {string} type - Component type
+	 * @returns {boolean} - True if the component is present
+	 */
+	hasComponent( type: string ): boolean {
 		return hasItem( type, this._components, "type" );
 	}
 
-	/** @description Overwrite the data for a Component with the given type within
-		* the Entity.
-		* @param {String} type - Type of the Component to check.
-		* @param {Object} data - JSON data to apply to the Component.
-		* @returns {(Array|null)} - Updated Component, or null if invalid.
-		*/
-	setComponentData( type, data ) {
-		for ( let i = 0; i < this._components.length; i++ ) {
-			if ( this._components[ i ].type === type ) {
-				this._components[ i ].mergeData( data );
-				return this._components[ i ];
-			}
-		}
-		throw Error( `Component with type ${ type } doesn't exist!` );
-	}
-
+	/**
+	 * @description Check if the entity is watchable by a given system.
+	 * @readonly
+	 * @param {System} system - System instance
+	 * @returns {boolean} - True if the entity is watchable
+	 */
 	isWatchableBy( system: System ) {
+
 		// Faster to loop through search criteria vs. all components on entity
 		for ( const type of system.watchedComponentTypes ) {
 
@@ -236,6 +210,37 @@ export default class Entity {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * @description Remove a component instance from the entity. This method should only be called internally, and never
+	 * after the entity has been registered.
+	 * @private
+	 * @param {string} type - Component type
+	 * @returns {Component[]} - Array of component instances
+	 */
+	removeComponent( type: string ): Component[] {
+		const index = this._components.indexOf( this.getComponent( type ) );
+		if ( index === -1 ) {
+			throw Error( `Component with type ${ type } doesn't exist!` );
+		}
+		this._components.splice( index, 1 );
+		return this._components;
+	}
+
+	/**
+	 * @description Overwrite the data for a component of the given type within the entity.
+	 * @param {string} type - Component type
+	 * @param {Object} data - Data object
+	 */
+	setComponentData( type: string, data: {}): void {
+		for ( let i = 0; i < this._components.length; i++ ) {
+			if ( this._components[ i ].type === type ) {
+				this._components[ i ].mergeData( data );
+				return this._components[ i ];
+			}
+		}
+		throw Error( `Component with type ${ type } doesn't exist!` );
 	}
 
 }
