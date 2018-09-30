@@ -1,6 +1,6 @@
 import { ComponentConfig } from "../utils/interfaces";
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a component.
  */
 export default class Component {

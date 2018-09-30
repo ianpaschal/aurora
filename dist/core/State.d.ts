@@ -1,7 +1,7 @@
 import Engine from "./Engine";
 import Entity from "./Entity";
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a state.
  */
 export default class State {

@@ -2,7 +2,7 @@ import Component from "./Component";
 import System from "./System";
 import { EntityConfig } from "../utils/interfaces";
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing an entity.
  */
 export default class Entity {

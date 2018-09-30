@@ -2,7 +2,7 @@
 // Aurora is distributed under the MIT license.
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a state.
  */
 var State = /** @class */ (function () {

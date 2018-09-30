@@ -2,7 +2,7 @@ import Engine from "./Engine";
 import Entity from "./Entity";
 import { SystemConfig } from "../utils/interfaces";
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a system.
  */
 export default class System {

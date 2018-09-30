@@ -8,7 +8,7 @@ var present_1 = __importDefault(require("present"));
 var getItem_1 = __importDefault(require("../utils/getItem"));
 var hasItem_1 = __importDefault(require("../utils/hasItem"));
 /**
- * @module fuck
+ * @module core
  * @classdesc Core singleton representing an instance of the Aurora engine. The engine is responsible for the creation
  * (and registration) of entities, as well as initialization and running of systems containing game logic.
  */

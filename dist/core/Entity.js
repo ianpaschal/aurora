@@ -9,7 +9,7 @@ var getItem_1 = __importDefault(require("../utils/getItem"));
 var hasItem_1 = __importDefault(require("../utils/hasItem"));
 var Component_1 = __importDefault(require("./Component"));
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing an entity.
  */
 var Entity = /** @class */ (function () {

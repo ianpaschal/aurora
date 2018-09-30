@@ -1,8 +1,6 @@
 "use strict";
 // Aurora is distributed under the MIT license.
 Object.defineProperty(exports, "__esModule", { value: true });
-// This is removed via Parcel when creating a production bundle
-console.warn("If you are seeing this message, you are running Aurora in development mode.", "Make sure to turn on production mode when deploying for production.", "See more tips at https://ianpaschal.github.io/aurora/guide/deployment");
 // Core
 var Component_1 = require("./core/Component");
 exports.Component = Component_1.default;

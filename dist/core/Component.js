@@ -8,7 +8,7 @@ var uuid_1 = __importDefault(require("uuid"));
 var copy_1 = __importDefault(require("../utils/copy"));
 var deepmerge_1 = __importDefault(require("deepmerge"));
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a component.
  */
 var Component = /** @class */ (function () {
