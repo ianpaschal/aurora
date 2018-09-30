@@ -7,7 +7,7 @@ import getItem from "../utils/getItem";
 import hasItem from "../utils/hasItem";
 
 /**
- * @module fuck
+ * @module core
  * @classdesc Core singleton representing an instance of the Aurora engine. The engine is responsible for the creation
  * (and registration) of entities, as well as initialization and running of systems containing game logic.
  */

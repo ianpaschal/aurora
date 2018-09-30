@@ -16,7 +16,7 @@ before_script:
 script:
   - npm run lint
   - npm run test -- --coverage
-  - npm run bundle
+  - npm run compile
 after_script:
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
 deploy:

@@ -1,6 +1,6 @@
 {
   "name": "aurora",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A small entity-component-system game engine/framework.",
   "keywords": [
     "entity-component-system",
@@ -22,8 +22,9 @@
     "url": "https://github.com/ianpaschal/aurora/issues"
   },
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "bundle": "parcel build ./src/index.ts",
+    "compile": "tsc --declaration",
     "docs": "typedoc --out docs/ src/ --module commonjs --mode file --hideGenerator --name Aurora",
     "lint": "eslint --fix",
     "test": "jest --silent --config jest.json"
@@ -33,7 +34,6 @@
     "@types/uuid": "^3.4.3",
     "deepmerge": "^2.1.0",
     "present": "^1.0.0",
-    "three": "^0.90.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -42,7 +42,6 @@
     "eslint": "^4.17.0",
     "eslint-plugin-import": "^2.9.0",
     "jest": "^23.5.0",
-    "parcel-bundler": "^1.9.7",
     "ts-jest": "^23.10.0-beta.2",
     "typedoc": "^0.12.0",
     "typedoc-plugin-external-module-name": "^1.1.3",

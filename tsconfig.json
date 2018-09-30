@@ -1,6 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "es5"
+  },
+  "files": [
+    "./src/index.ts"
+  ]
 }
