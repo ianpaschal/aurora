@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "module": "commonjs",
     "outDir": "dist",
+    "sourceMap": true,
     "target": "es5"
   },
   "files": [
