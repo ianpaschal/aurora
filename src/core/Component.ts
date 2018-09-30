@@ -6,7 +6,7 @@ import merge from "deepmerge";
 import { ComponentConfig } from "../utils/interfaces"; // Typing
 
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a component.
  */
 export default class Component {

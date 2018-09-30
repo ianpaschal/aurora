@@ -4,7 +4,7 @@ import Engine from "./Engine"; // Typing
 import Entity from "./Entity"; // Typing
 
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a state.
  */
 export default class State {

@@ -5,7 +5,7 @@ import Entity from "./Entity"; // Typing
 import { SystemConfig } from "../utils/interfaces"; // Typing
 
 /**
- * @module fuck
+ * @module core
  * @classdesc Class representing a system.
  */
 export default class System {
