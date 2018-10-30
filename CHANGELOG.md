@@ -1,7 +1,7 @@
 # Changelog
 
 ## 2.1.1
-- Patched security vulnerability by removing parcel-bundler from dependencies.
+- Patched security vulnerability by removing `parcel-bundler` from dependencies.
 
 ## 2.1.0
 - Total overhaul of Aurora with two major focuses:
