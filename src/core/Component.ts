@@ -11,7 +11,7 @@ import { ComponentConfig } from "../utils/interfaces"; // Typing
  */
 export default class Component {
 
-	private _data: {}|[];
+	private _data: any;
 	private _type: string;
 	private _uuid: string;
 
@@ -132,7 +132,7 @@ export default class Component {
 	 * @param {Object} data - JSON data to apply to the component
 	 * @returns {(Object|Array)} - Updated data object/array
 	 */
-	mergeData( data ): {}|[] {
+	mergeData( data: any ): any {
 		this._data = merge( this._data, data );
 		return this._data;
 	}
