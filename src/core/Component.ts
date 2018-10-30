@@ -50,7 +50,7 @@ export default class Component {
 	 * @readonly
 	 * @returns {Object} - The component's data
 	 */
-	get data(): any {
+	get data(): {}|[] {
 		return this._data;
 	}
 
@@ -60,7 +60,7 @@ export default class Component {
 	 * @param {Object} data - Data object to apply
 	 * @returns {Object} - The component's updated updated data object
 	 */
-	set data( data: any ) {
+	set data( data: {}|[] ) {
 		this._data = copy( data );
 	}
 
@@ -132,7 +132,7 @@ export default class Component {
 	 * @param {Object} data - JSON data to apply to the component
 	 * @returns {(Object|Array)} - Updated data object/array
 	 */
-	mergeData( data ): {}|[] {
+	mergeData( data: {}|[] ): {}|[] {
 		this._data = merge( this._data, data );
 		return this._data;
 	}
