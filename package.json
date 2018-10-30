@@ -1,6 +1,6 @@
 {
   "name": "aurora",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A small entity-component-system game engine/framework.",
   "keywords": [
     "entity-component-system",
