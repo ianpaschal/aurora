@@ -40,8 +40,6 @@
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
 							<input type="checkbox" id="tsd-filter-externals" checked />
 							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -135,40 +133,40 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class">
+					<li class=" tsd-kind-class tsd-is-external">
 						<a href="classes/component.html" class="tsd-kind-icon">Component</a>
 					</li>
-					<li class=" tsd-kind-class">
+					<li class=" tsd-kind-class tsd-is-external">
 						<a href="classes/engine.html" class="tsd-kind-icon">Engine</a>
 					</li>
-					<li class=" tsd-kind-class">
+					<li class=" tsd-kind-class tsd-is-external">
 						<a href="classes/entity.html" class="tsd-kind-icon">Entity</a>
 					</li>
-					<li class=" tsd-kind-class">
+					<li class=" tsd-kind-class tsd-is-external">
 						<a href="classes/state.html" class="tsd-kind-icon">State</a>
 					</li>
-					<li class=" tsd-kind-class">
+					<li class=" tsd-kind-class tsd-is-external">
 						<a href="classes/system.html" class="tsd-kind-icon">System</a>
 					</li>
-					<li class=" tsd-kind-interface">
+					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/componentconfig.html" class="tsd-kind-icon">Component<wbr>Config</a>
 					</li>
-					<li class=" tsd-kind-interface">
+					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/entityconfig.html" class="tsd-kind-icon">Entity<wbr>Config</a>
 					</li>
-					<li class=" tsd-kind-interface">
+					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/systemconfig.html" class="tsd-kind-icon">System<wbr>Config</a>
 					</li>
-					<li class=" tsd-kind-function">
+					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#capitalize" class="tsd-kind-icon">capitalize</a>
 					</li>
-					<li class=" tsd-kind-function">
+					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#copy" class="tsd-kind-icon">copy</a>
 					</li>
-					<li class=" tsd-kind-function">
+					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#getitem" class="tsd-kind-icon">get<wbr>Item</a>
 					</li>
-					<li class=" tsd-kind-function">
+					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#hasitem" class="tsd-kind-icon">has<wbr>Item</a>
 					</li>
 				</ul>
@@ -176,7 +174,7 @@
 		</div>
 	</div>
 </div>
-<footer>
+<footer class="with-border-bottom">
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
@@ -235,6 +233,9 @@
 		</div>
 	</div>
 </footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
 <script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
