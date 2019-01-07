@@ -64,5 +64,5 @@ export default class Component {
      * @param {Object} data - JSON data to apply to the component
      * @returns {(Object|Array)} - Updated data object/array
      */
-    mergeData(data: any): {} | [];
+    mergeData(data: any): any;
 }
