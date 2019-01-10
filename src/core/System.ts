@@ -140,7 +140,7 @@ export default class System {
 	 */
 	addMethod( key: string, fn: Function ): void {
 		// TODO: Error handling
-		this._methods[ key ] = fn;
+		this._methods[ key ] = fn.bind( this );
 	}
 
 	/**

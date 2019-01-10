@@ -137,7 +137,7 @@ var System = /** @class */ (function () {
      */
     System.prototype.addMethod = function (key, fn) {
         // TODO: Error handling
-        this._methods[key] = fn;
+        this._methods[key] = fn.bind(this);
     };
     /**
      * @description Check if the system can watch a given entity.

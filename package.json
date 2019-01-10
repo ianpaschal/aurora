@@ -25,7 +25,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "compile": "tsc --declaration",
-    "docs": "typedoc --out docs/ src/ --module commonjs --mode file --hideGenerator --name Aurora",
+    "docs": "typedoc --options typedoc.json",
     "lint": "eslint --fix --ext .ts src/** tests/**",
     "test": "jest --silent --config jest.json"
   },
