@@ -21,7 +21,7 @@ after_script:
   - ./cc-test-reporter after-build -t lcov --debug --exit-code $TRAVIS_TEST_RESULT
 deploy:
   provider: npm
-  email: ian.paschal@gmail.com
+  email: projects@ianpaschal.com
   api_key: $NPM_TOKEN
   skip_cleanup: true
   on:
