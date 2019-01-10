@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.3
+- Fixed: In system methods, `this` is now bound to the system instead of the method. This allows the methods to use system properties such as `this.entityUUIDs`.
+
 ## 2.1.2
 - Patched security vulnerability by updating `merge` to version 1.2.1.
 
