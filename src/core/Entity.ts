@@ -263,6 +263,7 @@ export default class Entity {
 		}
 		const component = this.getComponent( type );
 		component.mergeData( data );
+		this.dirty = true;
 	}
 
 }
