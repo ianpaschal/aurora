@@ -320,4 +320,17 @@ export default class Engine {
 		}
 	}
 
+	/**
+	 * @description Set all entities to "clean".
+	 *
+	 * When this function is invoked is up to the developer. In some cases it makes sense to invoke it
+	 * at the beginning of each tick, in other cases after all entities are sent from a server to the
+	 * clients (for example).
+	 */
+	cleanEntities() {
+		this._entities.forEach( ( entity ) => {
+			entity.dirty = false;
+		});
+	}
+
 }
