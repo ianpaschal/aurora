@@ -14,6 +14,7 @@ import { EntityConfig } from "../utils/interfaces"; // Typing
 export default class Entity {
 
 	private _components: any[];
+	private _dirty:      boolean;
 	private _name:       string;
 	private _type:       string;
 	private _uuid:       string;
@@ -34,6 +35,7 @@ export default class Entity {
 		this._type = "no-type";
 		this._name = "No Name";
 		this._components = [];
+		this._dirty = true;
 
 		// Apply config values
 		if ( config ) {
@@ -73,12 +75,20 @@ export default class Entity {
 		return componentTypes;
 	}
 
+	get dirty(): boolean {
+		return this._dirty;
+	}
+
+	set dirty( boolean ) {
+		this._dirty = boolean;
+	}
+
 	/**
-	 * @description Get the entity's data as a JSON string.
+	 * @description Get the entity's data as a pure object (as compared to a class instance).
 	 * @readonly
-	 * @returns {string} - JSON string
+	 * @returns {Object} - Entity data as an object
 	 */
-	get json(): string {
+	get flattened(): any {
 		const data = {
 			uuid: this._uuid,
 			type: this._type,
@@ -92,7 +102,16 @@ export default class Entity {
 				uuid: component.uuid
 			});
 		});
-		return JSON.stringify( data, null, 4 );
+		return data;
+	}
+
+	/**
+	 * @description Get the entity's data as a JSON string.
+	 * @readonly
+	 * @returns {string} - JSON string
+	 */
+	get json(): string {
+		return JSON.stringify( this.flattened, null, 4 );
 	}
 
 	/**
