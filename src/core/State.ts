@@ -14,26 +14,29 @@ export default class State {
 
 	/**
 	 * @description Create a state instance from an engine.
-	 * @param {number} timestamp - Timestamp in milliseconds
 	 * @param {Engine} engine - Engine instance
 	 */
-	constructor( engine: Engine ) {
+	constructor( engine: Engine, complete: boolean = false ) {
 		this._timestamp = engine.lastTickTime;
 		this._entities = [];
 		engine.entities.forEach( ( entity ) => {
-			// Copy of the entity's data using non-private property keys
-			const components = [];
-			entity.components.forEach( ( component ) => {
-				components.push( component.data );
-			});
-			this._entities.push({
-				uuid: entity.uuid,
-				type: entity.type,
-				name: entity.name,
-				components: components
-			});
+
+			// If not performing a full state capture and the entity is not dirty, skip it
+			if ( !complete && !entity.dirty ) {
+				return;
+			}
+
+			// Otherwise, flatten it to a JSON object and push it to the array
+			this._entities.push( entity.flattened );
 		});
 		return this;
+	}
+
+	get flattened(): Object {
+		return {
+			timestamp: this._timestamp,
+			entities: this._entities
+		};
 	}
 
 	/**
@@ -52,5 +55,9 @@ export default class State {
 	 */
 	get timestamp(): number {
 		return this._timestamp;
+	}
+
+	get json(): string {
+		return JSON.stringify( this.flattened, null, 4 );
 	}
 }
