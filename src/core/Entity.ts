@@ -19,8 +19,8 @@ export default class Entity {
 	private _uuid:       string;
 
 	/**
-	 * @description Create an entity. An object can be used when loading a previously created entity from disk, or
-	 * creating an entity to be used as an assembly to clone into new entity instances.
+	 * @description Create an entity. An object can be used when loading a previously created entity
+	 * from disk, or creating an entity to be used as an assembly to clone into new entity instances.
 	 * @param {Object} [config] - Configuration object
 	 * @param {string} [config.uuid] - Entity UUID
 	 * @param {string} [config.type] - Entity type
@@ -39,7 +39,7 @@ export default class Entity {
 		if ( config ) {
 			Object.keys( config ).forEach( ( key ) => {
 
-				// Handle components slightly differently, otherwise simply overwite props with config values
+				// Handle components slightly differently, otherwise simply overwite props with config value
 				if ( key === "components" ) {
 					config.components.forEach( ( data ) => {
 						this.addComponent( new Component( data ) );
@@ -214,8 +214,8 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Remove a component instance from the entity. This method should only be called internally, and never
-	 * after the entity has been registered.
+	 * @description Remove a component instance from the entity. This method should only be called
+	 * internally, and never after the entity has been registered.
 	 * @private
 	 * @param {string} type - Component type
 	 * @returns {Component[]} - Array of component instances
