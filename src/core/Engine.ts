@@ -146,11 +146,9 @@ export default class Engine {
 	}
 
 	/**
-	 * @description Add an entity instance to the engine.
-	 *
-	 * This will check which systems should watch it, and add it to those systems (running the entity
-	 * through each system's onAdd hook. After being added and initialized, entities are immutable
-	 * (although their component data is not).
+	 * @description Add an entity instance to the engine. This will check which systems should watch
+	 * it, and add it to those systems (running the entity through each system's onAdd hook. After
+	 * being added and initialized, entities are immutable (although their component data is not).
 	 * @param {Entity} entity - Entity instance
 	 * @returns {Entity[]} - Array of entity instances
 	 */

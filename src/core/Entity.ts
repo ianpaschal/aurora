@@ -26,7 +26,8 @@ export default class Entity {
 	 * @param {string} [config.uuid] - Entity UUID
 	 * @param {string} [config.type] - Entity type
 	 * @param {string} [config.name] - Entity name (typically also called "unit type" in-game)
-	 * @param {Array} [config.components] - Array of component data objects to generate component instances from
+	 * @param {Array} [config.components] - Array of component data objects to generate component
+	 * instances from
 	 */
 	constructor( config?: EntityConfig ) {
 
@@ -142,8 +143,8 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Add a component instance to the entity. This method should only be called internally, and never after
-	 * the entity has been registered.
+	 * @description Add a component instance to the entity. This method should only be called
+	 * internally, and never after the entity has been registered.
 	 * @private
 	 * @param {Component} component - The component to add
 	 * @returns {Component[]} - Updated array of components, or null if the component already existed
@@ -167,7 +168,8 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Copy another entity (such as an assembly) into the entity, replacing all components.
+	 * @description Copy another entity (such as an assembly) into the entity, replacing all
+	 * components.
 	 * @param {Entity} source - Entity to copy
 	 */
 	copy( source ): void {
@@ -190,7 +192,8 @@ export default class Entity {
 	}
 
 	/**
-	 * @description Get data by component type from the entity. This is basically a shorthand for .getComponent.getData();
+	 * @description Get data by component type from the entity. This is basically a shorthand for
+	 * .getComponent.getData();
 	 * @readonly
 	 * @param {string} type - Component type
 	 * @returns {any} - Requested component data
