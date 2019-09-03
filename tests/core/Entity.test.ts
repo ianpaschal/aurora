@@ -43,6 +43,8 @@ describe( "Entity.uuid", () => {
 describe( "Entity.json", () => {
 	it( "should be a formatted JSON string representing the entity.", () => {
 		expect( JSON.parse( instance.json ) ).toEqual({
+			"destroy": false,
+			"dirty": true,
 			"uuid": config.uuid,
 			"type": config.type,
 			"name": config.name,

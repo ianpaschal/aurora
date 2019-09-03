@@ -31,7 +31,7 @@ describe( "A state created from the engine", () => {
 	let state: State;
 	beforeEach( () => {
 		engine.start();
-		state = new State( engine );
+		state = new State( engine, true );
 	});
 	it( "should have all entities added.", () => {
 		expect( state.entities.length ).toBe( 2 );
