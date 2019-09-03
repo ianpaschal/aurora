@@ -7,17 +7,20 @@ import { EntityConfig } from "../utils/interfaces";
  */
 export default class Entity {
     private _components;
+    private _destroy;
+    private _dirty;
     private _name;
     private _type;
     private _uuid;
     /**
-     * @description Create an entity. An object can be used when loading a previously created entity from disk, or
-     * creating an entity to be used as an assembly to clone into new entity instances.
+     * @description Create an entity. An object can be used when loading a previously created entity
+     * from disk, or creating an entity to be used as an assembly to clone into new entity instances.
      * @param {Object} [config] - Configuration object
      * @param {string} [config.uuid] - Entity UUID
      * @param {string} [config.type] - Entity type
      * @param {string} [config.name] - Entity name (typically also called "unit type" in-game)
-     * @param {Array} [config.components] - Array of component data objects to generate component instances from
+     * @param {Array} [config.components] - Array of component data objects to generate component
+     * instances from
      */
     constructor(config?: EntityConfig);
     /**
@@ -32,6 +35,14 @@ export default class Entity {
      * @returns {string[]} - Array of component types
      */
     readonly componentTypes: string[];
+    dirty: boolean;
+    destroy: boolean;
+    /**
+     * @description Get the entity's data as a pure object (as compared to a class instance).
+     * @readonly
+     * @returns {Object} - Entity data as an object
+     */
+    readonly flattened: any;
     /**
      * @description Get the entity's data as a JSON string.
      * @readonly
@@ -57,8 +68,8 @@ export default class Entity {
      */
     readonly uuid: string;
     /**
-     * @description Add a component instance to the entity. This method should only be called internally, and never after
-     * the entity has been registered.
+     * @description Add a component instance to the entity. This method should only be called
+     * internally, and never after the entity has been registered.
      * @private
      * @param {Component} component - The component to add
      * @returns {Component[]} - Updated array of components, or null if the component already existed
@@ -70,7 +81,8 @@ export default class Entity {
      */
     clone(): Entity;
     /**
-     * @description Copy another entity (such as an assembly) into the entity, replacing all components.
+     * @description Copy another entity (such as an assembly) into the entity, replacing all
+     * components.
      * @param {Entity} source - Entity to copy
      */
     copy(source: any): void;
@@ -82,7 +94,8 @@ export default class Entity {
      */
     getComponent(type: string): Component;
     /**
-     * @description Get data by component type from the entity. This is basically a shorthand for .getComponent.getData();
+     * @description Get data by component type from the entity. This is basically a shorthand for
+     * .getComponent.getData();
      * @readonly
      * @param {string} type - Component type
      * @returns {any} - Requested component data
@@ -103,8 +116,8 @@ export default class Entity {
      */
     isWatchableBy(system: System): boolean;
     /**
-     * @description Remove a component instance from the entity. This method should only be called internally, and never
-     * after the entity has been registered.
+     * @description Remove a component instance from the entity. This method should only be called
+     * internally, and never after the entity has been registered.
      * @private
      * @param {string} type - Component type
      * @returns {Component[]} - Array of component instances

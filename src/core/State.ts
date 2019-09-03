@@ -22,7 +22,7 @@ export default class State {
 		engine.entities.forEach( ( entity ) => {
 
 			// If not performing a full state capture and the entity is not dirty, skip it
-			if ( !complete && !entity.dirty ) {
+			if ( complete || entity.dirty || entity.destroy ) {
 				return;
 			}
 

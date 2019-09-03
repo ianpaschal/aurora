@@ -14,7 +14,8 @@ import { EntityConfig } from "../utils/interfaces"; // Typing
 export default class Entity {
 
 	private _components: any[];
-	private _dirty:      boolean;
+	private _destroy:    boolean; // TODO: Move to flags object
+	private _dirty:      boolean; // TODO: Move to flags object
 	private _name:       string;
 	private _type:       string;
 	private _uuid:       string;
@@ -37,6 +38,7 @@ export default class Entity {
 		this._name = "No Name";
 		this._components = [];
 		this._dirty = true;
+		this._destroy = false;
 
 		// Apply config values
 		if ( config ) {
@@ -84,6 +86,14 @@ export default class Entity {
 		this._dirty = boolean;
 	}
 
+	get destroy(): boolean {
+		return this._destroy;
+	}
+
+	set destroy( boolean ) {
+		this._destroy = boolean;
+	}
+
 	/**
 	 * @description Get the entity's data as a pure object (as compared to a class instance).
 	 * @readonly
@@ -91,10 +101,12 @@ export default class Entity {
 	 */
 	get flattened(): any {
 		const data = {
-			uuid: this._uuid,
-			type: this._type,
+			components: [],
+			destroy: this._destroy,
+			dirty: this._dirty,
 			name: this._name,
-			components: []
+			type: this._type,
+			uuid: this._uuid,
 		};
 		this._components.forEach( ( component ) => {
 			data.components.push({

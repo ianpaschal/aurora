@@ -9,10 +9,10 @@ export default class State {
     private _entities;
     /**
      * @description Create a state instance from an engine.
-     * @param {number} timestamp - Timestamp in milliseconds
      * @param {Engine} engine - Engine instance
      */
-    constructor(engine: Engine);
+    constructor(engine: Engine, complete?: boolean);
+    readonly flattened: Object;
     /**
      * @description Get the state's entities.
      * @readonly
@@ -25,4 +25,5 @@ export default class State {
      * @returns {number} - Timestamp in milliseconds
      */
     readonly timestamp: number;
+    readonly json: string;
 }

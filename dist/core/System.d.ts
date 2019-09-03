@@ -26,9 +26,12 @@ export default class System {
      * @param {boolean} config.fixed - Fixed step size or update as often as possible
      * @param {number} config.step - Step size in milliseconds (only used if `fixed` is `false`)
      * @param {array} config.componentTypes - Types to watch
-     * @param {Function} config.onInit - Function to run when first connecting the system to the engine
-     * @param {Function} config.onAddEntity - Function to run on an entity when adding it to the system's watchlist
-     * @param {Function} config.onRemoveEntity - Function to run on an entity when removing it from the system's watchlist
+     * @param {Function} config.onInit - Function to run when first connecting the system to the
+     * engine
+     * @param {Function} config.onAddEntity - Function to run on an entity when adding it to the
+     * system's watchlist
+     * @param {Function} config.onRemoveEntity - Function to run on an entity when removing it from
+     * the system's watchlist
      * @param {Function} config.onUpdate - Function to run each time the engine updates the main loop
      */
     constructor(config: SystemConfig);
@@ -69,7 +72,8 @@ export default class System {
      */
     readonly watchedEntityUUIDs: string[];
     /**
-     * @description Add an extra method to the system. Cannot be modified after the system is registered with the engine.
+     * @description Add an extra method to the system. Cannot be modified after the system is
+     * registered with the engine.
      * @param {string} key - Method identifier
      * @param {function} fn - Method to be called by user in the future
      */
@@ -82,16 +86,17 @@ export default class System {
      */
     canWatch(entity: Entity): boolean;
     /**
-     * @description Call a user-added method from outside the system. Cannot be modified after the system is registered
-     * with the engine.
+     * @description Call a user-added method from outside the system. Cannot be modified after the
+     * system is registered with the engine.
      * @param {string} key - Method identifier
      * @param {any} payload - Any data which should be passed to the method
      * @returns {any} - Any data which the method returns
      */
     dispatch(key: string, payload?: any): any;
     /**
-     * @description Initialize the system (as a part of linking to the engine). After linking the engine, the system will
-     * run its stored init hook method. Cannot be modified after the system is registered with the engine.
+     * @description Initialize the system (as a part of linking to the engine). After linking the
+     * engine, the system will run its stored init hook method. Cannot be modified after the system is
+     * registered with the engine.
      * @param {Engine} engine - Engine instance to link to
      */
     init(engine: Engine): void;
@@ -110,13 +115,15 @@ export default class System {
      */
     isWatchingEntity(entity: Entity): boolean;
     /**
-     * @description Remove a user-added method from the system. Cannot be modified after the system is registered with the
+     * @description Remove a user-added method from the system. Cannot be modified after the system is
+     * registered with the
      * engine.
      * @param {string} key - Method identifier
      */
     removeMethod(key: string): void;
     /**
-     * @description Remove a component type to the system's watch list. Cannot be modified after the system is registered
+     * @description Remove a component type to the system's watch list. Cannot be modified after the
+     * system is registered
      * with the engine.
      * @param {string} componentType - Component type to stop watching
      * @returns {array} - Array of watched component types
@@ -129,22 +136,22 @@ export default class System {
      */
     unwatchEntity(entity: Entity): string[];
     /**
-     * @description Update the system with a given amount of time to simulate. The system will run its stored update
-     * function using either a fixed step or variable step (specified at creation) and the supplied delta time. Cannot be
-     * modified after the system is registered with the engine.
+     * @description Update the system with a given amount of time to simulate. The system will run its
+     * stored update function using either a fixed step or variable step (specified at creation) and
+     * the supplied delta time. Cannot be modified after the system is registered with the engine.
      * @param {number} delta - Time in milliseconds to simulate
      */
     update(delta: number): void;
     /**
-     * @description Add a single component type to the system's watch list. Cannot be modified after the system is
-     * registered with the engine.
+     * @description Add a single component type to the system's watch list. Cannot be modified after
+     * the system is registered with the engine.
      * @param {string} componentType - Component type to watch
      * @returns {array} - Array of watched component types
      */
     watchComponentType(componentType: string): string[];
     /**
-     * @description Watch an entity by adding its UUID to to the system. After adding, the system will run the entity
-     * through the internal add function to do any additional processing.
+     * @description Watch an entity by adding its UUID to to the system. After adding, the system will
+     * run the entity through the internal add function to do any additional processing.
      * @param {Entity} entity - Entity instance to watch
      * @returns {array} - Array of watched entity UUIDs
      */

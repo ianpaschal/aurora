@@ -21,8 +21,8 @@ export default class Component {
      * @returns {Object} - The component's data
      */
     /**
-    * @description Set the component's data. Note: This method differs from `.mergeData()` in that it completely
-    * overwrites any existing data within the component.
+    * @description Set the component's data. Note: This method differs from `.mergeData()` in that it
+    * completely overwrites any existing data within the component.
     * @param {Object} data - Data object to apply
     * @returns {Object} - The component's updated updated data object
     */

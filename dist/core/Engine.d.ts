@@ -2,8 +2,9 @@ import Entity from "./Entity";
 import System from "./System";
 /**
  * @module core
- * @classdesc Core singleton representing an instance of the Aurora engine. The engine is responsible for the creation
- * (and registration) of entities, as well as initialization and running of systems containing game logic.
+ * @classdesc Core singleton representing an instance of the Aurora engine. The engine is
+ * responsible for the creation and registration of entities, as well as initialization and running
+ * of systems containing game logic.
  */
 export default class Engine {
     private _assemblies;
@@ -74,16 +75,18 @@ export default class Engine {
      */
     addAssembly(assembly: Entity): Entity[];
     /**
-     * @description Add an entity instance to the engine. This will check which systems should watch it, and add it to
-     * those systems (running the entity through each system's onAdd hook. After being added and initialized, entities are
-     * immutable (although their component data is not).
+     * @description Add an entity instance to the engine. This will check which systems should watch
+     * it, and add it to those systems (running the entity through each system's onAdd hook. After
+     * being added and initialized, entities are immutable (although their component data is not).
      * @param {Entity} entity - Entity instance
      * @returns {Entity[]} - Array of entity instances
      */
     addEntity(entity: Entity): Entity[];
     /**
-     * @description Add a system instance to the engine. This will run the system's onInit hook. After being added and
-     * initialized, systems are immutable and are updated every game tick.
+     * @description Add a system instance to the engine.
+     *
+     * This will run the system's onInit hook. After being added and initialized, systems are
+     * immutable and are updated every game tick.
      * @param {System} system - System instance
      * @returns {System[]} - Array of system instances
      */
@@ -140,7 +143,18 @@ export default class Engine {
     stop(): void;
     /**
      * @description Perform one tick and update all systems.
-     * @private
+     *
+     * It is up to the user to decide how often to call this function. Typically on the client-side
+     * this would be called in requestAnimationFrame() and on the server-side this would simply be
+     * tied to a very fast setInterval() function (perhaps 10 ms).
      */
     tick(): void;
+    /**
+     * @description Set all entities to "clean".
+     *
+     * When this function is invoked is up to the developer. In some cases it makes sense to invoke it
+     * at the beginning of each tick, in other cases after all entities are sent from a server to the
+     * clients (for example).
+     */
+    cleanEntities(): void;
 }

@@ -14,13 +14,14 @@ var Component_1 = __importDefault(require("./Component"));
  */
 var Entity = /** @class */ (function () {
     /**
-     * @description Create an entity. An object can be used when loading a previously created entity from disk, or
-     * creating an entity to be used as an assembly to clone into new entity instances.
+     * @description Create an entity. An object can be used when loading a previously created entity
+     * from disk, or creating an entity to be used as an assembly to clone into new entity instances.
      * @param {Object} [config] - Configuration object
      * @param {string} [config.uuid] - Entity UUID
      * @param {string} [config.type] - Entity type
      * @param {string} [config.name] - Entity name (typically also called "unit type" in-game)
-     * @param {Array} [config.components] - Array of component data objects to generate component instances from
+     * @param {Array} [config.components] - Array of component data objects to generate component
+     * instances from
      */
     function Entity(config) {
         var _this = this;
@@ -29,10 +30,12 @@ var Entity = /** @class */ (function () {
         this._type = "no-type";
         this._name = "No Name";
         this._components = [];
+        this._dirty = true;
+        this._destroy = false;
         // Apply config values
         if (config) {
             Object.keys(config).forEach(function (key) {
-                // Handle components slightly differently, otherwise simply overwite props with config values
+                // Handle components slightly differently, otherwise simply overwite props with config value
                 if (key === "components") {
                     config.components.forEach(function (data) {
                         _this.addComponent(new Component_1.default(data));
@@ -72,18 +75,40 @@ var Entity = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Entity.prototype, "json", {
+    Object.defineProperty(Entity.prototype, "dirty", {
+        get: function () {
+            return this._dirty;
+        },
+        set: function (boolean) {
+            this._dirty = boolean;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Entity.prototype, "destroy", {
+        get: function () {
+            return this._destroy;
+        },
+        set: function (boolean) {
+            this._destroy = boolean;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Entity.prototype, "flattened", {
         /**
-         * @description Get the entity's data as a JSON string.
+         * @description Get the entity's data as a pure object (as compared to a class instance).
          * @readonly
-         * @returns {string} - JSON string
+         * @returns {Object} - Entity data as an object
          */
         get: function () {
             var data = {
-                uuid: this._uuid,
-                type: this._type,
+                components: [],
+                destroy: this._destroy,
+                dirty: this._dirty,
                 name: this._name,
-                components: []
+                type: this._type,
+                uuid: this._uuid,
             };
             this._components.forEach(function (component) {
                 data.components.push({
@@ -92,7 +117,19 @@ var Entity = /** @class */ (function () {
                     uuid: component.uuid
                 });
             });
-            return JSON.stringify(data, null, 4);
+            return data;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Entity.prototype, "json", {
+        /**
+         * @description Get the entity's data as a JSON string.
+         * @readonly
+         * @returns {string} - JSON string
+         */
+        get: function () {
+            return JSON.stringify(this.flattened, null, 4);
         },
         enumerable: true,
         configurable: true
@@ -134,8 +171,8 @@ var Entity = /** @class */ (function () {
         configurable: true
     });
     /**
-     * @description Add a component instance to the entity. This method should only be called internally, and never after
-     * the entity has been registered.
+     * @description Add a component instance to the entity. This method should only be called
+     * internally, and never after the entity has been registered.
      * @private
      * @param {Component} component - The component to add
      * @returns {Component[]} - Updated array of components, or null if the component already existed
@@ -157,7 +194,8 @@ var Entity = /** @class */ (function () {
         return clone;
     };
     /**
-     * @description Copy another entity (such as an assembly) into the entity, replacing all components.
+     * @description Copy another entity (such as an assembly) into the entity, replacing all
+     * components.
      * @param {Entity} source - Entity to copy
      */
     Entity.prototype.copy = function (source) {
@@ -179,7 +217,8 @@ var Entity = /** @class */ (function () {
         return getItem_1.default(type, this._components, "_type");
     };
     /**
-     * @description Get data by component type from the entity. This is basically a shorthand for .getComponent.getData();
+     * @description Get data by component type from the entity. This is basically a shorthand for
+     * .getComponent.getData();
      * @readonly
      * @param {string} type - Component type
      * @returns {any} - Requested component data
@@ -218,8 +257,8 @@ var Entity = /** @class */ (function () {
         return true;
     };
     /**
-     * @description Remove a component instance from the entity. This method should only be called internally, and never
-     * after the entity has been registered.
+     * @description Remove a component instance from the entity. This method should only be called
+     * internally, and never after the entity has been registered.
      * @private
      * @param {string} type - Component type
      * @returns {Component[]} - Array of component instances
@@ -244,6 +283,7 @@ var Entity = /** @class */ (function () {
         }
         var component = this.getComponent(type);
         component.mergeData(data);
+        this.dirty = true;
     };
     return Entity;
 }());

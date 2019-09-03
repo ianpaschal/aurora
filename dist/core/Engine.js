@@ -9,8 +9,9 @@ var getItem_1 = __importDefault(require("../utils/getItem"));
 var hasItem_1 = __importDefault(require("../utils/hasItem"));
 /**
  * @module core
- * @classdesc Core singleton representing an instance of the Aurora engine. The engine is responsible for the creation
- * (and registration) of entities, as well as initialization and running of systems containing game logic.
+ * @classdesc Core singleton representing an instance of the Aurora engine. The engine is
+ * responsible for the creation and registration of entities, as well as initialization and running
+ * of systems containing game logic.
  */
 var Engine = /** @class */ (function () {
     /**
@@ -144,9 +145,9 @@ var Engine = /** @class */ (function () {
         return this._assemblies;
     };
     /**
-     * @description Add an entity instance to the engine. This will check which systems should watch it, and add it to
-     * those systems (running the entity through each system's onAdd hook. After being added and initialized, entities are
-     * immutable (although their component data is not).
+     * @description Add an entity instance to the engine. This will check which systems should watch
+     * it, and add it to those systems (running the entity through each system's onAdd hook. After
+     * being added and initialized, entities are immutable (although their component data is not).
      * @param {Entity} entity - Entity instance
      * @returns {Entity[]} - Array of entity instances
      */
@@ -167,8 +168,10 @@ var Engine = /** @class */ (function () {
         return this._entities;
     };
     /**
-     * @description Add a system instance to the engine. This will run the system's onInit hook. After being added and
-     * initialized, systems are immutable and are updated every game tick.
+     * @description Add a system instance to the engine.
+     *
+     * This will run the system's onInit hook. After being added and initialized, systems are
+     * immutable and are updated every game tick.
      * @param {System} system - System instance
      * @returns {System[]} - Array of system instances
      */
@@ -265,7 +268,10 @@ var Engine = /** @class */ (function () {
     };
     /**
      * @description Perform one tick and update all systems.
-     * @private
+     *
+     * It is up to the user to decide how often to call this function. Typically on the client-side
+     * this would be called in requestAnimationFrame() and on the server-side this would simply be
+     * tied to a very fast setInterval() function (perhaps 10 ms).
      */
     Engine.prototype.tick = function () {
         if (this._running) {
@@ -285,6 +291,18 @@ var Engine = /** @class */ (function () {
                 this._onTickComplete();
             }
         }
+    };
+    /**
+     * @description Set all entities to "clean".
+     *
+     * When this function is invoked is up to the developer. In some cases it makes sense to invoke it
+     * at the beginning of each tick, in other cases after all entities are sent from a server to the
+     * clients (for example).
+     */
+    Engine.prototype.cleanEntities = function () {
+        this._entities.forEach(function (entity) {
+            entity.dirty = false;
+        });
     };
     return Engine;
 }());
